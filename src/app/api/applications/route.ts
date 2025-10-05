@@ -1,0 +1,305 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+import { apiHandler, APIError } from '@/lib/api-handler'
+import { ApplicationStatus } from '@prisma/client'
+
+export async function POST(request: NextRequest) {
+  return apiHandler(request, async (req) => {
+    const contentType = req.headers.get('content-type') || ''
+    
+    let formData: FormData
+    let data: any = {}
+
+    if (contentType.includes('multipart/form-data') || contentType.includes('application/x-www-form-urlencoded')) {
+      formData = await req.formData()
+      
+      // Extract form data
+      const jobId = formData.get('jobId') as string
+      const jobTitle = formData.get('jobTitle') as string
+      const companyName = formData.get('companyName') as string
+      const fullName = formData.get('fullName') as string
+      const email = formData.get('email') as string
+      const phone = formData.get('phone') as string
+      const location = formData.get('location') as string
+      const currentTitle = formData.get('currentTitle') as string
+      const currentCompany = formData.get('currentCompany') as string
+      const experience = formData.get('experience') as string
+      const linkedin = formData.get('linkedin') as string
+      const github = formData.get('github') as string
+      const portfolio = formData.get('portfolio') as string
+      const coverLetter = formData.get('coverLetter') as string
+      const salaryExpectation = formData.get('salaryExpectation') as string
+      const availability = formData.get('availability') as string
+      const noticePeriod = formData.get('noticePeriod') as string
+      const howDidYouHear = formData.get('howDidYouHear') as string
+      const additionalInfo = formData.get('additionalInfo') as string
+      const resumeUrl = formData.get('resumeUrl') as string
+      const resumeFile = formData.get('resume') as File | null
+
+      data = {
+        jobId, jobTitle, companyName, fullName, email, phone, location,
+        currentTitle, currentCompany, experience, linkedin, github, portfolio,
+        coverLetter, salaryExpectation, availability, noticePeriod,
+        howDidYouHear, additionalInfo, resumeUrl, resumeFile
+      }
+    } else {
+      // Handle JSON data
+      const jsonData = await req.json()
+      data = jsonData
+    }
+    
+    const {
+      jobId,
+      fullName,
+      email,
+      phone,
+      location,
+      currentTitle,
+      currentCompany,
+      experience,
+      linkedin,
+      github,
+      portfolio,
+      coverLetter,
+      salaryExpectation,
+      availability,
+      noticePeriod,
+      howDidYouHear,
+      additionalInfo,
+      resumeUrl,
+      resumeFile
+    } = data
+
+    // Validate required fields
+    if (!jobId || !fullName || !email || !phone || !location || !currentTitle || !experience || !coverLetter || !availability) {
+      throw new APIError('Missing required fields', 400)
+    }
+
+    // Validate email format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new APIError('Invalid email format', 400)
+    }
+
+    // Check if job exists and is published
+    const job = await db.job.findFirst({
+      where: {
+        jobId: jobId,
+        status: 'PUBLISHED',
+        expiresAt: {
+          gt: new Date()
+        }
+      }
+    })
+
+    if (!job) {
+      throw new APIError('Job not found or no longer accepting applications', 404)
+    }
+
+    // Check if user has already applied for this job
+    const existingApplication = await db.jobApplication.findFirst({
+      where: {
+        jobId: job.jobId,
+        jobSeekerProfile: {
+          user: {
+            email: email
+          }
+        }
+      }
+    })
+
+    if (existingApplication) {
+      throw new APIError('You have already applied for this position', 409)
+    }
+
+    // Find or create job seeker profile
+    let jobSeekerProfile = await db.jobSeekerProfile.findFirst({
+      where: {
+        user: {
+          email: email
+        }
+      },
+      include: {
+        user: true
+      }
+    })
+
+    if (!jobSeekerProfile) {
+      // Create a new user and job seeker profile
+      const newUser = await db.user.create({
+        data: {
+          email: email,
+          name: fullName,
+          role: 'seeker',
+          isActive: true
+        }
+      })
+
+      jobSeekerProfile = await db.jobSeekerProfile.create({
+        data: {
+          userUid: newUser.uid,
+          professionalTitle: currentTitle,
+          location: location,
+          phone: phone,
+          linkedin: linkedin || undefined,
+          github: github || undefined,
+          portfolioLinks: portfolio ? [portfolio] : undefined,
+          experienceYears: experience === 'entry' ? 1 : 
+                          experience === 'junior' ? 3 : 
+                          experience === 'mid' ? 5 : 
+                          experience === 'senior' ? 8 : 10,
+          availability: availability
+        },
+        include: {
+          user: true
+        }
+      })
+    } else {
+      // Update existing profile with new information
+      await db.jobSeekerProfile.update({
+        where: {
+          userUid: jobSeekerProfile.userUid
+        },
+        data: {
+          professionalTitle: currentTitle,
+          location: location,
+          phone: phone,
+          linkedin: linkedin || undefined,
+          github: github || undefined,
+          portfolioLinks: portfolio ? [portfolio] : undefined,
+          experienceYears: experience === 'entry' ? 1 : 
+                          experience === 'junior' ? 3 : 
+                          experience === 'mid' ? 5 : 
+                          experience === 'senior' ? 8 : 10,
+          availability: availability
+        }
+      })
+    }
+
+    // Handle resume file upload
+    let resumeFileUrl = resumeUrl
+    if (resumeFile) {
+      // For now, we'll simulate file upload
+      // In a real application, you would upload to a cloud storage service
+      const timestamp = Date.now()
+      const fileName = `resume_${jobSeekerProfile.userUid}_${timestamp}.${resumeFile.name.split('.').pop()}`
+      resumeFileUrl = `/uploads/resumes/${fileName}`
+      
+      // Here you would actually upload the file to your storage service
+      // For demo purposes, we'll just use the placeholder URL
+      console.log('Resume file uploaded:', resumeFile.name, '->', resumeFileUrl)
+    }
+
+    // Create the application
+    const application = await db.jobApplication.create({
+      data: {
+        jobId: job.jobId,
+        jobSeekerProfileId: jobSeekerProfile.userUid,
+        coverLetter: coverLetter,
+        status: ApplicationStatus.APPLIED,
+        matchScore: 0, // Will be calculated later
+        notes: `Current Company: ${currentCompany || 'Not specified'}
+Salary Expectation: ${salaryExpectation || 'Not specified'}
+How did you hear about us: ${howDidYouHear || 'Not specified'}
+Additional Info: ${additionalInfo || 'None'}
+LinkedIn: ${linkedin || 'Not provided'}
+GitHub: ${github || 'Not provided'}
+Portfolio: ${portfolio || 'Not provided'}
+Resume URL: ${resumeUrl || 'Not provided'}
+Resume File: ${resumeFileUrl || 'Not uploaded'}`,
+        appliedAt: new Date(),
+        lastStatusUpdate: new Date()
+      },
+      include: {
+        job: {
+          include: {
+            company: true,
+            employer: true
+          }
+        },
+        jobSeekerProfile: {
+          include: {
+            user: true
+          }
+        }
+      }
+    })
+
+    // Update job applicant count
+    await db.job.update({
+      where: { jobId: job.jobId },
+      data: {
+        applicantCount: {
+          increment: 1
+        }
+      }
+    })
+
+    // TODO: Send confirmation email to applicant
+    // TODO: Send notification to employer
+    // TODO: Calculate match score using AI
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        applicationId: application.applicationId,
+        jobTitle: job.title,
+        companyName: job.company?.name,
+        appliedAt: application.appliedAt,
+        status: application.status
+      },
+      message: 'Application submitted successfully!'
+    })
+  })
+}
+
+export async function GET(request: NextRequest) {
+  return apiHandler(request, async (req) => {
+    const { searchParams } = new URL(req.url)
+    const jobId = searchParams.get('jobId')
+    const email = searchParams.get('email')
+
+    if (!jobId || !email) {
+      throw new APIError('Job ID and email are required', 400)
+    }
+
+    // Check if user has already applied for this job
+    const application = await db.jobApplication.findFirst({
+      where: {
+        job: {
+          jobId: jobId
+        },
+        jobSeekerProfile: {
+          user: {
+            email: email
+          }
+        }
+      },
+      include: {
+        job: {
+          select: {
+            title: true,
+            company: {
+              select: {
+                name: true
+              }
+            }
+          }
+        }
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        hasApplied: !!application,
+        application: application ? {
+          id: application.applicationId,
+          status: application.status,
+          appliedAt: application.appliedAt,
+          jobTitle: application.job.title,
+          companyName: application.job.company.name
+        } : null
+      }
+    })
+  })
+}

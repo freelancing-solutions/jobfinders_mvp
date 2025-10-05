@@ -1,0 +1,522 @@
+// This is your Prisma schema file for the Job Finders application
+// Based on the comprehensive job platform architecture - SQLite compatible version
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Core User Management
+model User {
+  uid              String   @id @default(cuid()) @map("id")
+  email           String   @unique
+  passwordHash    String?  @map("password_hash")
+  name            String?
+  role            String   @default("seeker") // seeker, employer, admin
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  lastLogin       DateTime? @map("last_login")
+  lastPasswordChange DateTime? @map("last_password_change")
+  
+  // Relationships
+  jobSeekerProfile JobSeekerProfile?
+  employerProfile  EmployerProfile?
+  adminProfile     AdminProfile?
+  resumes         Resume[]
+  matches         Match[]
+  passwordResetTokens PasswordResetToken[]
+  
+  @@map("users")
+}
+
+// Job Seeker Profile
+model JobSeekerProfile {
+  userUid         String   @id @map("user_uid")
+  professionalTitle String?  @map("professional_title")
+  summary         String?
+  skills          Json?    // Array of skills
+  experienceYears Int?     @map("experience_years")
+  location        String?
+  phone           String?
+  website         String?
+  linkedin        String?
+  github          String?
+  portfolioLinks  Json?    // Array of portfolio links
+  resumeFileUrl   String?  @map("resume_file_url")
+  profileImageUrl String?  @map("profile_image_url")
+  remoteWorkPreference Boolean? @map("remote_work_preference")
+  salaryExpectationMin Float? @map("salary_expectation_min")
+  salaryExpectationMax Float? @map("salary_expectation_max")
+  currency        String   @default("ZAR")
+  availability    String?  // immediate, 2_weeks, 1_month, 3_months
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relationships
+  user            User           @relation(fields: [userUid], references: [uid], onDelete: Cascade)
+  applications    JobApplication[]
+  savedJobs       SavedJob[]
+  
+  @@map("jobseeker_profiles")
+}
+
+// Employer Profile
+model EmployerProfile {
+  employerId      String   @id @default(cuid()) @map("employer_id")
+  userUid         String   @unique @map("user_uid")
+  companyId       String   @map("company_id")
+  isVerified      Boolean  @default(false) @map("is_verified")
+  isAdmin         Boolean  @default(false) @map("is_admin")
+  verificationToken String? @map("verification_token")
+  verificationTokenExpiresAt DateTime? @map("verification_token_expires_at")
+  fullName        String?  @map("full_name")
+  jobTitle        String?  @map("job_title") @default("Human Resource")
+  profilePictureUrl String? @map("profile_picture_url")
+  bio             String?
+  companyEmail    String?  @map("company_email")
+  personalEmail   String?  @map("personal_email")
+  phoneNumber     String?  @map("phone_number")
+  alternatePhone  String?  @map("alternate_phone")
+  linkedinUrl     String?  @map("linkedin_url")
+  twitterHandle   String?  @map("twitter_handle")
+  department      String?
+  hireDate        DateTime? @map("hire_date")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relationships
+  user            User           @relation(fields: [userUid], references: [uid], onDelete: Cascade)
+  company         Company        @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
+  jobs            Job[]
+  
+  @@map("employers")
+}
+
+// Admin Profile - FIXED
+model AdminProfile {
+  adminId         String   @id @default(cuid()) @map("admin_id")
+  userUid         String   @unique @map("user_uid") // Changed from "admin_users" to "user_uid"
+  permissions     Json?    // Array of admin permissions
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relationships
+  user            User     @relation(fields: [userUid], references: [uid], onDelete: Cascade) // Added opposite relation
+  jobs            Job[]    // This will be fixed by adding adminProfile field in Job model
+  
+  @@map("admin")
+}
+
+enum JobStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+  PAUSED
+  EXPIRED
+  DELETED
+}
+
+enum ApplicationStatus {
+  APPLIED
+  REVIEWING
+  SHORTLISTED
+  REJECTED
+  HIRED
+}
+
+// Company Management
+model Company {
+  companyId       String   @id @default(cuid()) @map("company_id")
+  name            String   @unique
+  description     String?
+  industry        String?
+  website         String?
+  logoUrl         String?  @map("logo_url")
+  city            String?
+  province        String?
+  country         String?
+  contactEmail    String?  @map("contact_email")
+  phoneNumber     String?  @map("phone_number")
+  billingEmail    String?  @map("billing_email")
+  sendInvoiceEmails Boolean @default(true) @map("send_invoice_emails")
+  sendTrialReminders Boolean @default(true) @map("send_trial_reminders")
+  employeeCount   Int?     @map("employee_count")
+  foundedYear     Int?     @map("founded_year")
+  techStack       Json?    // Array of technologies
+  linkedinUrl     String?  @map("linkedin_url")
+  twitterHandle   String?  @map("twitter_handle")
+  isVerified      Boolean  @default(false) @map("is_verified")
+  verificationStatus String? @map("verification_status") // pending, verified, rejected
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relationships
+  employers       EmployerProfile[]
+  jobs            Job[]
+  billingProfiles  CompanyBillingProfile[]
+  
+  @@map("companies")
+}
+
+// Job Management - FIXED
+model Job {
+  jobId         String   @id @default(cuid()) @map("job_id")
+  title         String
+  companyId     String   @map("company_id")
+  employerId    String   @map("employer_id")
+  categoryId    String?  @map("category_id")
+  description   String
+  requirements  Json
+  location      String?
+  salary        Json?
+  status        JobStatus
+  applicantCount Int     @default(0) @map("applicant_count")
+  isRemote      Boolean  @default(false) @map("is_remote")
+  experienceLevel String? @map("experience_level")
+  employmentType String? @map("employment_type")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  expiresAt     DateTime? @map("expires_at")
+  
+  // Added admin relation fields
+  adminProfileId String? @map("admin_profile_id") // Added for AdminProfile relation
+  
+  // Relationships
+  company       Company        @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
+  employer      EmployerProfile @relation(fields: [employerId], references: [employerId], onDelete: Cascade)
+  category      JobCategory?   @relation(fields: [categoryId], references: [categoryId])
+  adminProfile  AdminProfile?  @relation(fields: [adminProfileId], references: [adminId]) // Added opposite relation
+  applications  JobApplication[]
+  savedJobs     SavedJob[]
+  matches       Match[]
+}
+
+model Match {
+  matchId      String   @id @default(cuid()) @map("match_id")
+  jobId        String   @map("job_id")
+  candidateId  String   @map("candidate_id")
+  score        Float
+  criteria     Json
+  status       MatchStatus
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  
+  // Relationships
+  job          Job      @relation(fields: [jobId], references: [jobId], onDelete: Cascade)
+  candidate    User     @relation(fields: [candidateId], references: [uid])
+}
+
+enum MatchStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model JobCategory {
+  categoryId      String   @id @default(cuid()) @map("category_id")
+  name            String   @unique
+  description     String?
+  slug            String   @unique
+  icon            String?
+  color           String?
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relationships
+  jobs            Job[]
+  
+  @@map("job_category")
+}
+
+// Job Applications
+model JobApplication {
+  applicationId   String   @id @default(cuid()) @map("application_id")
+  jobId           String   @map("job_id")
+  jobSeekerProfileId String @map("jobseeker_profile_id")
+  resumeId        String?  @map("resume_id")
+  coverLetter     String?
+  status          ApplicationStatus @default(APPLIED)
+  matchScore      Float?   @map("match_score")
+  notes           String?
+  appliedAt       DateTime @default(now()) @map("applied_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  lastStatusUpdate DateTime? @map("last_status_update")
+  
+  // Relationships
+  job             Job              @relation(fields: [jobId], references: [jobId], onDelete: Cascade)
+  jobSeekerProfile JobSeekerProfile @relation(fields: [jobSeekerProfileId], references: [userUid], onDelete: Cascade)
+  resume          Resume?          @relation(fields: [resumeId], references: [resumeId])
+  
+  @@map("job_applications")
+}
+
+// Saved Jobs
+model SavedJob {
+  savedJobId      String   @id @default(cuid()) @map("saved_job_id")
+  jobSeekerProfileId String @map("jobseeker_profile_id")
+  jobId           String   @map("job_id")
+  savedAt         DateTime @default(now()) @map("saved_at")
+  notes           String?
+  
+  // Relationships
+  jobSeekerProfile JobSeekerProfile @relation(fields: [jobSeekerProfileId], references: [userUid], onDelete: Cascade)
+  job             Job              @relation(fields: [jobId], references: [jobId], onDelete: Cascade)
+  
+  @@unique([jobSeekerProfileId, jobId])
+  @@map("saved_jobs")
+}
+
+// Resume Management
+model Resume {
+  resumeId        String   @id @default(cuid()) @map("resume_id")
+  userUid         String   @map("user_uid")
+  isPrimary       Boolean  @default(false) @map("is_primary")
+  professionalTitle String @map("professional_title")
+  summary         String?
+  skills          Json?    // Array of skills
+  portfolioLinks  Json?    @map("portfolio_links")
+  resumeFileUrl   String?  @map("resume_file_url")
+  profileImageUrl String?  @map("profile_image_url")
+  location        String?
+  phone           String?
+  website         String?
+  linkedin        String?
+  github          String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relationships
+  user            User            @relation(fields: [userUid], references: [uid], onDelete: Cascade)
+  applications    JobApplication[]
+  experience      Experience[]
+  education       Education[]
+  certifications  Certification[]
+  languages       Language[]
+  projects        Project[]
+  
+  @@map("jobseeker_cvs")
+}
+
+// Experience
+model Experience {
+  experienceId    String   @id @default(cuid()) @map("experience_id")
+  resumeId        String   @map("resume_id")
+  company         String
+  position        String
+  startDate       DateTime @map("start_date")
+  endDate         DateTime? @map("end_date")
+  isCurrent       Boolean  @default(false) @map("is_current")
+  description     String?
+  location        String?
+  skills          Json?    // Array of skills gained
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relationships
+  resume          Resume @relation(fields: [resumeId], references: [resumeId], onDelete: Cascade)
+  
+  @@map("experience")
+}
+
+// Education
+model Education {
+  educationId     String   @id @default(cuid()) @map("education_id")
+  resumeId        String   @map("resume_id")
+  institution     String
+  degree          String
+  field           String?
+  startDate       DateTime @map("start_date")
+  endDate         DateTime? @map("end_date")
+  isCurrent       Boolean  @default(false) @map("is_current")
+  gpa             Float?
+  description     String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relationships
+  resume          Resume @relation(fields: [resumeId], references: [resumeId], onDelete: Cascade)
+  
+  @@map("education")
+}
+
+// Certifications
+model Certification {
+  certificationId String   @id @default(cuid()) @map("certification_id")
+  resumeId        String   @map("resume_id")
+  name            String
+  issuer          String
+  issueDate       DateTime @map("issue_date")
+  expiryDate      DateTime? @map("expiry_date")
+  credentialId    String?  @map("credential_id")
+  credentialUrl   String?  @map("credential_url")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relationships
+  resume          Resume @relation(fields: [resumeId], references: [resumeId], onDelete: Cascade)
+  
+  @@map("certifications")
+}
+
+// Languages
+model Language {
+  languageId      String   @id @default(cuid()) @map("language_id")
+  resumeId        String   @map("resume_id")
+  language        String
+  proficiency     String   // beginner, intermediate, advanced, native
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relationships
+  resume          Resume @relation(fields: [resumeId], references: [resumeId], onDelete: Cascade)
+  
+  @@map("languages")
+}
+
+// Projects
+model Project {
+  projectId       String   @id @default(cuid()) @map("project_id")
+  resumeId        String   @map("resume_id")
+  title           String
+  description     String?
+  technologies    Json?    // Array of technologies used
+  projectUrl      String?  @map("project_url")
+  githubUrl       String?  @map("github_url")
+  startDate       DateTime @map("start_date")
+  endDate         DateTime? @map("end_date")
+  isCurrent       Boolean  @default(false) @map("is_current")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relationships
+  resume          Resume @relation(fields: [resumeId], references: [resumeId], onDelete: Cascade)
+  
+  @@map("projects")
+}
+
+// Billing System
+model BillingPlan {
+  planId          String   @id @default(cuid()) @map("plan_id")
+  name            String
+  description     String?
+  price           Float
+  currency        String   @default("ZAR")
+  durationDays    Int      @default(30) @map("duration_days")
+  isActive        Boolean  @default(true) @map("is_active")
+  isFeatured      Boolean  @default(false) @map("is_featured")
+  isTrial         Boolean  @default(false) @map("is_trial")
+  
+  // Features
+  maxOpenJobs     Int?     @map("max_open_jobs")
+  maxUsers        Int?     @map("max_users")
+  maxApplicantsPerJob Int? @map("max_applicants_per_job")
+  allowPrioritySupport Boolean @default(false) @map("allow_priority_support")
+  showBranding    Boolean  @default(true) @map("show_branding")
+  
+  sortOrder       Int      @default(0) @map("sort_order")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relationships
+  billingProfiles CompanyBillingProfile[]
+  invoices        Invoice[]
+  
+  @@map("billing_plan")
+}
+
+model CompanyBillingProfile {
+  profileId       String   @id @default(cuid()) @map("profile_id")
+  companyId       String   @map("company_id")
+  planId          String   @map("plan_id")
+  isActive        Boolean  @default(true) @map("is_active")
+  subscriptionStart DateTime @map("subscription_start")
+  subscriptionEnd DateTime @map("subscription_end")
+  autoRenew       Boolean  @default(true) @map("auto_renew")
+  paymentMethod   Json?    @map("payment_method")
+  billingEmail    String?  @map("billing_email")
+  billingAddress  Json?    @map("billing_address")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relationships
+  company         Company     @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
+  billingPlan     BillingPlan @relation(fields: [planId], references: [planId], onDelete: Cascade)
+  invoices        Invoice[]
+  
+  @@map("company_billing_profiles")
+}
+
+model Invoice {
+  invoiceId       String   @id @default(cuid()) @map("invoice_id")
+  companyBillingProfileId String @map("company_billing_profile_id")
+  planId          String   @map("plan_id")
+  invoiceNumber   String   @unique @map("invoice_number")
+  amount          Float
+  currency        String   @default("ZAR")
+  status          String   @default("pending") // pending, paid, overdue, cancelled
+  dueDate         DateTime @map("due_date")
+  paidAt          DateTime? @map("paid_at")
+  paymentMethod   String?  @map("payment_method")
+  paymentReference String? @map("payment_reference")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relationships
+  billingProfile  CompanyBillingProfile @relation(fields: [companyBillingProfileId], references: [profileId], onDelete: Cascade)
+  billingPlan    BillingPlan @relation(fields: [planId], references: [planId], onDelete: Cascade)
+  
+  @@map("invoices")
+}
+
+// AI & Analytics
+model AgentSession {
+  sessionId       String   @id @default(cuid()) @map("session_id")
+  agentName       String   @map("agent_name")
+  contextData    Json?    @map("context_data")
+  userId          String?  @map("user_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  @@map("agent_sessions")
+}
+
+// Password Reset Tokens
+model PasswordResetToken {
+  id          String   @id @default(cuid())
+  token       String   @unique // hashed token
+  userId      String   @map("user_uid")
+  user        User     @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  expiresAt   DateTime @map("expires_at")
+  used        Boolean  @default(false)
+  usedAt      DateTime? @map("used_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("password_reset_tokens")
+}
+
+// Email Logs
+model EmailLog {
+  id          String   @id @default(cuid())
+  to          String
+  subject     String
+  type        String   // 'password_reset', 'welcome', etc.
+  status      String   // 'sent', 'failed', 'pending'
+  resendId    String?  @map("resend_id") // Resend message ID
+  error       String?
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@index([to])
+  @@index([type])
+  @@index([createdAt])
+  @@map("email_logs")
+}
