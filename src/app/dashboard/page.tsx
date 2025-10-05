@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { AppLayout } from '@/components/layout/app-layout'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -147,12 +148,14 @@ export default function Dashboard() {
 
   if (userLoading || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading your dashboard...</p>
+      <AppLayout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p className="text-gray-600">Loading your dashboard...</p>
+          </div>
         </div>
-      </div>
+      </AppLayout>
     )
   }
 
@@ -162,39 +165,21 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <Alert className="max-w-md">
-          <AlertDescription>{error}</AlertDescription>
-          <Button onClick={fetchDashboardData} className="mt-2">
-            Try Again
-          </Button>
-        </Alert>
-      </div>
+      <AppLayout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+          <Alert className="max-w-md">
+            <AlertDescription>{error}</AlertDescription>
+            <Button onClick={fetchDashboardData} className="mt-2">
+              Try Again
+            </Button>
+          </Alert>
+        </div>
+      </AppLayout>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">Job Finders</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="outline" onClick={() => router.push('/jobs')}>
-                Browse Jobs
-              </Button>
-              <Button variant="outline" onClick={() => router.push('/profile')}>
-                <Settings className="h-4 w-4 mr-2" />
-                Profile
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
+    <AppLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
@@ -390,6 +375,6 @@ export default function Dashboard() {
           </Card>
         )}
       </div>
-    </div>
+    </AppLayout>
   )
 }

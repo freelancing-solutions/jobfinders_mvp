@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { AppLayout } from '@/components/layout/app-layout'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { 
   Building2, 
@@ -150,59 +151,34 @@ export default function EmployerDashboard() {
 
   if (userLoading || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p>Loading dashboard...</p>
+      <AppLayout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p>Loading dashboard...</p>
+          </div>
         </div>
-      </div>
+      </AppLayout>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <Alert className="max-w-md">
-          <AlertDescription>{error}</AlertDescription>
-          <Button onClick={fetchDashboardData} className="mt-2">
-            Try Again
-          </Button>
-        </Alert>
-      </div>
+      <AppLayout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+          <Alert className="max-w-md">
+            <AlertDescription>{error}</AlertDescription>
+            <Button onClick={fetchDashboardData} className="mt-2">
+              Try Again
+            </Button>
+          </Alert>
+        </div>
+      </AppLayout>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">Job Finders</h1>
-              {company && (
-                <div className="ml-4 flex items-center gap-2">
-                  <span className="text-gray-600">|</span>
-                  <span className="font-medium">{company.name}</span>
-                  <Badge className={getVerificationStatusColor(company.verificationStatus)}>
-                    {company.verificationStatus}
-                  </Badge>
-                </div>
-              )}
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button onClick={() => router.push('/employer/jobs/new')}>
-                <Plus className="h-4 w-4 mr-2" />
-                Post Job
-              </Button>
-              <Button variant="outline" onClick={() => router.push('/employer/profile')}>
-                Company Profile
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
+    <AppLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
@@ -470,6 +446,6 @@ export default function EmployerDashboard() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </AppLayout>
   )
 }
