@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
+import { AppLayout } from '@/components/layout/app-layout'
 import { 
   User, 
   Briefcase, 
@@ -50,7 +51,7 @@ export default function Profile() {
     }
 
     if (status === 'authenticated') {
-      if (session.user.role !== 'seeker') {
+      if (session.user.role !== 'USER') {
         router.push(session.user.role === 'employer' ? '/employer/dashboard' : '/admin/dashboard')
         return
       }
@@ -234,46 +235,34 @@ export default function Profile() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p>Loading profile...</p>
+      <AppLayout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p>Loading profile...</p>
+          </div>
         </div>
-      </div>
+      </AppLayout>
     )
   }
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Alert className="max-w-md">
-          <AlertDescription>Failed to load profile</AlertDescription>
-          <Button onClick={fetchProfile} className="mt-2">
-            Try Again
-          </Button>
-        </Alert>
-      </div>
+      <AppLayout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <Alert className="max-w-md">
+            <AlertDescription>Failed to load profile</AlertDescription>
+            <Button onClick={fetchProfile} className="mt-2">
+              Try Again
+            </Button>
+          </Alert>
+        </div>
+      </AppLayout>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">Job Finders</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="outline" onClick={() => router.push('/dashboard')}>
-                Back to Dashboard
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
+    <AppLayout>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="mb-6 sm:mb-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Profile Settings</h2>
@@ -721,6 +710,6 @@ export default function Profile() {
           </div>
         </form>
       </div>
-    </div>
+    </AppLayout>
   )
 }
