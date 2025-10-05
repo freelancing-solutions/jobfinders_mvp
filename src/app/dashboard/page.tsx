@@ -1,12 +1,12 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { 
   Briefcase, 
   MapPin, 
@@ -60,7 +60,13 @@ interface SavedJob {
 }
 
 export default function Dashboard() {
-  const { data: session, status } = useSession()
+  const { 
+    user, 
+    isLoading: userLoading, 
+    isAuthenticated, 
+    isJobSeeker, 
+    displayName 
+  } = useCurrentUser()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -69,19 +75,23 @@ export default function Dashboard() {
   const [recommendedJobs, setRecommendedJobs] = useState<Job[]>([])
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    // Redirect if not authenticated
+    if (!userLoading && !isAuthenticated) {
       router.push('/auth/signin')
       return
     }
 
-    if (status === 'authenticated') {
-      if (session.user.role !== 'seeker') {
-        router.push(session.user.role === 'employer' ? '/employer/dashboard' : '/admin/dashboard')
-        return
-      }
+    // Redirect if not a job seeker
+    if (!userLoading && user && !isJobSeeker) {
+      router.push(user.role === 'EMPLOYER' ? '/employer/dashboard' : '/admin/dashboard')
+      return
+    }
+
+    // Fetch dashboard data when user is loaded and is a job seeker
+    if (!userLoading && isAuthenticated && isJobSeeker) {
       fetchDashboardData()
     }
-  }, [status, session, router])
+  }, [userLoading, isAuthenticated, isJobSeeker, user, router])
 
   const fetchDashboardData = async () => {
     try {
@@ -135,15 +145,19 @@ export default function Dashboard() {
     })
   }
 
-  if (status === 'loading' || loading) {
+  if (userLoading || loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p>Loading dashboard...</p>
+          <p className="text-gray-600">Loading your dashboard...</p>
         </div>
       </div>
     )
+  }
+
+  if (!isAuthenticated || !user) {
+    return null // Will redirect in useEffect
   }
 
   if (error) {
