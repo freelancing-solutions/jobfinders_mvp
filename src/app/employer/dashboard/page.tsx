@@ -1,12 +1,12 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { 
   Building2, 
   Users, 
@@ -51,7 +51,13 @@ interface Application {
 }
 
 export default function EmployerDashboard() {
-  const { data: session, status } = useSession()
+  const { 
+    user, 
+    isLoading: userLoading, 
+    isAuthenticated, 
+    isEmployer, 
+    displayName 
+  } = useCurrentUser()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -60,19 +66,23 @@ export default function EmployerDashboard() {
   const [recentApplications, setRecentApplications] = useState<Application[]>([])
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    // Redirect if not authenticated
+    if (!userLoading && !isAuthenticated) {
       router.push('/auth/signin')
       return
     }
 
-    if (status === 'authenticated') {
-      if (session.user.role !== 'employer') {
-        router.push(session.user.role === 'seeker' ? '/dashboard' : '/admin/dashboard')
-        return
-      }
+    // Redirect if not an employer
+    if (!userLoading && user && !isEmployer) {
+      router.push(user.role === 'SEEKER' ? '/dashboard' : '/admin/dashboard')
+      return
+    }
+
+    // Fetch dashboard data when user is loaded and is an employer
+    if (!userLoading && isAuthenticated && isEmployer) {
       fetchDashboardData()
     }
-  }, [status, session, router])
+  }, [userLoading, isAuthenticated, isEmployer, user, router])
 
   const fetchDashboardData = async () => {
     try {
@@ -133,7 +143,12 @@ export default function EmployerDashboard() {
     })
   }
 
-  if (status === 'loading' || loading) {
+  // Return null if redirecting (useEffect will handle redirects)
+  if (!userLoading && (!isAuthenticated || !isEmployer)) {
+    return null
+  }
+
+  if (userLoading || loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -192,7 +207,7 @@ export default function EmployerDashboard() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back, {session?.user?.name}!
+            Welcome back, {displayName}!
           </h2>
           <p className="text-gray-600">
             Manage your company profile, job postings, and applications

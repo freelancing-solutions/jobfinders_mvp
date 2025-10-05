@@ -40,9 +40,45 @@ export interface CurrentUser {
 }
 
 /**
- * Custom hook for fetching current user data
- * Integrates with NextAuth session and TanStack Query for optimal caching
- * Only fetches when user is authenticated to avoid unnecessary API calls
+ * Custom hook for fetching and managing current user data
+ * 
+ * This hook integrates NextAuth session management with TanStack Query for optimal
+ * data fetching and caching. It provides comprehensive user information including
+ * role-specific profiles and authentication state.
+ * 
+ * Features:
+ * - Automatic session-based query enabling/disabling
+ * - 5-minute cache with background refetching
+ * - Role-based helper functions (isSeeker, isEmployer)
+ * - Computed display name from user data
+ * - Loading and error state management
+ * 
+ * @returns {Object} User data and helper functions
+ * @returns {CurrentUser | undefined} user - Complete user data with profile
+ * @returns {boolean} isLoading - True when fetching user data
+ * @returns {boolean} isError - True when fetch failed
+ * @returns {boolean} isAuthenticated - True when user has valid session
+ * @returns {boolean} isSeeker - True when user role is 'SEEKER'
+ * @returns {boolean} isEmployer - True when user role is 'EMPLOYER'
+ * @returns {string} displayName - User's display name (name or email fallback)
+ * @returns {Function} refetch - Function to manually refetch user data
+ * 
+ * @example
+ * ```tsx
+ * function Dashboard() {
+ *   const { user, isLoading, isSeeker, displayName } = useCurrentUser()
+ *   
+ *   if (isLoading) return <LoadingSpinner />
+ *   if (!user) return <LoginPrompt />
+ *   
+ *   return (
+ *     <div>
+ *       <h1>Welcome, {displayName}!</h1>
+ *       {isSeeker && <JobSeekerDashboard />}
+ *     </div>
+ *   )
+ * }
+ * ```
  */
 export function useCurrentUser() {
   const { data: session, status } = useSession()
