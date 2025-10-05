@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { NotificationDropdown } from '@/components/notifications/notification-dropdown'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 import {
   Briefcase,
   MapPin,
@@ -17,10 +18,12 @@ import {
   FileText,
   Settings,
   CreditCard,
-  Menu
+  Menu,
+  Loader2
 } from 'lucide-react'
 
 interface NavigationHeaderProps {
+  // Made optional since we now use the hook internally
   user?: {
     name?: string | null
     email?: string | null
@@ -29,11 +32,27 @@ interface NavigationHeaderProps {
   }
 }
 
-export function NavigationHeader({ user }: NavigationHeaderProps) {
+export function NavigationHeader({ user: propUser }: NavigationHeaderProps) {
+  // Use the useCurrentUser hook for consistent user data
+  const { 
+    user: hookUser, 
+    isLoading, 
+    isAuthenticated, 
+    isUnauthenticated,
+    isJobSeeker,
+    isEmployer,
+    displayName,
+    avatarUrl,
+    initials
+  } = useCurrentUser()
+  
+  // Use hook user data if available, fallback to prop user for backward compatibility
+  const user = hookUser || propUser
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const isEmployer = user?.role === 'EMPLOYER'
+  // Use hook data for role checking, with fallback to prop user
+  const isEmployerUser = isEmployer || user?.role === 'EMPLOYER'
 
   const employerLinks = [
     {
@@ -91,7 +110,7 @@ export function NavigationHeader({ user }: NavigationHeaderProps) {
     },
   ]
 
-  const navigationLinks = isEmployer ? employerLinks : jobSeekerLinks
+  const navigationLinks = isEmployerUser ? employerLinks : jobSeekerLinks
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -117,33 +136,40 @@ export function NavigationHeader({ user }: NavigationHeaderProps) {
         </div>
 
         {/* Navigation Links - Desktop */}
-        {user && (
+        {(isAuthenticated || user) && (
           <nav className="hidden md:flex items-center gap-6">
-            {navigationLinks.map((link) => {
-              const Icon = link.icon
-              const isActive = pathname === link.href
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                    isActive
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                  {link.label}
-                </Link>
-              )
-            })}
+            {isLoading ? (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="text-sm">Loading...</span>
+              </div>
+            ) : (
+              navigationLinks.map((link) => {
+                const Icon = link.icon
+                const isActive = pathname === link.href
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                      isActive
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {link.label}
+                  </Link>
+                )
+              })
+            )}
           </nav>
         )}
 
         {/* Navigation Controls */}
         <div className="flex items-center gap-4">
           {/* Mobile Menu Toggle */}
-          {user && (
+          {(isAuthenticated || user) && (
             <Button
               variant="ghost"
               size="sm"
@@ -155,13 +181,17 @@ export function NavigationHeader({ user }: NavigationHeaderProps) {
           )}
           
           {/* Quick Actions */}
-          {user ? (
+          {isLoading ? (
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
+            </div>
+          ) : (isAuthenticated || user) ? (
             <>
               {/* Notifications */}
               <NotificationDropdown />
               
               {/* Post Job Button for Employers */}
-              {isEmployer && (
+              {isEmployerUser && (
                 <Button asChild variant="default" size="sm">
                   <Link href="/employer/post">
                     Post Job
@@ -190,29 +220,36 @@ export function NavigationHeader({ user }: NavigationHeaderProps) {
       </div>
 
       {/* Mobile Navigation Menu */}
-      {user && (
+      {(isAuthenticated || user) && (
         <nav className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} border-t`}>
           <div className="container mx-auto px-4 py-2">
-            <div className="grid grid-cols-2 gap-2">
-              {navigationLinks.map((link) => {
-                const Icon = link.icon
-                const isActive = pathname === link.href
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`flex items-center gap-2 p-3 text-sm font-medium rounded-md transition-colors ${
-                      isActive
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
-                    }`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {link.label}
-                  </Link>
-                )
-              })}
-            </div>
+            {isLoading ? (
+              <div className="flex items-center justify-center py-4">
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <span className="text-sm text-muted-foreground">Loading menu...</span>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                {navigationLinks.map((link) => {
+                  const Icon = link.icon
+                  const isActive = pathname === link.href
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={`flex items-center gap-2 p-3 text-sm font-medium rounded-md transition-colors ${
+                        isActive
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {link.label}
+                    </Link>
+                  )
+                })}
+              </div>
+            )}
           </div>
         </nav>
       )}
