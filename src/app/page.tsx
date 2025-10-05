@@ -4,6 +4,7 @@ import { JobSearch } from '@/components/jobs/job-search'
 import { Card, CardContent } from '@/components/ui/card'
 import { Briefcase, Building2, Users, TrendingUp, Search } from 'lucide-react'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
 // This can be fetched from a database in the future
 const jobCategories = [
@@ -82,7 +83,9 @@ export default function Home() {
         <section id="job-search-section" className="py-12 bg-gray-50">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-8">Find Your Next Opportunity</h2>
-            <JobSearch />
+            <Suspense fallback={<div className="flex justify-center items-center py-8">Loading search...</div>}>
+              <JobSearch />
+            </Suspense>
           </div>
         </section>
 

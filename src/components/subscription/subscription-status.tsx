@@ -1,3 +1,5 @@
+'use client';
+
 import { useSession } from 'next-auth/react';
 import { useQuery } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';

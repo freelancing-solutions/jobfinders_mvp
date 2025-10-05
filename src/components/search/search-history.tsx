@@ -162,5 +162,4 @@ export function SearchHistory({ onSelect, className }: SearchHistoryProps) {
   );
 }
 
-// Export the save function for use in other components
-export { saveToHistory };
+// Note: saveToHistory is available as a method within the SearchHistory component
