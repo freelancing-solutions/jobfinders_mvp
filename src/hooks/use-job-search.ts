@@ -138,12 +138,13 @@ export function useJobSearch() {
 
   // Dispatch function for state updates
   const dispatch = useCallback((action: SearchAction) => {
-    setSearchState(prev => {
-      const newState = searchReducer(prev, action);
-      updateURL(newState);
-      return newState;
-    });
-  }, [searchReducer, updateURL]);
+    setSearchState(prev => searchReducer(prev, action));
+  }, [searchReducer]);
+
+  // Update URL when search state changes (moved to useEffect to avoid setState-in-render)
+  useEffect(() => {
+    updateURL(searchState);
+  }, [searchState, updateURL]);
 
   // Update filters
   const updateFilters = useCallback((filters: Partial<SearchFilters>) => {
