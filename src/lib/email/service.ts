@@ -404,7 +404,7 @@ function generateWelcomeTemplate({
   role: string;
   loginUrl: string;
 }) {
-  const roleText = role === 'employer' ? 'employer' : 'job seeker';
+  const roleText = role === 'EMPLOYER' ? 'employer' : 'job seeker';
   
   return `
 <!DOCTYPE html>
@@ -442,7 +442,7 @@ function generateWelcomeTemplate({
       
       <p>You're now ready to:</p>
       <ul>
-        ${role === 'employer' ? `
+        ${role === 'EMPLOYER' ? `
           <li>Post job openings and reach thousands of qualified candidates</li>
           <li>Manage applications and track candidate progress</li>
           <li>Build your company profile and attract top talent</li>

@@ -42,21 +42,25 @@ Fix the bug where job seeker dashboard does not load user details properly, caus
 
 ### Task 3: Create useCurrentUser Hook
 - [x] Create `src/hooks/useCurrentUser.ts`
-- [x] Implement TanStack Query integration
-- [x] Add session status checking to enable/disable query
-- [x] Configure proper caching and retry logic
+- [x] Implement session integration with NextAuth
+- [x] Add user data fetching from `/api/user/me`
+- [x] Implement caching with TanStack Query
 - [x] Add TypeScript interfaces for user data
-- [ ] Write unit tests for the hook
+- [x] Include role-based helper functions
+- [x] Add loading and error state management
+- [x] Write unit tests for the hook
 
 **Requirements Referenced:** FR-1, FR-2, NFR-1, NFR-2
-**Estimated Time:** 2 hours
+**Estimated Time:** 4 hours
 **Dependencies:** Task 2 complete
 **Acceptance Criteria:**
-- [x] Hook only fetches when user is authenticated
-- [x] Proper caching with 5-minute stale time
-- [x] Retry logic for failed requests
-- [x] TypeScript types defined
-- [x] Unit tests pass
+- [x] Hook returns user data when authenticated
+- [x] Hook returns null when unauthenticated
+- [x] Loading states handled properly
+- [x] Error states handled gracefully
+- [x] Data cached and reused across components
+- [x] TypeScript types properly defined
+- [x] Unit tests pass with good coverage
 
 ### Task 4: Update Navbar Component
 - [x] Examine current `src/components/layout/Navbar.tsx`

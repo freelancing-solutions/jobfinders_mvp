@@ -10,6 +10,12 @@ import {
   Search,
   HelpCircle,
   Plus,
+  BarChart3,
+  Shield,
+  UserCheck,
+  Tags,
+  Info,
+  Mail,
 } from 'lucide-react';
 
 export interface NavigationItem {
@@ -42,6 +48,18 @@ export const publicNavigationItems: NavigationItem[] = [
     description: 'Explore companies',
   },
   {
+    href: '/about',
+    label: 'About',
+    icon: Info,
+    description: 'Learn about us',
+  },
+  {
+    href: '/contact',
+    label: 'Contact',
+    icon: Mail,
+    description: 'Get in touch',
+  },
+  {
     href: '/pricing',
     label: 'Pricing',
     icon: CreditCard,
@@ -56,35 +74,35 @@ export const jobSeekerNavigationItems: NavigationItem[] = [
     label: 'Dashboard',
     icon: Home,
     description: 'Your job search overview',
-    roles: ['job_seeker'],
+    roles: ['SEEKER'],
   },
   {
     href: '/jobs',
     label: 'Find Jobs',
     icon: Search,
     description: 'Browse available positions',
-    roles: ['job_seeker'],
+    roles: ['SEEKER'],
   },
   {
     href: '/applications',
     label: 'My Applications',
     icon: FileText,
     description: 'Track your job applications',
-    roles: ['job_seeker'],
+    roles: ['SEEKER'],
   },
   {
     href: '/saved-jobs',
     label: 'Saved Jobs',
     icon: Heart,
     description: 'Your bookmarked positions',
-    roles: ['job_seeker'],
+    roles: ['SEEKER'],
   },
   {
     href: '/profile',
     label: 'Profile & Resume',
     icon: Users,
     description: 'Manage your profile and resume',
-    roles: ['job_seeker'],
+    roles: ['SEEKER'],
   },
 ];
 
@@ -95,35 +113,35 @@ export const employerNavigationItems: NavigationItem[] = [
     label: 'Dashboard',
     icon: Home,
     description: 'Your hiring overview',
-    roles: ['employer'],
+    roles: ['EMPLOYER'],
   },
   {
     href: '/employer/jobs',
     label: 'My Jobs',
     icon: Briefcase,
     description: 'Manage your job postings',
-    roles: ['employer'],
+    roles: ['EMPLOYER'],
   },
   {
     href: '/employer/applications',
     label: 'Applications',
     icon: FileText,
     description: 'Review candidate applications',
-    roles: ['employer'],
+    roles: ['EMPLOYER'],
   },
   {
     href: '/employer/company',
     label: 'Company Profile',
     icon: Building2,
     description: 'Manage your company profile',
-    roles: ['employer'],
+    roles: ['EMPLOYER'],
   },
   {
     href: '/employer/post-job',
     label: 'Post Job',
     icon: Plus,
     description: 'Create a new job posting',
-    roles: ['employer'],
+    roles: ['EMPLOYER'],
     badge: 'New',
   },
   {
@@ -131,7 +149,53 @@ export const employerNavigationItems: NavigationItem[] = [
     label: 'Subscription',
     icon: CreditCard,
     description: 'Manage your subscription',
-    roles: ['employer'],
+    roles: ['EMPLOYER'],
+  },
+];
+
+// Navigation items for admin users
+export const adminNavigationItems: NavigationItem[] = [
+  {
+    href: '/admin/dashboard',
+    label: 'Admin Dashboard',
+    icon: BarChart3,
+    description: 'System overview and analytics',
+    roles: ['ADMIN'],
+  },
+  {
+    href: '/admin/users',
+    label: 'User Management',
+    icon: Users,
+    description: 'Manage users and permissions',
+    roles: ['ADMIN'],
+  },
+  {
+    href: '/admin/jobs',
+    label: 'Job Management',
+    icon: Briefcase,
+    description: 'Manage job postings',
+    roles: ['ADMIN'],
+  },
+  {
+    href: '/admin/companies',
+    label: 'Company Management',
+    icon: Building2,
+    description: 'Manage company profiles',
+    roles: ['ADMIN'],
+  },
+  {
+    href: '/admin/categories',
+    label: 'Category Management',
+    icon: Tags,
+    description: 'Manage job categories',
+    roles: ['ADMIN'],
+  },
+  {
+    href: '/admin/analytics',
+    label: 'Analytics',
+    icon: BarChart3,
+    description: 'Platform analytics and reports',
+    roles: ['ADMIN'],
   },
 ];
 
@@ -153,7 +217,7 @@ export const commonNavigationItems: NavigationItem[] = [
 
 /**
  * Get navigation items based on user role and authentication status
- * @param role - User role ('job_seeker' | 'employer' | undefined)
+ * @param role - User role ('SEEKER' | 'EMPLOYER' | 'ADMIN' | undefined)
  * @param isAuthenticated - Whether user is authenticated
  * @returns Array of navigation items appropriate for the user
  */
@@ -167,10 +231,12 @@ export function getNavigationItems(
 
   let navigationItems: NavigationItem[] = [];
 
-  if (role === 'job_seeker') {
+  if (role === 'SEEKER') {
     navigationItems = [...jobSeekerNavigationItems];
-  } else if (role === 'employer') {
+  } else if (role === 'EMPLOYER') {
     navigationItems = [...employerNavigationItems];
+  } else if (role === 'ADMIN') {
+    navigationItems = [...adminNavigationItems];
   }
 
   // Add common items for all authenticated users

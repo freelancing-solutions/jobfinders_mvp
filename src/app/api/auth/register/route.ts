@@ -48,14 +48,14 @@ export async function POST(request: NextRequest) {
     })
 
     // Create profile based on role
-    if (role === 'seeker') {
+    if (role === 'SEEKER') {
       await db.jobSeekerProfile.create({
         data: {
           userUid: user.uid,
           currency: 'ZAR'
         }
       })
-    } else if (role === 'employer') {
+    } else if (role === 'EMPLOYER') {
       // Create a default company for employers
       const company = await db.company.create({
         data: {

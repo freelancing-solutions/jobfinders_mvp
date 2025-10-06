@@ -26,19 +26,16 @@ export async function GET(request: NextRequest) {
         email: session.user.email 
       },
       select: {
-        id: true,
+        uid: true,
         name: true,
         email: true,
         role: true,
-        image: true,
-        profilePicture: true,
-        subscription: true,
         createdAt: true,
         updatedAt: true,
         // Include related profile data based on role
         jobSeekerProfile: {
           select: {
-            id: true,
+            userUid: true,
             professionalTitle: true,
             location: true,
             phone: true,
@@ -52,13 +49,13 @@ export async function GET(request: NextRequest) {
         },
         employerProfile: {
           select: {
-            id: true,
-            companyName: true,
-            companySize: true,
-            industry: true,
-            website: true,
-            location: true,
-            phone: true
+            employerId: true,
+            fullName: true,
+            jobTitle: true,
+            companyId: true,
+            phoneNumber: true,
+            linkedinUrl: true,
+            bio: true
           }
         }
       }
@@ -73,12 +70,10 @@ export async function GET(request: NextRequest) {
 
     // Format response based on user role
     const responseData = {
-      id: user.id,
+      id: user.uid,
       name: user.name,
       email: user.email,
       role: user.role,
-      image: user.image || user.profilePicture,
-      subscription: user.subscription,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       // Include profile data if available
@@ -99,12 +94,12 @@ export async function GET(request: NextRequest) {
       ...(user.role === 'EMPLOYER' && user.employerProfile && {
         profile: {
           type: 'employer',
-          companyName: user.employerProfile.companyName,
-          companySize: user.employerProfile.companySize,
-          industry: user.employerProfile.industry,
-          website: user.employerProfile.website,
-          location: user.employerProfile.location,
-          phone: user.employerProfile.phone
+          fullName: user.employerProfile.fullName,
+          jobTitle: user.employerProfile.jobTitle,
+          companyId: user.employerProfile.companyId,
+          phoneNumber: user.employerProfile.phoneNumber,
+          linkedinUrl: user.employerProfile.linkedinUrl,
+          bio: user.employerProfile.bio
         }
       })
     }

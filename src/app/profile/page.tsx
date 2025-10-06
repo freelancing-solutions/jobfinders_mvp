@@ -52,7 +52,7 @@ export default function Profile() {
 
     if (status === 'authenticated') {
       if (session.user.role !== 'USER') {
-        router.push(session.user.role === 'employer' ? '/employer/dashboard' : '/admin/dashboard')
+        router.push(session.user.role === 'EMPLOYER' ? '/employer/dashboard' : '/admin/dashboard')
         return
       }
       fetchProfile()

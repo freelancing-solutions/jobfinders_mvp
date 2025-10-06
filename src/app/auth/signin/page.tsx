@@ -36,9 +36,9 @@ export default function SignIn() {
       } else {
         // Get user session to determine redirect path
         const session = await getSession()
-        if (session?.user?.role === 'admin') {
+        if (session?.user?.role === 'ADMIN') {
           router.push('/admin/dashboard')
-        } else if (session?.user?.role === 'employer') {
+        } else if (session?.user?.role === 'EMPLOYER') {
           router.push('/employer/dashboard')
         } else {
           router.push('/dashboard')

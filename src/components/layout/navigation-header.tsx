@@ -3,6 +3,9 @@
 import Link from 'next/link'
 import { NavigationDropdown } from '@/components/ui/navigation-dropdown'
 import { UserAvatarDropdown } from '@/components/ui/user-avatar-dropdown'
+import { UserMenu } from '@/components/navigation/UserMenu'
+import { MainNav } from '@/components/navigation/MainNav'
+import { MobileNav } from '@/components/navigation/MobileNav'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Button } from '@/components/ui/button'
 import { NotificationDropdown } from '@/components/notifications/notification-dropdown'
@@ -69,8 +72,11 @@ export function NavigationHeader({ user: propUser }: NavigationHeaderProps) {
 
         {/* Navigation Controls */}
         <div className="flex items-center gap-4">
-          {/* Navigation Dropdown */}
-          <NavigationDropdown navigationItems={navigationItems} />
+          {/* Main Navigation for Desktop */}
+          <MainNav navigationItems={navigationItems} />
+          
+          {/* Mobile Navigation */}
+          <MobileNav navigationItems={navigationItems} />
           
           {/* Quick Actions */}
           {isLoading ? (
@@ -94,8 +100,8 @@ export function NavigationHeader({ user: propUser }: NavigationHeaderProps) {
               {/* Theme Toggle */}
               <ThemeToggle />
               
-              {/* User Avatar Dropdown */}
-              <UserAvatarDropdown user={user} />
+              {/* Enhanced User Menu */}
+              <UserMenu user={user} />
             </>
           ) : (
             <div className="flex items-center gap-2">
