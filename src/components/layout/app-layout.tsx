@@ -1,6 +1,7 @@
 'use client'
 
 import { NavigationHeader } from './navigation-header'
+import { Footer } from './Footer'
 
 interface AppLayoutProps {
   children: React.ReactNode
@@ -19,6 +20,7 @@ export function AppLayout({ children, user }: AppLayoutProps) {
       <main className="flex-1">
         {children}
       </main>
+      <Footer />
     </div>
   )
 }

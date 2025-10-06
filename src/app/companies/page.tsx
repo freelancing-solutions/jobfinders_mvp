@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { AppLayout } from '@/components/layout/app-layout'
 
 export const metadata: Metadata = {
   title: 'Companies - Job Finders',
@@ -138,7 +139,8 @@ export default function CompaniesPage() {
   const allCompanies = companies
 
   return (
-    <div className="min-h-screen bg-background">
+    <AppLayout>
+      <div className="bg-background">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
         <div className="container mx-auto px-4 py-16">
@@ -413,6 +415,7 @@ export default function CompaniesPage() {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </AppLayout>
   )
 }

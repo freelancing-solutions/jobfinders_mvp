@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ArrowRight, Users, Target, Award, Heart, Globe, Briefcase } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { AppLayout } from '@/components/layout/app-layout'
 
 export const metadata: Metadata = {
   title: 'About Us - Job Finders',
@@ -13,9 +14,10 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+    <AppLayout>
+      <div className="bg-background">
+        {/* Hero Section */}
+        <section className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl font-bold mb-6">
@@ -290,6 +292,7 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </AppLayout>
   )
 }

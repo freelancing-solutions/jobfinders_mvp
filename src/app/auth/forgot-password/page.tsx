@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Loader2, ArrowLeft, Mail, CheckCircle } from 'lucide-react'
+import { Loader2, ArrowLeft, Mail, CheckCircle, Home } from 'lucide-react'
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('')
@@ -94,6 +94,19 @@ export default function ForgotPassword() {
   if (success) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        {/* Back to Home Button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="absolute top-4 left-4 text-gray-600 hover:text-gray-900"
+          asChild
+        >
+          <Link href="/">
+            <Home className="h-4 w-4 mr-2" />
+            Back to Home
+          </Link>
+        </Button>
+
         <div className="max-w-md w-full space-y-8">
           <Card>
             <CardHeader className="text-center">
@@ -160,6 +173,19 @@ export default function ForgotPassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      {/* Back to Home Button */}
+      <Button
+        variant="ghost"
+        size="sm"
+        className="absolute top-4 left-4 text-gray-600 hover:text-gray-900"
+        asChild
+      >
+        <Link href="/">
+          <Home className="h-4 w-4 mr-2" />
+          Back to Home
+        </Link>
+      </Button>
+
       <div className="max-w-md w-full space-y-8">
         <Card>
           <CardHeader className="text-center">

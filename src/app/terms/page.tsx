@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { AppLayout } from '@/components/layout/app-layout'
 
 export const metadata: Metadata = {
   title: 'Terms of Service | JobFinders.site',
