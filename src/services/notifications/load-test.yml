@@ -1,0 +1,276 @@
+config:
+  target: 'http://localhost:3001'
+  phases:
+    # Warm-up phase
+    - duration: 30
+      arrivalRate: 5
+      name: "Warm-up"
+    
+    # Ramp-up phase
+    - duration: 60
+      arrivalRate: 5
+      rampTo: 20
+      name: "Ramp-up"
+    
+    # Sustained load phase
+    - duration: 120
+      arrivalRate: 20
+      name: "Sustained load"
+    
+    # Peak load phase
+    - duration: 60
+      arrivalRate: 20
+      rampTo: 50
+      name: "Peak load"
+    
+    # Cool-down phase
+    - duration: 30
+      arrivalRate: 50
+      rampTo: 5
+      name: "Cool-down"
+
+  # Global configuration
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+      Authorization: 'Bearer {{ $randomString() }}'
+  
+  # Variables for test data
+  variables:
+    userIds:
+      - "user-1"
+      - "user-2"
+      - "user-3"
+      - "user-4"
+      - "user-5"
+    
+    notificationTypes:
+      - "welcome_email"
+      - "job_alert"
+      - "password_reset"
+      - "verification_sms"
+      - "new_message_push"
+    
+    channels:
+      - "email"
+      - "sms"
+      - "push"
+      - "in_app"
+    
+    priorities:
+      - "low"
+      - "medium"
+      - "high"
+
+  # Plugins for enhanced reporting
+  plugins:
+    metrics-by-endpoint:
+      useOnlyRequestNames: true
+    
+    # Publish metrics to console
+    publish-metrics:
+      - type: datadog
+        host: localhost
+        port: 8125
+        prefix: 'artillery.notification_service'
+      
+    # Custom expectations
+    expect:
+      outputFormat: 'json'
+      
+  # Performance thresholds
+  ensure:
+    thresholds:
+      - http.response_time.p95: 1000  # 95th percentile < 1s
+      - http.response_time.p99: 2000  # 99th percentile < 2s
+      - http.request_rate: 40         # At least 40 req/sec
+      - http.codes.200: 95            # 95% success rate
+      - http.codes.4xx: 3             # Max 3% client errors
+      - http.codes.5xx: 2             # Max 2% server errors
+
+scenarios:
+  # Test single notification sending
+  - name: "Send Single Notification"
+    weight: 40
+    flow:
+      - post:
+          url: "/api/notifications/send"
+          name: "Send single notification"
+          json:
+            userId: "{{ $randomItem(userIds) }}"
+            type: "{{ $randomItem(notificationTypes) }}"
+            channel: "{{ $randomItem(channels) }}"
+            priority: "{{ $randomItem(priorities) }}"
+            data:
+              user_name: "Test User {{ $randomInt(1, 1000) }}"
+              app_name: "JobFinders"
+              job_count: "{{ $randomInt(1, 10) }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: "success"
+            - hasProperty: "notificationId"
+          capture:
+            - json: "$.notificationId"
+              as: "notificationId"
+      
+      # Check notification status
+      - get:
+          url: "/api/notifications/{{ notificationId }}/status"
+          name: "Check notification status"
+          expect:
+            - statusCode: 200
+            - hasProperty: "status"
+
+  # Test bulk notification sending
+  - name: "Send Bulk Notifications"
+    weight: 20
+    flow:
+      - post:
+          url: "/api/notifications/bulk"
+          name: "Send bulk notifications"
+          json:
+            notifications:
+              - userId: "{{ $randomItem(userIds) }}"
+                type: "job_alert"
+                channel: "email"
+                data:
+                  user_name: "User 1"
+                  job_count: 3
+              - userId: "{{ $randomItem(userIds) }}"
+                type: "new_message_push"
+                channel: "push"
+                data:
+                  sender_name: "Recruiter"
+                  message_preview: "New job opportunity"
+              - userId: "{{ $randomItem(userIds) }}"
+                type: "profile_completion"
+                channel: "in_app"
+                data:
+                  completion_percentage: 75
+          expect:
+            - statusCode: 200
+            - hasProperty: "success"
+            - hasProperty: "results"
+
+  # Test user notifications retrieval
+  - name: "Get User Notifications"
+    weight: 15
+    flow:
+      - get:
+          url: "/api/notifications/user/{{ $randomItem(userIds) }}"
+          name: "Get user notifications"
+          qs:
+            page: "{{ $randomInt(1, 3) }}"
+            limit: "{{ $randomInt(10, 50) }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: "notifications"
+            - hasProperty: "pagination"
+
+  # Test template operations
+  - name: "Template Operations"
+    weight: 10
+    flow:
+      - get:
+          url: "/api/templates"
+          name: "List templates"
+          qs:
+            channel: "{{ $randomItem(channels) }}"
+            active: true
+          expect:
+            - statusCode: 200
+            - hasProperty: "templates"
+      
+      - get:
+          url: "/api/templates/welcome_email"
+          name: "Get specific template"
+          expect:
+            - statusCode: 200
+            - hasProperty: "template"
+
+  # Test analytics endpoints
+  - name: "Analytics Queries"
+    weight: 10
+    flow:
+      - get:
+          url: "/api/analytics/delivery"
+          name: "Get delivery analytics"
+          qs:
+            startDate: "2024-01-01"
+            endDate: "2024-12-31"
+            channel: "{{ $randomItem(channels) }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: "metrics"
+      
+      - get:
+          url: "/api/analytics/engagement"
+          name: "Get engagement analytics"
+          qs:
+            channel: "email"
+            period: "7d"
+          expect:
+            - statusCode: 200
+            - hasProperty: "metrics"
+
+  # Test health and monitoring
+  - name: "Health Checks"
+    weight: 5
+    flow:
+      - get:
+          url: "/health"
+          name: "Health check"
+          expect:
+            - statusCode: 200
+            - hasProperty: "status"
+            - equals:
+                - "healthy"
+                - "{{ status }}"
+      
+      - get:
+          url: "/metrics"
+          name: "Prometheus metrics"
+          expect:
+            - statusCode: 200
+
+# Custom functions for test data generation
+functions:
+  generateEmail:
+    - "test{{ $randomInt(1, 10000) }}@example.com"
+  
+  generatePhoneNumber:
+    - "+1555{{ $randomInt(1000000, 9999999) }}"
+  
+  generateJobTitle:
+    - "Software Engineer"
+    - "Product Manager"
+    - "Data Scientist"
+    - "UX Designer"
+    - "DevOps Engineer"
+  
+  generateCompanyName:
+    - "TechCorp"
+    - "InnovateLabs"
+    - "DataDriven Inc"
+    - "CloudFirst"
+    - "AI Solutions"
+
+# Before and after hooks
+before:
+  flow:
+    - log: "Starting notification service load test"
+    - log: "Target: {{ $environment.target }}"
+    - log: "Test duration: {{ $environment.duration || '5 minutes' }}"
+
+after:
+  flow:
+    - log: "Load test completed"
+    - log: "Check the results for performance metrics"
+
+# Error handling
+onError:
+  flow:
+    - log: "Error occurred during test: {{ $error }}"
+
+# Custom processors for advanced scenarios
+processor: "./load-test-processor.js"

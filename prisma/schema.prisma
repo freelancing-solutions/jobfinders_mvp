@@ -40,6 +40,10 @@ model User {
   notifications   Notification[]
   notificationPreferences NotificationPreference?
   
+  // Analytics relationships
+  analyticsEvents AnalyticsEvent[]
+  userJourneys    UserJourney[]
+  
   @@map("users")
 }
 
@@ -819,6 +823,8 @@ model Notification {
   // Relationships
   user            User     @relation(fields: [userId], references: [uid], onDelete: Cascade)
   deliveryLogs    NotificationDeliveryLog[]
+  analyticsEvents AnalyticsEvent[]
+  userJourneys    UserJourney[]
 
   @@index([userId])
   @@index([type])
@@ -938,6 +944,9 @@ model NotificationCampaign {
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
+  // Relationships
+  analytics       CampaignAnalytics[]
+
   @@index([status])
   @@index([scheduledFor])
   @@index([createdBy])
@@ -945,7 +954,87 @@ model NotificationCampaign {
   @@map("notification_campaigns")
 }
 
-// Notification analytics and metrics
+// Individual analytics events for detailed tracking
+model AnalyticsEvent {
+  id              String   @id @default(cuid())
+  eventType       String   @map("event_type") // sent, delivered, opened, clicked, bounced, failed, unsubscribed, spam_reported
+  notificationId  String   @map("notification_id")
+  userId          String   @map("user_id")
+  channel         String   // email, sms, push, in_app, web
+  timestamp       DateTime @default(now())
+  metadata        Json?    // Additional event data
+  campaignId      String?  @map("campaign_id")
+  templateId      String?  @map("template_id")
+  deviceInfo      Json?    @map("device_info") // platform, device, browser, os
+  locationInfo    Json?    @map("location_info") // country, region, city, timezone
+
+  // Relationships
+  notification    Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User @relation(fields: [userId], references: [uid], onDelete: Cascade)
+
+  @@index([eventType])
+  @@index([notificationId])
+  @@index([userId])
+  @@index([channel])
+  @@index([timestamp])
+  @@index([campaignId])
+  @@index([templateId])
+  @@map("analytics_events")
+}
+
+// User journey tracking for advanced analytics
+model UserJourney {
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  sessionId       String?  @map("session_id")
+  journeyType     String   @map("journey_type") // onboarding, job_application, profile_completion, etc.
+  stepName        String   @map("step_name")
+  stepOrder       Int      @map("step_order")
+  timestamp       DateTime @default(now())
+  duration        Int?     // Time spent on this step in seconds
+  metadata        Json?    // Step-specific data
+  notificationId  String?  @map("notification_id") // If triggered by notification
+  
+  // Relationships
+  user           User @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  notification   Notification? @relation(fields: [notificationId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([journeyType])
+  @@index([timestamp])
+  @@index([notificationId])
+  @@map("user_journeys")
+}
+
+// Campaign analytics for detailed campaign performance
+model CampaignAnalytics {
+  id              String   @id @default(cuid())
+  campaignId      String   @map("campaign_id")
+  date            DateTime @default(now())
+  channel         String
+  segment         String?  // User segment if applicable
+  totalSent       Int      @default(0) @map("total_sent")
+  totalDelivered  Int      @default(0) @map("total_delivered")
+  totalFailed     Int      @default(0) @map("total_failed")
+  totalOpened     Int      @default(0) @map("total_opened")
+  totalClicked    Int      @default(0) @map("total_clicked")
+  totalBounced    Int      @default(0) @map("total_bounced")
+  totalUnsubscribed Int    @default(0) @map("total_unsubscribed")
+  revenue         Float?   // Revenue attributed to this campaign
+  conversions     Int      @default(0) // Conversion events
+  
+  // Relationships
+  campaign       NotificationCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, date, channel, segment])
+  @@index([campaignId])
+  @@index([date])
+  @@index([channel])
+  @@map("campaign_analytics")
+}
+
+// Notification analytics and metrics (aggregated daily)
 model NotificationAnalytics {
   id                    String   @id @default(cuid())
   date                  DateTime @default(now())

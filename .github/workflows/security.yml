@@ -1,0 +1,161 @@
+name: Security Scanning
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Run daily at 2 AM UTC
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  dependency-security:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run npm audit
+      run: npm audit --audit-level=moderate
+      continue-on-error: true
+
+    - name: Run Snyk to check for vulnerabilities
+      uses: snyk/actions/node@master
+      continue-on-error: true
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+  code-security:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run CodeQL Analysis
+      uses: github/codeql-action/init@v2
+      with:
+        languages: javascript
+
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v2
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+
+    - name: Run Semgrep
+      uses: semgrep/semgrep-action@v1
+      with:
+        config: >-
+          p/security-audit
+          p/secrets
+          p/owasp-top-ten
+
+  container-security:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build Docker image
+      run: docker build -f Dockerfile.prod -t jobfinders:latest .
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'jobfinders:latest'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  secrets-detection:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Detect secrets
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+        extra_args: --debug --only-verified
+
+  api-security:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    services:
+      app:
+        image: jobfinders:latest
+        ports:
+          - 3000:3000
+        env:
+          NODE_ENV: test
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Wait for application to start
+      run: sleep 30
+
+    - name: Run OWASP ZAP Baseline Scan
+      uses: zaproxy/action-baseline@v0.7.0
+      with:
+        target: 'http://localhost:3000'
+
+    - name: Run Nuclei vulnerability scanner
+      uses: projectdiscovery/nuclei-action@v2.3.2
+      with:
+        target: http://localhost:3000
+        templates: /templates/owasp-top-10/
+
+  security-report:
+    needs: [dependency-security, code-security, container-security, secrets-detection, api-security]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+    - name: Generate security report
+      run: |
+        echo "# Security Scan Report" > security-report.md
+        echo "" >> security-report.md
+        echo "Generated on: $(date)" >> security-report.md
+        echo "" >> security-report.md
+        echo "## Results Summary" >> security-report.md
+        echo "- Dependency Security: ${{ needs.dependency-security.result }}" >> security-report.md
+        echo "- Code Security: ${{ needs.code-security.result }}" >> security-report.md
+        echo "- Container Security: ${{ needs.container-security.result }}" >> security-report.md
+        echo "- Secrets Detection: ${{ needs.secrets-detection.result }}" >> security-report.md
+        echo "- API Security: ${{ needs.api-security.result }}" >> security-report.md
+
+    - name: Upload security report
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-report
+        path: security-report.md
+
+    - name: Notify on security issues
+      if: contains(needs.*.result, 'failure')
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        channel: '#security'
+        message: '🚨 Security scan detected issues that need attention'
+        webhook_url: ${{ secrets.SECURITY_SLACK_WEBHOOK }}

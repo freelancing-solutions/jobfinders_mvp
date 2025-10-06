@@ -41,9 +41,24 @@ The Notification System follows a microservices architecture with event-driven c
 └───────┬────────┘    └─────────┬──────────┘    └──────┬──────┘
         │                       │                       │
 ┌───────▼────────┐    ┌─────────▼──────────┐    ┌──────▼──────┐
-│   SendGrid     │    │     Twilio         │    │  Firebase   │
-│   AWS SES      │    │    AWS SNS         │    │  OneSignal  │
+│     Resend     │    │     Twilio         │    │  Firebase   │
+│                │    │    AWS SNS         │    │  OneSignal  │
 └────────────────┘    └────────────────────┘    └─────────────┘
+
+                    ┌────────────────────────┐
+                    │       Redis Cache      │
+                    │  - User Preferences    │
+                    │  - Behavioral Patterns │
+                    │  - Recommendation Data │
+                    │  - Session Management  │
+                    └────────────────────────┘
+                                │
+                    ┌───────────▼────────────┐
+                    │  Recommendation Engine │
+                    │  - Job Matching        │
+                    │  - Candidate Matching  │
+                    │  - Content Personalization │
+                    └────────────────────────┘
 ```
 
 ## Core Components
@@ -66,6 +81,7 @@ class NotificationOrchestrator {
   selectOptimalChannels(userId: string, notificationType: string): Channel[]
   scheduleNotification(notification: Notification): Promise<string>
   handleDeliveryFailure(notificationId: string, error: Error): Promise<void>
+  integrateWithRecommendationEngine(userId: string, context: NotificationContext): Promise<RecommendationData>
 }
 
 class NotificationProcessor {
@@ -73,6 +89,7 @@ class NotificationProcessor {
   applyUserPreferences(notification: Notification, preferences: UserPreferences): Notification
   checkDeliveryRules(notification: Notification): boolean
   processTemplate(template: Template, data: any): string
+  enrichWithRecommendations(notification: Notification, recommendations: RecommendationData): Notification
 }
 
 class RealTimeNotificationManager {
@@ -80,6 +97,16 @@ class RealTimeNotificationManager {
   manageUserConnections(): void
   handleConnectionEvents(): void
   broadcastToUserSessions(userId: string, message: any): Promise<void>
+}
+
+class RedisNotificationCache {
+  cacheUserPreferences(userId: string, preferences: UserPreferences): Promise<void>
+  getCachedPreferences(userId: string): Promise<UserPreferences | null>
+  cacheRecommendationData(userId: string, recommendations: RecommendationData): Promise<void>
+  getCachedRecommendations(userId: string): Promise<RecommendationData | null>
+  invalidateUserCache(userId: string): Promise<void>
+  setBehavioralPattern(userId: string, pattern: BehavioralPattern): Promise<void>
+  getBehavioralPattern(userId: string): Promise<BehavioralPattern | null>
 }
 ```
 
@@ -101,6 +128,8 @@ class PreferenceManager {
   updatePreferences(userId: string, preferences: Partial<UserPreferences>): Promise<void>
   validatePreferenceUpdate(preferences: UserPreferences): ValidationResult
   getEffectivePreferences(userId: string, context: NotificationContext): Promise<EffectivePreferences>
+  getCachedPreferences(userId: string): Promise<UserPreferences | null>
+  cachePreferences(userId: string, preferences: UserPreferences): Promise<void>
 }
 
 class DeliveryRuleEngine {
@@ -108,6 +137,7 @@ class DeliveryRuleEngine {
   checkQuietHours(userId: string, timestamp: Date): boolean
   checkFrequencyLimits(userId: string, notificationType: string): boolean
   applyThrottling(userId: string, channel: Channel): ThrottleResult
+  evaluateWithRecommendationContext(notification: Notification, recommendations: RecommendationData): DeliveryDecision
 }
 
 class PreferenceLearningEngine {
@@ -115,6 +145,8 @@ class PreferenceLearningEngine {
   suggestPreferenceOptimizations(userId: string): Promise<PreferenceSuggestion[]>
   updatePreferencesBasedOnBehavior(userId: string): Promise<void>
   trackEngagementPatterns(userId: string, interactions: Interaction[]): Promise<void>
+  integrateRecommendationFeedback(userId: string, feedback: RecommendationFeedback): Promise<void>
+  cacheBehavioralPatterns(userId: string, patterns: BehavioralPattern): Promise<void>
 }
 ```
 
@@ -868,6 +900,246 @@ class ApplicationIntegrationService {
 }
 ```
 
+## Redis Integration and Caching Strategy
+
+### Redis Architecture
+
+The notification system leverages Redis for high-performance caching, session management, and real-time data sharing across system components. Redis serves as the primary cache layer for user preferences, behavioral patterns, and recommendation data.
+
+```typescript
+class RedisIntegrationService {
+  // User preference caching
+  async cacheUserPreferences(userId: string, preferences: UserPreferences): Promise<void> {
+    const key = `user:${userId}:preferences`
+    await this.redis.setex(key, 3600, JSON.stringify(preferences)) // 1 hour TTL
+  }
+  
+  async getCachedUserPreferences(userId: string): Promise<UserPreferences | null> {
+    const key = `user:${userId}:preferences`
+    const cached = await this.redis.get(key)
+    return cached ? JSON.parse(cached) : null
+  }
+  
+  // Behavioral pattern caching
+  async cacheBehavioralPattern(userId: string, pattern: BehavioralPattern): Promise<void> {
+    const key = `user:${userId}:behavior`
+    await this.redis.setex(key, 7200, JSON.stringify(pattern)) // 2 hours TTL
+  }
+  
+  // Recommendation data caching
+  async cacheRecommendationData(userId: string, recommendations: RecommendationData): Promise<void> {
+    const key = `user:${userId}:recommendations`
+    await this.redis.setex(key, 1800, JSON.stringify(recommendations)) // 30 minutes TTL
+  }
+  
+  // Session management for real-time notifications
+  async trackUserSession(userId: string, sessionId: string): Promise<void> {
+    const key = `user:${userId}:sessions`
+    await this.redis.sadd(key, sessionId)
+    await this.redis.expire(key, 86400) // 24 hours
+  }
+  
+  // Notification deduplication
+  async checkNotificationDeduplication(userId: string, notificationHash: string): Promise<boolean> {
+    const key = `user:${userId}:sent:${notificationHash}`
+    const exists = await this.redis.exists(key)
+    if (!exists) {
+      await this.redis.setex(key, 3600, '1') // 1 hour deduplication window
+    }
+    return exists === 1
+  }
+}
+```
+
+### Cache Invalidation Strategy
+
+```typescript
+class CacheInvalidationService {
+  // Invalidate user-specific caches when preferences change
+  async invalidateUserCache(userId: string): Promise<void> {
+    const patterns = [
+      `user:${userId}:preferences`,
+      `user:${userId}:behavior`,
+      `user:${userId}:recommendations`,
+      `user:${userId}:sent:*`
+    ]
+    
+    for (const pattern of patterns) {
+      if (pattern.includes('*')) {
+        const keys = await this.redis.keys(pattern)
+        if (keys.length > 0) {
+          await this.redis.del(...keys)
+        }
+      } else {
+        await this.redis.del(pattern)
+      }
+    }
+  }
+  
+  // Selective cache invalidation for recommendation updates
+  async invalidateRecommendationCache(userId: string): Promise<void> {
+    await this.redis.del(`user:${userId}:recommendations`)
+  }
+}
+```
+
+## Recommendation Engine Integration
+
+### Integration Architecture
+
+The notification system integrates with the recommendation engine to provide personalized job suggestions, candidate matches, and content optimization. This integration leverages Redis for real-time data sharing and caching of recommendation results.
+
+```typescript
+class RecommendationIntegrationService {
+  // Fetch personalized job recommendations for notifications
+  async getJobRecommendations(userId: string, context: NotificationContext): Promise<JobRecommendation[]> {
+    // Check cache first
+    const cached = await this.redis.getCachedRecommendations(userId)
+    if (cached && cached.jobRecommendations) {
+      return cached.jobRecommendations
+    }
+    
+    // Fetch from recommendation engine
+    const recommendations = await this.recommendationEngine.getJobRecommendations({
+      userId,
+      context,
+      limit: 5,
+      includeReasons: true
+    })
+    
+    // Cache the results
+    await this.redis.cacheRecommendationData(userId, { jobRecommendations: recommendations })
+    
+    return recommendations
+  }
+  
+  // Get candidate recommendations for employer notifications
+  async getCandidateRecommendations(employerId: string, jobId: string): Promise<CandidateRecommendation[]> {
+    const cacheKey = `employer:${employerId}:job:${jobId}:candidates`
+    const cached = await this.redis.get(cacheKey)
+    
+    if (cached) {
+      return JSON.parse(cached)
+    }
+    
+    const recommendations = await this.recommendationEngine.getCandidateRecommendations({
+      employerId,
+      jobId,
+      limit: 10,
+      includeMatchScores: true
+    })
+    
+    await this.redis.setex(cacheKey, 1800, JSON.stringify(recommendations)) // 30 minutes TTL
+    
+    return recommendations
+  }
+  
+  // Personalize notification content based on user behavior
+  async personalizeNotificationContent(notification: Notification, userId: string): Promise<Notification> {
+    const behaviorPattern = await this.redis.getBehavioralPattern(userId)
+    const recommendations = await this.getCachedRecommendations(userId)
+    
+    if (behaviorPattern && recommendations) {
+      // Apply personalization based on user preferences and behavior
+      notification.content = await this.contentPersonalizationEngine.personalize({
+        originalContent: notification.content,
+        userBehavior: behaviorPattern,
+        recommendations: recommendations,
+        notificationType: notification.type
+      })
+    }
+    
+    return notification
+  }
+  
+  // Track recommendation engagement for feedback loop
+  async trackRecommendationEngagement(userId: string, recommendationId: string, action: EngagementAction): Promise<void> {
+    const engagement = {
+      userId,
+      recommendationId,
+      action,
+      timestamp: new Date(),
+      notificationChannel: 'notification_system'
+    }
+    
+    // Send feedback to recommendation engine
+    await this.recommendationEngine.recordEngagement(engagement)
+    
+    // Update cached behavioral patterns
+    const behaviorKey = `user:${userId}:behavior`
+    const currentBehavior = await this.redis.get(behaviorKey)
+    
+    if (currentBehavior) {
+      const behavior = JSON.parse(currentBehavior)
+      behavior.recentEngagements.push(engagement)
+      
+      // Keep only recent engagements (last 100)
+      if (behavior.recentEngagements.length > 100) {
+        behavior.recentEngagements = behavior.recentEngagements.slice(-100)
+      }
+      
+      await this.redis.setex(behaviorKey, 7200, JSON.stringify(behavior))
+    }
+  }
+}
+```
+
+### Real-time Recommendation Updates
+
+```typescript
+class RealtimeRecommendationService {
+  // Listen for recommendation engine updates
+  async subscribeToRecommendationUpdates(): Promise<void> {
+    await this.redis.subscribe('recommendation_updates', (message) => {
+      const update = JSON.parse(message)
+      this.handleRecommendationUpdate(update)
+    })
+  }
+  
+  // Handle recommendation updates and trigger notifications
+  async handleRecommendationUpdate(update: RecommendationUpdate): Promise<void> {
+    const { userId, type, data } = update
+    
+    // Invalidate cached recommendations
+    await this.redis.invalidateRecommendationCache(userId)
+    
+    // Trigger personalized notification based on update type
+    switch (type) {
+      case 'new_job_match':
+        await this.triggerJobMatchNotification(userId, data)
+        break
+      case 'candidate_interest':
+        await this.triggerCandidateInterestNotification(userId, data)
+        break
+      case 'recommendation_refresh':
+        await this.triggerRecommendationRefreshNotification(userId, data)
+        break
+    }
+  }
+  
+  // Trigger job match notification with personalized content
+  async triggerJobMatchNotification(userId: string, jobData: JobMatchData): Promise<void> {
+    const recommendations = await this.getJobRecommendations(userId, { type: 'job_match' })
+    
+    const notification: Notification = {
+      userId,
+      type: 'job_match',
+      title: 'New Job Match Found!',
+      content: `We found ${recommendations.length} new jobs that match your preferences`,
+      data: {
+        jobId: jobData.jobId,
+        matchScore: jobData.matchScore,
+        recommendations: recommendations.slice(0, 3) // Include top 3 recommendations
+      },
+      channels: ['websocket', 'email'],
+      priority: 'high'
+    }
+    
+    await this.notificationOrchestrator.processNotification(notification)
+  }
+}
+```
+
 ## Monitoring and Observability
 
 ### Metrics and Monitoring
@@ -933,8 +1205,7 @@ services:
     image: jobfinders/email-service:latest
     replicas: 2
     environment:
-      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
-      - AWS_SES_REGION=${AWS_SES_REGION}
+      - RESEND_API_KEY=${RESEND_API_KEY}
   
   sms-service:
     image: jobfinders/sms-service:latest

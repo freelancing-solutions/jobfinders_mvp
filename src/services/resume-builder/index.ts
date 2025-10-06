@@ -11,6 +11,7 @@ export { ResumeParser } from './parser';
 export { AIAnalysisService } from './ai-analysis';
 export { TemplateEngine } from './template-engine';
 export { FileUploadService } from './file-upload';
+export { OpenAIService, openAIService, wrappedOpenAIService } from './openai-service';
 
 // Error handling
 export {

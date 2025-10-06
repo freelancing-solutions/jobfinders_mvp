@@ -124,7 +124,7 @@
 
 **Acceptance Criteria:**
 - [ ] EmailDeliveryService with provider abstraction
-- [ ] SendGrid and AWS SES integration implemented
+- [ ] Resend integration implemented
 - [ ] Email template engine with dynamic content
 - [ ] Delivery tracking and status updates
 - [ ] Bounce and complaint handling
@@ -134,8 +134,7 @@
 **Files to Create/Modify:**
 - `src/services/notifications/email/email-delivery-service.ts`
 - `src/services/notifications/email/email-template-engine.ts`
-- `src/lib/email/providers/sendgrid-provider.ts`
-- `src/lib/email/providers/aws-ses-provider.ts`
+- `src/lib/email/providers/resend-provider.ts`
 - `src/lib/email/email-validator.ts`
 - `src/lib/email/bounce-handler.ts`
 - `tests/services/notifications/email/`
@@ -803,7 +802,7 @@
 ## Dependencies and Prerequisites
 
 ### External Dependencies
-- Email service providers (SendGrid, AWS SES) with sufficient quotas
+- Email service provider (Resend) with sufficient quotas
 - SMS service providers (Twilio, AWS SNS) with international support
 - Push notification services (Firebase, OneSignal) with platform support
 - Message queue system (RabbitMQ/Redis) for event processing

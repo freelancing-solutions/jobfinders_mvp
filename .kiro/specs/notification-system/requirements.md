@@ -44,6 +44,8 @@ The Notification System provides a comprehensive, multi-channel communication pl
 - **F2.1.3** System shall provide quiet hours configuration to prevent notifications during specified times
 - **F2.1.4** System shall allow users to mute specific notification categories temporarily
 - **F2.1.5** System shall support notification priority levels with user-defined handling
+- **F2.1.6** System shall integrate with recommendation engines for personalized content suggestions
+- **F2.1.7** System shall use Redis-based caching of user preferences and behavioral patterns for real-time personalization
 
 #### F2.2 Smart Delivery Optimization
 - **F2.2.1** System shall analyze user engagement patterns to optimize delivery timing
@@ -67,6 +69,8 @@ The Notification System provides a comprehensive, multi-channel communication pl
 - **F3.1.3** System shall notify users of job posting updates and modifications
 - **F3.1.4** System shall send salary alerts when jobs matching criteria are posted
 - **F3.1.5** System shall provide company-specific job alerts for followed employers
+- **F3.1.6** System shall integrate with recommendation engine for personalized job discovery
+- **F3.1.7** System shall use Redis-cached job matching scores for real-time recommendation updates
 
 #### F3.2 Application Status Notifications
 - **F3.2.1** System shall notify users of application status changes (received, reviewed, rejected, accepted)
@@ -124,6 +128,7 @@ The Notification System provides a comprehensive, multi-channel communication pl
 - SMS notifications must be sent within 10 seconds for urgent alerts
 - In-app notifications must appear within 500ms of user action
 - Notification history must load within 2 seconds
+- Redis caching must reduce database query response time by at least 50%
 
 #### NF1.2 Throughput
 - System must handle 100,000 notifications per minute during peak hours
@@ -169,6 +174,7 @@ The Notification System provides a comprehensive, multi-channel communication pl
 - Message queues must prevent message loss during system failures
 - Notification delivery must support retry mechanisms with exponential backoff
 - Database failures must not prevent notification queuing
+- Redis-based caching for improved reliability and reduced database load
 - Network failures must trigger automatic failover to backup channels
 
 #### NF3.3 Data Consistency
@@ -255,6 +261,8 @@ The Notification System provides a comprehensive, multi-channel communication pl
 - **BR3.3** SMS notifications must include opt-out instructions where required by law
 - **BR3.4** Personal data in notifications must be minimized and relevant only
 - **BR3.5** Notification templates must be reviewed and approved before use
+- **BR3.6** Recommendation engine content must be relevant and non-discriminatory
+- **BR3.7** Redis-cached recommendation data must maintain content freshness and accuracy
 
 ## Integration Requirements
 
@@ -264,9 +272,11 @@ The Notification System provides a comprehensive, multi-channel communication pl
 - **IR1.3** Integration with application tracking system for status updates
 - **IR1.4** Integration with interview scheduling system for calendar notifications
 - **IR1.5** Integration with AI agents for intelligent notification content generation
+- **IR1.6** Integration with recommendation engines for personalized job and candidate suggestions
+- **IR1.7** Integration with Redis for real-time information sharing and caching across system components
 
 ### IR2. External Service Integration
-- **IR2.1** Email service provider integration (SendGrid, AWS SES, or similar)
+- **IR2.1** Email service provider integration (Resend)
 - **IR2.2** SMS service provider integration (Twilio, AWS SNS, or similar)
 - **IR2.3** Push notification service integration (Firebase, OneSignal, or similar)
 - **IR2.4** Calendar system integration (Google Calendar, Outlook) for event notifications
