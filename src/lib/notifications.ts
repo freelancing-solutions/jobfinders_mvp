@@ -1,5 +1,6 @@
 import { Server } from 'socket.io'
 import { db } from './db'
+import { EnhancedNotificationService } from './enhanced-notification-service'
 
 export interface NotificationData {
   id: string
@@ -13,6 +14,10 @@ export interface NotificationData {
 }
 
 export const setupNotificationHandlers = (io: Server) => {
+  // Initialize enhanced notification service
+  const enhancedService = EnhancedNotificationService.getInstance()
+  enhancedService.setSocketIO(io)
+
   io.on('connection', (socket) => {
     console.log('Client connected:', socket.id)
 
@@ -39,8 +44,8 @@ export const setupNotificationHandlers = (io: Server) => {
           }
         })
 
-        // Create notification
-        const notification: NotificationData = {
+        // Send enhanced notification with database persistence
+        await enhancedService.sendNotification({
           id: `notif_${Date.now()}_${Math.random()}`,
           type: 'application_status',
           title: 'Application Status Updated',
@@ -51,15 +56,14 @@ export const setupNotificationHandlers = (io: Server) => {
           },
           timestamp: new Date(),
           userId: data.userId,
-          read: false
-        }
-
-        // Send notification to the specific user
-        io.to(`user_${data.userId}`).emit('notification', notification)
+          read: false,
+          channels: ['websocket', 'email'],
+          priority: 'medium'
+        })
 
         // If there's an employer, send them a notification too
         if (data.employerId) {
-          const employerNotification: NotificationData = {
+          await enhancedService.sendNotification({
             id: `notif_${Date.now()}_${Math.random()}`,
             type: 'application_status',
             title: 'Application Status Updated',
@@ -70,9 +74,10 @@ export const setupNotificationHandlers = (io: Server) => {
             },
             timestamp: new Date(),
             userId: data.employerId,
-            read: false
-          }
-          io.to(`user_${data.employerId}`).emit('notification', employerNotification)
+            read: false,
+            channels: ['websocket', 'email'],
+            priority: 'low'
+          })
         }
 
       } catch (error) {
@@ -101,7 +106,7 @@ export const setupNotificationHandlers = (io: Server) => {
             (!data.location || seeker.jobSeekerProfile.location.toLowerCase().includes(data.location.toLowerCase()))
 
           if (shouldNotify) {
-            const notification: NotificationData = {
+            await enhancedService.sendNotification({
               id: `notif_${Date.now()}_${Math.random()}`,
               type: 'new_job',
               title: 'New Job Posted',
@@ -114,10 +119,10 @@ export const setupNotificationHandlers = (io: Server) => {
               },
               timestamp: new Date(),
               userId: seeker.uid,
-              read: false
-            }
-
-            io.to(`user_${seeker.uid}`).emit('notification', notification)
+              read: false,
+              channels: ['websocket', 'email'],
+              priority: 'low'
+            })
           }
         }
       } catch (error) {
@@ -133,7 +138,7 @@ export const setupNotificationHandlers = (io: Server) => {
       employerId: string
     }) => {
       try {
-        const notification: NotificationData = {
+        await enhancedService.sendNotification({
           id: `notif_${Date.now()}_${Math.random()}`,
           type: 'application_received',
           title: 'New Application Received',
@@ -145,10 +150,10 @@ export const setupNotificationHandlers = (io: Server) => {
           },
           timestamp: new Date(),
           userId: data.employerId,
-          read: false
-        }
-
-        io.to(`user_${data.employerId}`).emit('notification', notification)
+          read: false,
+          channels: ['websocket', 'email'],
+          priority: 'medium'
+        })
 
       } catch (error) {
         console.error('Error handling application received notification:', error)
@@ -164,7 +169,7 @@ export const setupNotificationHandlers = (io: Server) => {
       userId: string
     }) => {
       try {
-        const notification: NotificationData = {
+        await enhancedService.sendNotification({
           id: `notif_${Date.now()}_${Math.random()}`,
           type: 'job_match',
           title: 'New Job Match Found',
@@ -177,21 +182,24 @@ export const setupNotificationHandlers = (io: Server) => {
           },
           timestamp: new Date(),
           userId: data.userId,
-          read: false
-        }
-
-        io.to(`user_${data.userId}`).emit('notification', notification)
+          read: false,
+          channels: ['websocket', 'email'],
+          priority: 'high'
+        })
 
       } catch (error) {
         console.error('Error handling job match notification:', error)
       }
     })
 
-    // Handle marking notifications as read
-    socket.on('mark_notification_read', (notificationId: string) => {
-      // In a real implementation, you would update the database
-      // For now, we'll just acknowledge the request
-      socket.emit('notification_marked_read', { notificationId })
+    // Handle marking notifications as read (now with database persistence)
+    socket.on('mark_notification_read', async (data: { notificationId: string, userId: string }) => {
+      try {
+        await enhancedService.markAsRead(data.notificationId, data.userId)
+      } catch (error) {
+        console.error('Error marking notification as read:', error)
+        socket.emit('notification_marked_read', { notificationId: data.notificationId, error: 'Failed to mark as read' })
+      }
     })
 
     // Handle disconnect
@@ -207,13 +215,16 @@ export const setupNotificationHandlers = (io: Server) => {
   })
 }
 
-export const sendNotificationToUser = (io: Server, userId: string, notification: Omit<NotificationData, 'id' | 'timestamp' | 'read'>) => {
-  const fullNotification: NotificationData = {
+export const sendNotificationToUser = async (io: Server, userId: string, notification: Omit<NotificationData, 'id' | 'timestamp' | 'read'>) => {
+  const enhancedService = EnhancedNotificationService.getInstance()
+  enhancedService.setSocketIO(io)
+
+  await enhancedService.sendNotification({
     ...notification,
     id: `notif_${Date.now()}_${Math.random()}`,
     timestamp: new Date(),
-    read: false
-  }
-
-  io.to(`user_${userId}`).emit('notification', fullNotification)
+    read: false,
+    channels: ['websocket', 'email'],
+    priority: 'medium'
+  })
 }

@@ -3,10 +3,10 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/design-system'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/design-system'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, Eye, EyeOff, CheckCircle, AlertCircle, ArrowLeft } from 'lucide-react'
 
@@ -121,13 +121,13 @@ function ResetPasswordForm() {
   // Loading state while validating token
   if (tokenValid === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full">
-          <Card>
+      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <Card variant="elevated" className="transition-base">
             <CardContent className="flex items-center justify-center py-12">
               <div className="text-center">
-                <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
-                <p className="text-gray-600">Validating reset link...</p>
+                <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+                <p className="text-muted-foreground text-lg-fluid">Validating reset link...</p>
               </div>
             </CardContent>
           </Card>
@@ -139,21 +139,21 @@ function ResetPasswordForm() {
   // Invalid token state
   if (tokenValid === false) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full">
-          <Card>
+      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <Card variant="elevated" className="transition-base">
             <CardHeader className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
-                <AlertCircle className="h-6 w-6 text-red-600" />
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-destructive/10 mb-4">
+                <AlertCircle className="h-6 w-6 text-destructive" />
               </div>
-              <CardTitle className="text-2xl font-bold text-gray-900">
+              <CardTitle className="text-2xl-fluid font-bold text-foreground">
                 Invalid Reset Link
               </CardTitle>
-              <CardDescription className="text-gray-600">
+              <CardDescription className="text-muted-foreground text-lg-fluid">
                 This password reset link is invalid or has expired
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
@@ -161,15 +161,20 @@ function ResetPasswordForm() {
               <div className="space-y-3">
                 <Button
                   onClick={() => router.push('/auth/forgot-password')}
-                  className="w-full"
+                  variant="outline"
+                  size="lg"
+                  fullWidth
+                  className="transition-base"
                 >
                   Request New Reset Link
                 </Button>
-                
+
                 <Button
                   onClick={handleSignIn}
                   variant="ghost"
-                  className="w-full"
+                  size="lg"
+                  fullWidth
+                  className="transition-base"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Sign In

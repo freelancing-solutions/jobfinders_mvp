@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/design-system'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/design-system'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, ArrowLeft, Mail, CheckCircle, Home } from 'lucide-react'
 
@@ -93,12 +93,12 @@ export default function ForgotPassword() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
         {/* Back to Home Button */}
         <Button
           variant="ghost"
           size="sm"
-          className="absolute top-4 left-4 text-gray-600 hover:text-gray-900"
+          className="absolute top-4 left-4 text-muted-foreground hover:text-foreground transition-base"
           asChild
         >
           <Link href="/">
@@ -107,36 +107,36 @@ export default function ForgotPassword() {
           </Link>
         </Button>
 
-        <div className="max-w-md w-full space-y-8">
-          <Card>
+        <div className="w-full max-w-md">
+          <Card variant="elevated" hover className="transition-base">
             <CardHeader className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
-                <CheckCircle className="h-6 w-6 text-green-600" />
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-success/10 mb-4">
+                <CheckCircle className="h-6 w-6 text-success" />
               </div>
-              <CardTitle className="text-2xl font-bold text-gray-900">
+              <CardTitle className="text-2xl-fluid font-bold text-foreground">
                 Check Your Email
               </CardTitle>
-              <CardDescription className="text-gray-600">
+              <CardDescription className="text-muted-foreground text-lg-fluid">
                 We've sent password reset instructions to your email address
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
                 <div className="flex items-start">
-                  <Mail className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
-                  <div className="text-sm text-blue-800">
+                  <Mail className="h-5 w-5 text-primary mt-0.5 mr-3 flex-shrink-0" />
+                  <div className="text-sm text-primary">
                     <p className="font-medium mb-1">Email sent to:</p>
                     <p className="break-all">{email}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="text-sm text-gray-600 space-y-2">
+              <div className="text-sm-fluid text-muted-foreground space-y-2">
                 <p>• Check your inbox and spam folder</p>
                 <p>• The reset link expires in 1 hour</p>
                 <p>• If you don't receive the email, you can request another one</p>
                 {rateLimitInfo.remaining !== undefined && rateLimitInfo.remaining > 0 && (
-                  <p className="text-blue-600">
+                  <p className="text-primary">
                     • You have {rateLimitInfo.remaining} more attempt{rateLimitInfo.remaining !== 1 ? 's' : ''} remaining
                   </p>
                 )}
@@ -149,16 +149,20 @@ export default function ForgotPassword() {
                     setEmail('')
                   }}
                   variant="outline"
-                  className="w-full"
+                  size="lg"
+                  fullWidth
                   disabled={rateLimitInfo.remaining === 0}
+                  className="transition-base"
                 >
                   Send Another Email
                 </Button>
-                
+
                 <Button
                   onClick={handleBackToSignIn}
                   variant="ghost"
-                  className="w-full"
+                  size="lg"
+                  fullWidth
+                  className="transition-base"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Sign In
@@ -172,12 +176,12 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
       {/* Back to Home Button */}
       <Button
         variant="ghost"
         size="sm"
-        className="absolute top-4 left-4 text-gray-600 hover:text-gray-900"
+        className="absolute top-4 left-4 text-muted-foreground hover:text-foreground transition-base"
         asChild
       >
         <Link href="/">
@@ -186,13 +190,13 @@ export default function ForgotPassword() {
         </Link>
       </Button>
 
-      <div className="max-w-md w-full space-y-8">
-        <Card>
+      <div className="w-full max-w-md">
+        <Card variant="elevated" hover className="transition-base">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-gray-900">
+            <CardTitle className="text-2xl-fluid font-bold text-foreground">
               Forgot Your Password?
             </CardTitle>
-            <CardDescription className="text-gray-600">
+            <CardDescription className="text-muted-foreground text-lg-fluid">
               Enter your email address and we'll send you a link to reset your password
             </CardDescription>
           </CardHeader>
@@ -219,23 +223,20 @@ export default function ForgotPassword() {
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={loading}
                   required
-                  className="w-full"
+                  className="transition-base"
                 />
               </div>
 
               <Button
                 type="submit"
-                disabled={loading || !email.trim()}
-                className="w-full"
+                variant="primary"
+                size="lg"
+                fullWidth
+                loading={loading}
+                disabled={!email.trim()}
+                className="transition-base"
               >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Sending Reset Link...
-                  </>
-                ) : (
-                  'Send Reset Link'
-                )}
+                Send Reset Link
               </Button>
 
               <div className="text-center">
@@ -243,7 +244,8 @@ export default function ForgotPassword() {
                   type="button"
                   variant="ghost"
                   onClick={handleBackToSignIn}
-                  className="text-sm"
+                  size="sm"
+                  className="transition-base"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Sign In
@@ -251,12 +253,12 @@ export default function ForgotPassword() {
               </div>
             </form>
 
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
+            <div className="mt-8 text-center">
+              <p className="text-sm-fluid text-muted-foreground">
                 Don't have an account?{' '}
                 <Link
                   href="/auth/signup"
-                  className="font-medium text-blue-600 hover:text-blue-500"
+                  className="font-medium text-primary hover:underline transition-base"
                 >
                   Sign up here
                 </Link>

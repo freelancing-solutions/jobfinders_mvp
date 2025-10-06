@@ -4,10 +4,10 @@ import { useState } from 'react'
 import { signIn, getSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/design-system'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/design-system'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, Eye, EyeOff, Home } from 'lucide-react'
 
@@ -53,12 +53,12 @@ export default function SignIn() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
       {/* Back to Home Button */}
       <Button
         variant="ghost"
         size="sm"
-        className="absolute top-4 left-4 text-gray-600 hover:text-gray-900"
+        className="absolute top-4 left-4 text-muted-foreground hover:text-foreground transition-base"
         asChild
       >
         <Link href="/">
@@ -69,11 +69,11 @@ export default function SignIn() {
 
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Job Finders</h1>
-          <p className="text-gray-600">Sign in to your account</p>
+          <h1 className="text-4xl-fluid font-bold text-foreground mb-2">Job Finders</h1>
+          <p className="text-muted-foreground text-lg-fluid">Sign in to your account</p>
         </div>
 
-        <Card>
+        <Card variant="elevated" hover className="transition-base">
           <CardHeader>
             <CardTitle>Sign In</CardTitle>
             <CardDescription>
@@ -81,7 +81,7 @@ export default function SignIn() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
                 <Alert variant="destructive">
                   <AlertDescription>{error}</AlertDescription>
@@ -97,6 +97,7 @@ export default function SignIn() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   required
+                  className="transition-base"
                 />
               </div>
 
@@ -110,6 +111,7 @@ export default function SignIn() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
                     required
+                    className="transition-base"
                   />
                   <Button
                     type="button"
@@ -129,31 +131,27 @@ export default function SignIn() {
 
               <Button
                 type="submit"
-                className="w-full"
-                disabled={loading}
+                variant="primary"
+                size="lg"
+                fullWidth
+                loading={loading}
+                className="transition-base"
               >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  'Sign In'
-                )}
+                Sign In
               </Button>
             </form>
 
-            <div className="mt-6 text-center text-sm text-gray-600">
+            <div className="mt-8 text-center text-sm-fluid text-muted-foreground">
               <p>
                 Don't have an account?{' '}
-                <a href="/auth/signup" className="text-blue-600 hover:underline">
+                <Link href="/auth/signup" className="text-primary hover:underline transition-base">
                   Sign up
-                </a>
+                </Link>
               </p>
               <p className="mt-2">
-                <a href="/auth/forgot-password" className="text-blue-600 hover:underline">
+                <Link href="/auth/forgot-password" className="text-primary hover:underline transition-base">
                   Forgot your password?
-                </a>
+                </Link>
               </p>
             </div>
           </CardContent>
