@@ -49,3 +49,21 @@ test
 prompt
 
 server.log
+
+# Resume Builder specific
+/uploads/resumes/
+/uploads/temp/
+/exports/
+# Test coverage reports
+/coverage/
+/coverage-resume-builder/
+# Jest test outputs
+/jest-coverage/
+# Template compilation cache
+/.template-cache/
+# AI model cache
+/.ai-cache/
+# Batch processing temp files
+/.batch-temp/
+# Performance test results
+/performance-results/

@@ -5,6 +5,8 @@
  * Defines data structures for resumes, parsing, analysis, templates, and ATS scoring.
  */
 
+import { ResumeTemplate } from './template';
+
 // Base resume data structures
 export interface PersonalInfo {
   fullName: string;
@@ -93,6 +95,13 @@ export interface Resume {
   languages: Language[];
   customSections?: CustomSection[];
   metadata: ResumeMetadata;
+
+  // Template integration fields
+  templateId?: string;
+  templateCustomizationId?: string;
+  templateData?: ResumeTemplateData;
+  integrationMetadata?: IntegrationMetadata;
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -115,6 +124,207 @@ export interface ResumeMetadata {
   atsScore?: number;
   lastAnalyzedAt?: Date;
   templateUsed?: string;
+}
+
+// Template integration data structure
+export interface ResumeTemplateData {
+  selectedTemplate: ResumeTemplate;
+  customization: TemplateCustomization;
+  renderedPreview?: string;
+  atsScore?: number;
+  version: string;
+  appliedAt?: Date;
+}
+
+// Integration metadata for tracking template interactions
+export interface IntegrationMetadata {
+  templateAppliedAt?: Date;
+  lastCustomizedAt?: Date;
+  templateHistory: TemplateHistoryEntry[];
+  atsAnalysisHistory: ATSAnalysisEntry[];
+  exportHistory: ExportHistoryEntry[];
+  performanceMetrics?: PerformanceMetrics;
+  userPreferences?: UserTemplatePreferences;
+}
+
+export interface TemplateHistoryEntry {
+  id: string;
+  templateId: string;
+  templateName: string;
+  action: 'selected' | 'customized' | 'exported' | 'reverted' | 'shared';
+  timestamp: Date;
+  snapshot?: any;
+  changeSummary?: string;
+  sessionId?: string;
+}
+
+export interface ATSAnalysisEntry {
+  id: string;
+  score: number;
+  issues: ATSIssue[];
+  suggestions: string[];
+  analyzedAt: Date;
+  templateVersion: string;
+  improvementAmount?: number;
+}
+
+export interface ExportHistoryEntry {
+  id: string;
+  format: 'pdf' | 'docx' | 'html' | 'txt';
+  fileName: string;
+  fileSize: number;
+  exportedAt: Date;
+  downloadUrl?: string;
+  expiresAt?: Date;
+  templateId: string;
+  customizationId?: string;
+}
+
+export interface PerformanceMetrics {
+  averageRenderTime: number;
+  renderCount: number;
+  errorCount: number;
+  lastRenderTime?: Date;
+  optimizationSuggestions: string[];
+}
+
+export interface UserTemplatePreferences {
+  favoriteCategories: string[];
+  preferredLayouts: string[];
+  colorSchemePreference: string;
+  fontPreference: string;
+  autoSaveEnabled: boolean;
+  realTimePreviewEnabled: boolean;
+  atsOptimizationEnabled: boolean;
+}
+
+// Template customization data structure
+export interface TemplateCustomization {
+  id: string;
+  name?: string;
+  templateId: string;
+  userId: string;
+  resumeId?: string;
+  colorScheme: ColorScheme;
+  typography: TypographySettings;
+  layout: LayoutSettings;
+  sectionVisibility: SectionVisibility;
+  customSections: Record<string, any>;
+  branding: BrandingSettings;
+  metadata: {
+    createdAt: Date;
+    updatedAt: Date;
+    version: string;
+    changeCount: number;
+    isDefault: boolean;
+    lastApplied?: Date;
+  };
+}
+
+export interface ColorScheme {
+  name: string;
+  primary: string;
+  secondary: string;
+  accent: string;
+  background: string;
+  text: string;
+  muted: string;
+  border: string;
+  highlight: string;
+  link: string;
+  customColors?: Record<string, string>;
+}
+
+export interface TypographySettings {
+  heading: {
+    fontFamily: string;
+    fontWeight: number;
+    fontSize: {
+      h1: number;
+      h2: number;
+      h3: number;
+      h4: number;
+      h5: number;
+      h6: number;
+    };
+    lineHeight: number;
+    letterSpacing: number;
+  };
+  body: {
+    fontFamily: string;
+    fontWeight: number;
+    fontSize: {
+      large: number;
+      normal: number;
+      small: number;
+      caption: number;
+    };
+    lineHeight: number;
+    letterSpacing: number;
+  };
+  accent: {
+    fontFamily: string;
+    fontWeight: number;
+    fontSize: number;
+    lineHeight: number;
+    letterSpacing: number;
+  };
+  monospace?: {
+    fontFamily: string;
+    fontWeight: number;
+    fontSize: number;
+    lineHeight: number;
+    letterSpacing: number;
+  };
+}
+
+export interface LayoutSettings {
+  margins: {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+  };
+  sectionSpacing: {
+    before: number;
+    after: number;
+  };
+  itemSpacing: number;
+  lineHeight: number;
+  columns: {
+    count: number;
+    widths: number[];
+    gutters: number;
+  };
+  customSections: Record<string, any>;
+}
+
+export interface SectionVisibility {
+  [sectionId: string]: {
+    visible: boolean;
+    order: number;
+    customSettings?: Record<string, any>;
+  };
+}
+
+export interface BrandingSettings {
+  logo?: {
+    url: string;
+    size: number;
+    position: string;
+    opacity: number;
+  };
+  watermark?: {
+    text: string;
+    font: string;
+    size: number;
+    color: string;
+    opacity: number;
+    position: string;
+    rotation: number;
+  };
+  customHeader?: Record<string, any>;
+  customFooter?: Record<string, any>;
 }
 
 // File upload and parsing types
@@ -180,76 +390,18 @@ export interface ImprovementSuggestion {
   section?: string;
 }
 
-// Template system types
-export interface ResumeTemplate {
-  id: string;
-  name: string;
+export interface ATSIssue {
+  severity: 'critical' | 'warning' | 'info';
+  category: 'format' | 'structure' | 'content' | 'fonts';
   description: string;
-  category: 'professional' | 'creative' | 'modern' | 'academic' | 'technical';
-  preview: string; // URL to preview image
-  layout: TemplateLayout;
-  styling: TemplateStyling;
-  sections: TemplateSection[];
-  atsOptimized: boolean;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  suggestion: string;
+  autoFixable: boolean;
+  section?: string;
+  line?: number;
 }
 
-export interface TemplateLayout {
-  format: 'single-column' | 'two-column' | 'three-column';
-  headerStyle: 'centered' | 'left-aligned' | 'right-aligned';
-  sectionOrder: string[];
-  margins: {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
-  };
-  spacing: {
-    section: number;
-    item: number;
-    line: number;
-  };
-}
-
-export interface TemplateStyling {
-  fonts: {
-    heading: string;
-    body: string;
-    accents: string;
-  };
-  colors: {
-    primary: string;
-    secondary: string;
-    accent: string;
-    text: string;
-    background: string;
-  };
-  sizes: {
-    heading: {
-      h1: number;
-      h2: number;
-      h3: number;
-    };
-    body: number;
-    small: number;
-  };
-}
-
-export interface TemplateSection {
-  id: string;
-  name: string;
-  type: 'personal-info' | 'summary' | 'experience' | 'education' | 'skills' | 'projects' | 'certifications' | 'languages' | 'custom';
-  required: boolean;
-  order: number;
-  styling: {
-    showDates: boolean;
-    showLocation: boolean;
-    bulletPoints: boolean;
-    maxItems?: number;
-  };
-}
+// Template system types are imported from './template'
+// TemplateLayout, TemplateStyling, TemplateSection interfaces are available from template types
 
 // Resume generation and export types
 export interface ResumeGenerationRequest {

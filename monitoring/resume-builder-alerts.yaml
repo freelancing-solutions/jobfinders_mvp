@@ -1,0 +1,254 @@
+# Resume Builder Monitoring and Alerting Configuration
+# Prometheus alerts for the Resume Builder service
+
+groups:
+- name: resume-builder.rules
+  rules:
+  # Application Health Alerts
+  - alert: ResumeBuilderDown
+    expr: up{job="resume-builder"} == 0
+    for: 1m
+    labels:
+      severity: critical
+      service: resume-builder
+    annotations:
+      summary: "Resume Builder service is down"
+      description: "Resume Builder service has been down for more than 1 minute on {{ $labels.instance }}"
+
+  - alert: ResumeBuilderHighErrorRate
+    expr: rate(http_requests_total{job="resume-builder",status=~"5.."}[5m]) > 0.05
+    for: 5m
+    labels:
+      severity: warning
+      service: resume-builder
+    annotations:
+      summary: "High error rate on Resume Builder"
+      description: "Error rate is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+  - alert: ResumeBuilderHighLatency
+    expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="resume-builder"}[5m])) > 5
+    for: 5m
+    labels:
+      severity: warning
+      service: resume-builder
+    annotations:
+      summary: "High latency on Resume Builder"
+      description: "95th percentile latency is {{ $value }}s on {{ $labels.instance }}"
+
+  # AI Service Alerts
+  - alert: AIServiceHighFailureRate
+    expr: rate(ai_requests_total{job="resume-builder",status="error"}[5m]) / rate(ai_requests_total{job="resume-builder"}[5m]) > 0.1
+    for: 3m
+    labels:
+      severity: critical
+      service: resume-builder
+    annotations:
+      summary: "High AI service failure rate"
+      description: "AI service failure rate is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+  - alert: AIServiceSlowResponse
+    expr: histogram_quantile(0.90, rate(ai_request_duration_seconds_bucket{job="resume-builder"}[5m])) > 30
+    for: 5m
+    labels:
+      severity: warning
+      service: resume-builder
+    annotations:
+      summary: "AI service slow response"
+      description: "90th percentile AI response time is {{ $value }}s on {{ $labels.instance }}"
+
+  - alert: AIQuotaExhausted
+    expr: ai_quota_remaining{job="resume-builder"} < 10
+    for: 0m
+    labels:
+      severity: critical
+      service: resume-builder
+    annotations:
+      summary: "AI service quota exhausted"
+      description: "AI quota remaining is {{ $value }} on {{ $labels.instance }}"
+
+  # File Processing Alerts
+  - alert: ResumeUploadFailures
+    expr: rate(resume_upload_requests_total{job="resume-builder",status="error"}[5m]) > 0.1
+    for: 3m
+    labels:
+      severity: warning
+      service: resume-builder
+    annotations:
+      summary: "High resume upload failure rate"
+      description: "Resume upload failure rate is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+  - alert: ResumeProcessingBacklog
+    expr: resume_processing_queue_size{job="resume-builder"} > 100
+    for: 10m
+    labels:
+      severity: warning
+      service: resume-builder
+    annotations:
+      summary: "Resume processing backlog"
+      description: "Resume processing queue has {{ $value }} items on {{ $labels.instance }}"
+
+  - alert: ResumeParsingFailures
+    expr: rate(resume_parsing_requests_total{job="resume-builder",status="error"}[5m]) > 0.15
+    for: 5m
+    labels:
+      severity: warning
+      service: resume-builder
+    annotations:
+      summary: "High resume parsing failure rate"
+      description: "Resume parsing failure rate is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+  # Database Alerts
+  - alert: DatabaseConnectionFailure
+    expr: database_up{job="resume-builder"} == 0
+    for: 1m
+    labels:
+      severity: critical
+      service: resume-builder
+    annotations:
+      summary: "Database connection failure"
+      description: "Cannot connect to database from {{ $labels.instance }}"
+
+  - alert: DatabaseSlowQueries
+    expr: histogram_quantile(0.95, rate(database_query_duration_seconds_bucket{job="resume-builder"}[5m])) > 2
+    for: 5m
+    labels:
+      severity: warning
+      service: resume-builder
+    annotations:
+      summary: "Slow database queries"
+      description: "95th percentile query time is {{ $value }}s on {{ $labels.instance }}"
+
+  - alert: DatabaseConnectionPoolExhausted
+    expr: database_connection_pool_active{job="resume-builder"} / database_connection_pool_max{job="resume-builder"} > 0.9
+    for: 3m
+    labels:
+      severity: warning
+      service: resume-builder
+    annotations:
+      summary: "Database connection pool nearly exhausted"
+      description: "Database connection pool usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+  # Storage Alerts
+  - alert: StorageSpaceLow
+    expr: (node_filesystem_avail_bytes{mountpoint="/app/uploads"} / node_filesystem_size_bytes{mountpoint="/app/uploads"}) < 0.1
+    for: 5m
+    labels:
+      severity: warning
+      service: resume-builder
+    annotations:
+      summary: "Low storage space for uploads"
+      description: "Upload storage has {{ $value | humanizePercentage }} space remaining on {{ $labels.instance }}"
+
+  - alert: StorageSpaceCritical
+    expr: (node_filesystem_avail_bytes{mountpoint="/app/uploads"} / node_filesystem_size_bytes{mountpoint="/app/uploads"}) < 0.05
+    for: 1m
+    labels:
+      severity: critical
+      service: resume-builder
+    annotations:
+      summary: "Critical storage space for uploads"
+      description: "Upload storage has {{ $value | humanizePercentage }} space remaining on {{ $labels.instance }}"
+
+  # Resource Usage Alerts
+  - alert: HighCPUUsage
+    expr: rate(container_cpu_usage_seconds_total{job="resume-builder"}[5m]) > 0.8
+    for: 10m
+    labels:
+      severity: warning
+      service: resume-builder
+    annotations:
+      summary: "High CPU usage"
+      description: "CPU usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+  - alert: HighMemoryUsage
+    expr: container_memory_usage_bytes{job="resume-builder"} / container_spec_memory_limit_bytes{job="resume-builder"} > 0.9
+    for: 5m
+    labels:
+      severity: critical
+      service: resume-builder
+    annotations:
+      summary: "High memory usage"
+      description: "Memory usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+  - alert: PodCrashLooping
+    expr: rate(kube_pod_container_status_restarts_total{job="resume-builder"}[15m]) > 0
+    for: 5m
+    labels:
+      severity: critical
+      service: resume-builder
+    annotations:
+      summary: "Pod is crash looping"
+      description: "Pod {{ $labels.pod }} is restarting frequently on {{ $labels.instance }}"
+
+  # Business Logic Alerts
+  - alert: LowResumeCompletionRate
+    expr: rate(resume_completion_requests_total{job="resume-builder",status="completed"}[1h]) / rate(resume_completion_requests_total{job="resume-builder"}[1h]) < 0.8
+    for: 15m
+    labels:
+      severity: warning
+      service: resume-builder
+    annotations:
+      summary: "Low resume completion rate"
+      description: "Resume completion rate is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+  - alert: HighATSAnalysisFailures
+    expr: rate(ats_analysis_requests_total{job="resume-builder",status="error"}[5m]) > 0.2
+    for: 5m
+    labels:
+      severity: warning
+      service: resume-builder
+    annotations:
+      summary: "High ATS analysis failure rate"
+      description: "ATS analysis failure rate is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+  - alert: TemplateRenderingFailures
+    expr: rate(template_rendering_requests_total{job="resume-builder",status="error"}[5m]) > 0.1
+    for: 3m
+    labels:
+      severity: warning
+      service: resume-builder
+    annotations:
+      summary: "High template rendering failure rate"
+      description: "Template rendering failure rate is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+  # Security Alerts
+  - alert: SuspiciousFileUploads
+    expr: rate(malicious_file_detection_total{job="resume-builder"}[5m]) > 0.01
+    for: 1m
+    labels:
+      severity: critical
+      service: resume-builder
+    annotations:
+      summary: "Suspicious file uploads detected"
+      description: "{{ $value | humanizePercentage }} of uploads are flagged as malicious on {{ $labels.instance }}"
+
+  - alert: UnusualAPIUsage
+    expr: rate(api_requests_total{job="resume-builder"}[5m]) > 100
+    for: 5m
+    labels:
+      severity: warning
+      service: resume-builder
+    annotations:
+      summary: "Unusual API usage spike"
+      description: "API request rate is {{ $value }} requests/second on {{ $labels.instance }}"
+
+  # Cost Monitoring Alerts
+  - alert: HighAICosts
+    expr: increase(ai_cost_total_dollars{job="resume-builder"}[1h]) > 50
+    for: 0m
+    labels:
+      severity: warning
+      service: resume-builder
+    annotations:
+      summary: "High AI costs detected"
+      description: "AI costs have increased by ${{ $value }} in the last hour on {{ $labels.instance }}"
+
+  - alert: MonthlyCostBudgetWarning
+    expr: increase(ai_cost_total_dollars{job="resume-builder"}[30d]) > 500
+    for: 0m
+    labels:
+      severity: warning
+      service: resume-builder
+    annotations:
+      summary: "Monthly cost budget warning"
+      description: "AI costs for the last 30 days are ${{ $value }} on {{ $labels.instance }}"

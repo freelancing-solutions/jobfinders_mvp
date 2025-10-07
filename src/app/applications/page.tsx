@@ -1,229 +1,110 @@
 'use client'
 
+import { useState } from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { AppLayout } from '@/components/layout/app-layout'
+import { ApplicationList } from '@/components/applications/ApplicationList'
+import { ApplicationDetails } from '@/components/applications/ApplicationDetails'
+import { ApplicationAnalytics } from '@/components/applications/ApplicationAnalytics'
+import { useApplicationStore } from '@/stores/applications'
+import { useRealtimeUpdates } from '@/hooks/applications/use-realtime-updates'
+import { Application, ApplicationStatus } from '@/types/applications'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Skeleton } from '@/components/ui/skeleton'
-import { 
-  Briefcase, 
-  Building2, 
-  Calendar,
-  Mail,
-  ExternalLink,
-  CheckCircle,
-  Clock,
-  XCircle,
-  AlertCircle,
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Briefcase,
+  BarChart3,
   FileText,
-  ArrowRight
+  Settings,
+  Plus,
+  Filter,
+  Download,
+  Bell,
+  Search,
+  RefreshCw,
+  TrendingUp,
+  Activity,
 } from 'lucide-react'
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
 
-interface Application {
-  id: string
-  jobTitle: string
-  companyName: string
-  status: 'APPLIED' | 'REVIEWING' | 'SHORTLISTED' | 'REJECTED' | 'HIRED'
-  appliedAt: string
-  jobUrl: string
-  coverLetter: string
-  matchScore?: number
-}
+export default function ApplicationsPage() {
+  const { data: session } = useSession()
+  const router = useRouter()
 
-const STATUS_CONFIG = {
-  APPLIED: {
-    label: 'Applied',
-    color: 'bg-blue-100 text-blue-800',
-    icon: Clock,
-    description: 'Your application has been received and is under review.'
-  },
-  REVIEWING: {
-    label: 'Under Review',
-    color: 'bg-yellow-100 text-yellow-800',
-    icon: AlertCircle,
-    description: 'Your application is being reviewed by the hiring team.'
-  },
-  SHORTLISTED: {
-    label: 'Shortlisted',
-    color: 'bg-green-100 text-green-800',
-    icon: CheckCircle,
-    description: 'Congratulations! You have been shortlisted for this position.'
-  },
-  REJECTED: {
-    label: 'Not Selected',
-    color: 'bg-red-100 text-red-800',
-    icon: XCircle,
-    description: 'Unfortunately, your application was not selected for this position.'
-  },
-  HIRED: {
-    label: 'Hired',
-    color: 'bg-purple-100 text-purple-800',
-    icon: CheckCircle,
-    description: 'Congratulations! You have been hired for this position.'
+  const [selectedApplicationId, setSelectedApplicationId] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState('applications')
+
+  const {
+    applications,
+    isLoading,
+    error,
+    fetchApplications,
+    refresh,
+  } = useApplicationStore()
+
+  const { isConnected } = useRealtimeUpdates()
+
+  // Redirect if not authenticated or not a job seeker
+  if (!session?.user) {
+    router.push('/auth/signin')
+    return null
   }
-}
 
-function ApplicationsPageContent() {
-  const [applications, setApplications] = useState<Application[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  if (session.user.role !== 'SEEKER') {
+    router.push('/dashboard')
+    return null
+  }
 
-  useEffect(() => {
-    async function fetchApplications() {
-      try {
-        setIsLoading(true)
-        setError(null)
+  const handleApplicationSelect = (application: Application) => {
+    setSelectedApplicationId(application.id)
+  }
 
-        // For demo purposes, we'll use mock data
-        // In a real application, you would fetch from the API
-        const mockApplications: Application[] = [
-          {
-            id: '1',
-            jobTitle: 'Senior Frontend Developer',
-            companyName: 'Tech Solutions Inc',
-            status: 'REVIEWING',
-            appliedAt: '2024-01-15T10:30:00Z',
-            jobUrl: '/jobs/cmgdumrwl000kry6bp08eerxd',
-            coverLetter: 'I am excited about this opportunity...',
-            matchScore: 85
-          },
-          {
-            id: '2',
-            jobTitle: 'Data Scientist',
-            companyName: 'AI Innovations',
-            status: 'SHORTLISTED',
-            appliedAt: '2024-01-14T14:20:00Z',
-            jobUrl: '/jobs/sample-id-2',
-            coverLetter: 'My background in machine learning...',
-            matchScore: 92
-          },
-          {
-            id: '3',
-            jobTitle: 'UX Designer',
-            companyName: 'Design Studio',
-            status: 'REJECTED',
-            appliedAt: '2024-01-10T09:15:00Z',
-            jobUrl: '/jobs/sample-id-3',
-            coverLetter: 'I have extensive experience in UX design...'
-          }
-        ]
+  const handleApplicationEdit = (application: Application) => {
+    // TODO: Implement edit functionality
+    console.log('Edit application:', application)
+  }
 
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        
-        setApplications(mockApplications)
-      } catch (err) {
-        console.error('Error fetching applications:', err)
-        setError('Failed to load applications. Please try again.')
-      } finally {
-        setIsLoading(false)
-      }
-    }
+  const handleStatusUpdate = (applicationId: string, status: ApplicationStatus) => {
+    // Status update is handled by the store
+    console.log('Status updated:', applicationId, status)
+  }
 
+  const handleApplicationDelete = (applicationId: string) => {
+    setSelectedApplicationId(null)
+    // Refresh the list
     fetchApplications()
-  }, [])
-
-  const LoadingSkeleton = () => (
-    <div className="space-y-4">
-      {Array.from({ length: 3 }).map((_, i) => (
-        <Card key={i}>
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div className="space-y-2">
-                <Skeleton className="h-6 w-48" />
-                <Skeleton className="h-4 w-32" />
-              </div>
-              <Skeleton className="h-6 w-24" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4" />
-              <div className="flex items-center justify-between">
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-8 w-24" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  )
-
-  const EmptyState = () => (
-    <Card className="text-center py-12">
-      <CardContent>
-        <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-          <Briefcase className="h-12 w-12 text-gray-400" />
-        </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">No Applications Yet</h3>
-        <p className="text-gray-600 mb-6">
-          You haven't applied for any positions yet. Start browsing jobs to find your next opportunity!
-        </p>
-        <Button asChild className="w-full">
-          <Link href="/jobs">Browse Jobs</Link>
-        </Button>
-      </CardContent>
-    </Card>
-  )
-
-  const ErrorState = () => (
-    <Card className="text-center py-12">
-      <CardContent>
-        <div className="mx-auto w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-4">
-          <AlertCircle className="h-12 w-12 text-red-500" />
-        </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Something went wrong</h3>
-        <p className="text-gray-600 mb-6">
-          {error || 'Failed to load your applications. Please try again.'}
-        </p>
-        <Button onClick={() => window.location.reload()} className="w-full">
-          Try Again
-        </Button>
-      </CardContent>
-    </Card>
-  )
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    })
   }
 
-  if (isLoading) {
-    return (
-      <AppLayout>
-        <div className="min-h-screen bg-gray-50 py-8">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900">My Applications</h1>
-              <p className="text-gray-600 mt-2">Track the status of your job applications</p>
-            </div>
-            <LoadingSkeleton />
-          </div>
-        </div>
-      </AppLayout>
-    )
+  const selectedApplication = applications.find(app => app.id === selectedApplicationId)
+
+  // Calculate stats
+  const stats = {
+    total: applications.length,
+    applied: applications.filter(app => app.status === 'applied').length,
+    reviewing: applications.filter(app => app.status === 'reviewing').length,
+    shortlisted: applications.filter(app => app.status === 'shortlisted').length,
+    interview: applications.filter(app =>
+      ['interview_scheduled', 'interview_completed'].includes(app.status)
+    ).length,
+    offered: applications.filter(app => app.status === 'offered').length,
+    rejected: applications.filter(app => app.status === 'rejected').length,
+    hired: applications.filter(app => app.status === 'hired').length,
   }
 
   if (error) {
     return (
       <AppLayout>
-        <div className="min-h-screen bg-gray-50 py-8">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900">My Applications</h1>
-              <p className="text-gray-600 mt-2">Track the status of your job applications</p>
-            </div>
-            <ErrorState />
-          </div>
+        <div className="container mx-auto px-4 py-8">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+            <Button onClick={refresh} className="mt-2">
+              Try Again
+            </Button>
+          </Alert>
         </div>
       </AppLayout>
     )
@@ -231,133 +112,170 @@ function ApplicationsPageContent() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="mb-8">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <div>
             <h1 className="text-3xl font-bold text-gray-900">My Applications</h1>
-            <p className="text-gray-600 mt-2">Track the status of your job applications</p>
+            <p className="text-gray-600 mt-1">
+              Track and manage your job applications in one place
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+              <span className="text-sm text-gray-600 hidden sm:inline">
+                {isConnected ? 'Real-time updates active' : 'Connection lost'}
+              </span>
+            </div>
+            <Button variant="outline" size="sm" className="hidden sm:flex">
+              <Filter className="h-4 w-4 mr-2" />
+              Filters
+            </Button>
+            <Button variant="outline" size="sm" className="hidden sm:flex">
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+            <Button onClick={refresh} size="sm">
+              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">Refresh</span>
+            </Button>
+            <Button asChild>
+              <a href="/jobs">
+                <Plus className="h-4 w-4 mr-2" />
+                <span className="hidden sm:inline">New Application</span>
+                <span className="sm:hidden">Apply</span>
+              </a>
+            </Button>
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <Card>
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.total}</p>
+                </div>
+                <div className="p-2 sm:p-3 rounded-full bg-blue-500">
+                  <Briefcase className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Under Review</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.reviewing}</p>
+                </div>
+                <div className="p-2 sm:p-3 rounded-full bg-yellow-500">
+                  <FileText className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Interviews</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.interview}</p>
+                </div>
+                <div className="p-2 sm:p-3 rounded-full bg-purple-500">
+                  <Settings className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Offers</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.offered}</p>
+                </div>
+                <div className="p-2 sm:p-3 rounded-full bg-green-500">
+                  <BarChart3 className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Left Column - List/Analytics */}
+          <div className="flex-1 lg:flex-initial lg:w-2/3">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="applications" className="flex items-center gap-2">
+                  <Briefcase className="h-4 w-4" />
+                  <span className="hidden sm:inline">Applications</span>
+                  <span className="sm:hidden">Apps</span>
+                </TabsTrigger>
+                <TabsTrigger value="analytics" className="flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  <span className="hidden sm:inline">Analytics</span>
+                  <span className="sm:hidden">Stats</span>
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="applications" className="mt-6">
+                <ApplicationList
+                  showFilters={true}
+                  showStats={false}
+                  selectable={true}
+                  onApplicationSelect={handleApplicationSelect}
+                  onApplicationEdit={handleApplicationEdit}
+                  onStatusUpdate={handleStatusUpdate}
+                />
+              </TabsContent>
+
+              <TabsContent value="analytics" className="mt-6">
+                <ApplicationAnalytics compact={true} />
+              </TabsContent>
+            </Tabs>
           </div>
 
-          {/* Applications List */}
-          {applications.length === 0 ? (
-            <EmptyState />
-          ) : (
-            <div className="space-y-6">
-              {applications.map((application) => {
-                const statusConfig = STATUS_CONFIG[application.status]
-                const StatusIcon = statusConfig.icon
-
-                return (
-                  <Card key={application.id} className="hover:shadow-md transition-shadow">
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="space-y-2">
-                          <CardTitle className="text-xl">{application.jobTitle}</CardTitle>
-                          <CardDescription className="flex items-center gap-2">
-                            <Building2 className="h-4 w-4" />
-                            {application.companyName}
-                          </CardDescription>
-                        </div>
-                        <Badge className={statusConfig.color}>
-                          <StatusIcon className="h-3 w-3 mr-1" />
-                          {statusConfig.label}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    
-                    <CardContent className="space-y-4">
-                      {/* Status Description */}
-                      <Alert>
-                        <StatusIcon className="h-4 w-4" />
-                        <AlertDescription>
-                          {statusConfig.description}
-                        </AlertDescription>
-                      </Alert>
-
-                      {/* Application Details */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-gray-400" />
-                          <span className="text-gray-600">Applied: {formatDate(application.appliedAt)}</span>
-                        </div>
-                        {application.matchScore && (
-                          <div className="flex items-center gap-2">
-                            <FileText className="h-4 w-4 text-gray-400" />
-                            <span className="text-gray-600">Match Score: {application.matchScore}%</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Cover Letter Preview */}
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <h4 className="font-medium text-gray-900 mb-2">Cover Letter Preview</h4>
-                        <p className="text-sm text-gray-600 line-clamp-3">
-                          {application.coverLetter}
-                        </p>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex items-center justify-between pt-4 border-t">
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <Mail className="h-4 w-4" />
-                          <span>Application ID: {application.id}</span>
-                        </div>
-                        <Button variant="outline" size="sm" asChild>
-                          <Link href={application.jobUrl} className="flex items-center gap-2">
-                            View Job
-                            <ArrowRight className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </div>
-          )}
-
-          {/* Stats Summary */}
-          {applications.length > 0 && (
-            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* Right Column - Details */}
+          <div className="flex-1 lg:flex-initial lg:w-1/3">
+            {selectedApplication ? (
+              <ApplicationDetails
+                applicationId={selectedApplication.id}
+                onStatusUpdate={handleStatusUpdate}
+                onEdit={handleApplicationEdit}
+                onDelete={handleApplicationDelete}
+              />
+            ) : (
               <Card>
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-blue-600">{applications.length}</div>
-                  <div className="text-sm text-gray-600">Total Applications</div>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <FileText className="h-12 w-12 text-gray-400 mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No Application Selected</h3>
+                  <p className="text-gray-600 text-center">
+                    Select an application from the list to view details and manage your progress.
+                  </p>
+                  <Button className="mt-4" asChild>
+                    <a href="/jobs">Browse Jobs</a>
+                  </Button>
                 </CardContent>
               </Card>
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-yellow-600">
-                    {applications.filter(app => app.status === 'REVIEWING').length}
-                  </div>
-                  <div className="text-sm text-gray-600">Under Review</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-green-600">
-                    {applications.filter(app => app.status === 'SHORTLISTED').length}
-                  </div>
-                  <div className="text-sm text-gray-600">Shortlisted</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-purple-600">
-                    {applications.filter(app => app.status === 'HIRED').length}
-                  </div>
-                  <div className="text-sm text-gray-600">Hired</div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
+            )}
+          </div>
+        </div>
+
+        {/* Floating Action Button for mobile */}
+        <div className="fixed bottom-6 right-6 lg:hidden">
+          <Button size="lg" className="rounded-full w-14 h-14 shadow-lg" asChild>
+            <a href="/jobs">
+              <Plus className="h-6 w-6" />
+            </a>
+          </Button>
         </div>
       </div>
     </AppLayout>
   )
-}
-
-export default function ApplicationsPage() {
-  return <ApplicationsPageContent />
 }

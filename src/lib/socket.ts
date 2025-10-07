@@ -1,9 +1,13 @@
 import { Server } from 'socket.io';
 import { setupNotificationHandlers } from './notifications';
+import { setupApplicationHandlers } from './websocket/application-socket';
 
 export const setupSocket = (io: Server) => {
   // Setup notification handlers
   setupNotificationHandlers(io);
+
+  // Setup application management handlers
+  setupApplicationHandlers(io);
   
   // Keep existing echo functionality for compatibility
   io.on('connection', (socket) => {

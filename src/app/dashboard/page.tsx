@@ -8,12 +8,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
-import { 
-  Briefcase, 
-  MapPin, 
-  Calendar, 
-  TrendingUp, 
-  FileText, 
+import { JobRecommendations } from '@/components/matching/job-recommendations'
+import {
+  Briefcase,
+  MapPin,
+  Calendar,
+  TrendingUp,
+  FileText,
   Bookmark,
   Settings,
   User,
@@ -73,7 +74,6 @@ export default function Dashboard() {
   const [error, setError] = useState('')
   const [applications, setApplications] = useState<Application[]>([])
   const [savedJobs, setSavedJobs] = useState<SavedJob[]>([])
-  const [recommendedJobs, setRecommendedJobs] = useState<Job[]>([])
 
   useEffect(() => {
     // Redirect if not authenticated
@@ -99,11 +99,10 @@ export default function Dashboard() {
       setLoading(true)
       setError('')
 
-      // Fetch applications
-      const [applicationsRes, savedJobsRes, recommendedJobsRes] = await Promise.all([
+      // Fetch applications and saved jobs
+      const [applicationsRes, savedJobsRes] = await Promise.all([
         fetch('/api/applications'),
-        fetch('/api/saved-jobs'),
-        fetch('/api/jobs/recommended')
+        fetch('/api/saved-jobs')
       ])
 
       if (applicationsRes.ok) {
@@ -114,11 +113,6 @@ export default function Dashboard() {
       if (savedJobsRes.ok) {
         const savedJobsData = await savedJobsRes.json()
         setSavedJobs(savedJobsData.success ? savedJobsData.data : [])
-      }
-
-      if (recommendedJobsRes.ok) {
-        const recommendedJobsData = await recommendedJobsRes.json()
-        setRecommendedJobs(recommendedJobsData.success ? recommendedJobsData.data : [])
       }
     } catch (err) {
       setError('Failed to load dashboard data')
@@ -342,38 +336,10 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Recommended Jobs */}
-        {recommendedJobs.length > 0 && (
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle>Recommended for You</CardTitle>
-              <CardDescription>
-                Jobs that match your profile and preferences
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {recommendedJobs.slice(0, 6).map((job) => (
-                  <div key={job.id} className="p-4 border rounded-lg hover:shadow-md transition-shadow cursor-pointer">
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-medium">{job.title}</h4>
-                      {job.matchScore && (
-                        <Badge className="bg-green-100 text-green-800">
-                          {job.matchScore}%
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-600 mb-2">{job.company}</p>
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                      <MapPin className="h-3 w-3" />
-                      <span>{job.location}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        {/* AI-Powered Job Recommendations */}
+        <div className="mt-8">
+          <JobRecommendations userId={user.id} />
+        </div>
       </div>
     </AppLayout>
   )

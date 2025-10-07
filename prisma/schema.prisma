@@ -30,19 +30,24 @@ model User {
   resumes         Resume[]
   matches         Match[]
   passwordResetTokens PasswordResetToken[]
-  
+
   // New matching relationships
   candidateProfile CandidateProfile?
   jobProfiles     JobProfile[]
   userInteractions UserInteraction[]
-  
+
   // Notification system relationships
   notifications   Notification[]
   notificationPreferences NotificationPreference?
-  
+
   // Analytics relationships
   analyticsEvents AnalyticsEvent[]
   userJourneys    UserJourney[]
+
+  // Template system relationships
+  templateCustomizations ResumeTemplateCustomization[]
+  templateUsage ResumeTemplateUsage[]
+  templateHistory ResumeTemplateHistory[]
   
   @@map("users")
 }
@@ -260,13 +265,28 @@ model JobApplication {
   notes           String?
   appliedAt       DateTime @default(now()) @map("applied_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
-  lastStatusUpdate DateTime? @map("last_status_update")
-  
+  lastStatusUpdate DateTime @default(now()) @map("last_status_update")
+  viewCount       Int      @default(0) @map("view_count")
+  lastViewedAt    DateTime? @map("last_viewed_at")
+  resumeFileUrl   String?  @map("resume_file_url")
+  source          String   @default("direct") // direct, linkedin, indeed, glassdoor, other
+  referralName    String?  @map("referral_name")
+  referralEmail   String?  @map("referral_email")
+  referralRelationship String? @map("referral_relationship")
+
   // Relationships
   job             Job              @relation(fields: [jobId], references: [jobId], onDelete: Cascade)
   jobSeekerProfile JobSeekerProfile @relation(fields: [jobSeekerProfileId], references: [userUid], onDelete: Cascade)
   resume          Resume?          @relation(fields: [resumeId], references: [resumeId])
-  
+  timeline        ApplicationTimeline[]
+  attachments     ApplicationAttachment[]
+  notes           ApplicationNote[]
+  interviews      InterviewSchedule[]
+
+  @@index([jobSeekerProfileId, status])
+  @@index([jobId, status])
+  @@index([appliedAt])
+  @@index([lastStatusUpdate])
   @@map("job_applications")
 }
 
@@ -302,9 +322,16 @@ model Resume {
   website         String?
   linkedin        String?
   github          String?
+
+  // Template integration fields
+  templateId              String?  @map("template_id")
+  templateCustomizationId String?  @map("template_customization_id")
+  templateData            Json?    @map("template_data") // Template metadata and settings
+  integrationMetadata     Json?    @map("integration_metadata") // Template history and analytics
+
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
-  
+
   // Relationships
   user            User            @relation(fields: [userUid], references: [uid], onDelete: Cascade)
   applications    JobApplication[]
@@ -313,7 +340,13 @@ model Resume {
   certifications  Certification[]
   languages       Language[]
   projects        Project[]
-  
+
+  // New template relationships
+  template                ResumeTemplate?         @relation(fields: [templateId], references: [templateId], onDelete: SetNull)
+  templateCustomization   ResumeTemplateCustomization? @relation(fields: [templateCustomizationId], references: [id], onDelete: SetNull)
+  templateHistory         ResumeTemplateHistory[]
+  templateUsage           ResumeTemplateUsage[]
+
   @@map("jobseeker_cvs")
 }
 
@@ -1055,4 +1088,267 @@ model NotificationAnalytics {
   @@index([date])
   @@index([channel])
   @@map("notification_analytics")
+}
+
+// ==================== APPLICATION MANAGEMENT MODELS ====================
+
+// Application Timeline Events
+model ApplicationTimeline {
+  timelineId      String   @id @default(cuid()) @map("timeline_id")
+  applicationId   String   @map("application_id")
+  status          ApplicationStatus
+  notes           String?
+  createdBy       String?  @map("created_by")
+  createdByRole   String?  @map("created_by_role") // candidate, employer, system
+  createdAt       DateTime @default(now()) @map("created_at")
+  metadata        Json?    // Additional event data
+
+  // Relationships
+  application     JobApplication @relation(fields: [applicationId], references: [applicationId], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([createdByRole])
+  @@map("application_timeline")
+}
+
+// Application Attachments
+model ApplicationAttachment {
+  attachmentId    String   @id @default(cuid()) @map("attachment_id")
+  applicationId   String   @map("application_id")
+  fileName        String   @map("file_name")
+  fileUrl         String   @map("file_url")
+  fileType        String   @map("file_type")
+  fileSize        Int      @map("file_size")
+  description     String?
+  uploadedBy      String?  @map("uploaded_by")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  application     JobApplication @relation(fields: [applicationId], references: [applicationId], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([uploadedBy])
+  @@index([createdAt])
+  @@map("application_attachments")
+}
+
+// Application Notes
+model ApplicationNote {
+  noteId          String   @id @default(cuid()) @map("note_id")
+  applicationId   String   @map("application_id")
+  content         String
+  isPrivate       Boolean  @default(true) @map("is_private")
+  tags            Json?    // Array of tags as JSON
+  createdBy       String   @map("created_by")
+  createdById     String   @map("created_by_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  application     JobApplication @relation(fields: [applicationId], references: [applicationId], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([createdById])
+  @@index([createdAt])
+  @@map("application_notes")
+}
+
+// Interview Schedule
+model InterviewSchedule {
+  interviewId     String   @id @default(cuid()) @map("interview_id")
+  applicationId   String   @map("application_id")
+  type            String   // phone, video, onsite, technical, behavioral, panel
+  scheduledAt     DateTime @map("scheduled_at")
+  duration        Int      // in minutes
+  location        String?
+  meetingLink     String?  @map("meeting_link")
+  interviewers    Json?    // Array of interviewer information
+  instructions     String? @map("instructions")
+  preparation     Json?    // Array of preparation items
+  status          String   @default("scheduled") // scheduled, completed, cancelled, rescheduled
+  feedback        String?
+  rating          Int?     // 1-5 scale
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  application     JobApplication @relation(fields: [applicationId], references: [applicationId], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([scheduledAt])
+  @@index([status])
+  @@index([type])
+  @@map("interview_schedule")
+}
+
+// ============================================================================
+// RESUME TEMPLATE SYSTEM MODELS
+// ============================================================================
+
+// Resume Templates
+model ResumeTemplate {
+  templateId      String   @id @default(cuid()) @map("template_id")
+  name            String
+  description     String
+  category        String   // professional, modern, academic, creative, technical
+  subcategory     String?  // executive, software-engineer, healthcare, etc.
+  previewUrl      String   @map("preview_url") // URL to preview image
+  largePreviewUrl String?  @map("large_preview_url") // URL to large preview
+  animatedPreviewUrl String? @map("animated_preview_url") // URL to animated preview
+
+  // Template configuration (JSON fields for flexibility)
+  layout          Json     // TemplateLayout configuration
+  styling         Json     // TemplateStyling configuration
+  sections        Json     // TemplateSection[] configuration
+  features        Json     // TemplateFeatures configuration
+  atsOptimization Json     // ATSOptimization configuration
+  customization   Json     // CustomizationOptions configuration
+  metadata        Json     // TemplateMetadata configuration
+
+  // Template status and availability
+  isActive        Boolean  @default(true) @map("is_active")
+  isPremium       Boolean  @default(false) @map("is_premium")
+  version         String   @default("1.0.0")
+  author          String?  // Template author
+  license         String?  // Template license type
+
+  // Usage analytics
+  downloadCount   Int      @default(0) @map("download_count")
+  rating          Float    @default(0)
+  reviewCount     Int      @default(0) @map("review_count")
+
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  customizations  ResumeTemplateCustomization[]
+  usage           ResumeTemplateUsage[]
+  history         ResumeTemplateHistory[]
+  resumes         Resume[]
+
+  @@index([category])
+  @@index([subcategory])
+  @@index([isActive])
+  @@index([isPremium])
+  @@index([rating])
+  @@index([downloadCount])
+  @@map("resume_templates")
+}
+
+// Template Customizations
+model ResumeTemplateCustomization {
+  id              String   @id @default(cuid())
+  userUid         String   @map("user_uid")
+  resumeId        String?  @map("resume_id") // Optional: link to specific resume
+  templateId      String   @map("template_id")
+
+  // Customization data
+  name            String?  // User-defined name for this customization
+  colorScheme     Json     // Color customization data
+  typography      Json     // Font customization data
+  layout          Json     // Layout customization data
+  sectionSettings Json     @map("section_settings") // Section visibility and ordering
+  customSections  Json?    @map("custom_sections") // User-defined custom sections
+  branding        Json?    // Logo, watermark, etc.
+
+  // Metadata
+  isDefault       Boolean  @default(false) @map("is_default")
+  version         String   @default("1.0.0")
+  changeCount     Int      @default(0) @map("change_count")
+  lastApplied     DateTime? @map("last_applied")
+
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user            User     @relation(fields: [userUid], references: [uid], onDelete: Cascade)
+  template        ResumeTemplate @relation(fields: [templateId], references: [templateId], onDelete: Cascade)
+  resume          Resume?  @relation(fields: [resumeId], references: [resumeId], onDelete: Cascade)
+  usage           ResumeTemplateUsage[]
+
+  @@unique([userUid, templateId, name])
+  @@index([userUid])
+  @@index([templateId])
+  @@index([resumeId])
+  @@map("resume_template_customizations")
+}
+
+// Template Usage Analytics
+model ResumeTemplateUsage {
+  id              String   @id @default(cuid())
+  userUid         String   @map("user_uid")
+  templateId      String   @map("template_id")
+  customizationId String?  @map("customization_id")
+  resumeId        String?  @map("resume_id")
+
+  // Usage metrics
+  useCount        Int      @default(0) @map("use_count")
+  lastUsed        DateTime? @map("last_used")
+  averageAtsScore Float?  @default(0) @map("average_ats_score")
+  exportCount     Int      @default(0) @map("export_count")
+
+  // User feedback
+  rating          Int?     // 1-5 rating
+  feedback        String?  // User feedback text
+  recommendationScore Float? @default(0) @map("recommendation_score") // How well template was recommended
+
+  // Analytics data
+  sessionDuration Int?     @map("session_duration") // Average session duration in seconds
+  customizationCount Int?   @map("customization_count") // Number of customizations made
+  shareCount      Int      @default(0) @map("share_count") // How many times shared
+
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user            User                       @relation(fields: [userUid], references: [uid], onDelete: Cascade)
+  template        ResumeTemplate             @relation(fields: [templateId], references: [templateId], onDelete: Cascade)
+  customization   ResumeTemplateCustomization? @relation(fields: [customizationId], references: [id], onDelete: SetNull)
+  resume          Resume?                    @relation(fields: [resumeId], references: [resumeId], onDelete: SetNull)
+
+  @@unique([userUid, templateId])
+  @@index([userUid])
+  @@index([templateId])
+  @@index([lastUsed])
+  @@map("resume_template_usage")
+}
+
+// Template History Tracking
+model ResumeTemplateHistory {
+  id              String   @id @default(cuid())
+  userUid         String   @map("user_uid")
+  resumeId        String   @map("resume_id")
+  templateId      String   @map("template_id")
+  customizationId String?  @map("customization_id")
+
+  // Action tracking
+  action          String   // selected, customized, exported, reverted, shared, etc.
+  templateName    String   @map("template_name") // Snapshot of template name at time of action
+
+  // Change data
+  previousState   Json?    @map("previous_state") // Previous template/customization state
+  newState        Json?    @map("new_state") // New template/customization state
+  changeSummary   String?  @map("change_summary") // Human-readable summary of changes
+  changeReason    String?  @map("change_reason") // User-provided reason for change
+
+  // Metadata
+  sessionId       String?  @map("session_id") // For tracking user sessions
+  ipAddress       String?  @map("ip_address") // For security analytics
+  userAgent       String?  @map("user_agent") // Browser/client information
+
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  user            User     @relation(fields: [userUid], references: [uid], onDelete: Cascade)
+  resume          Resume   @relation(fields: [resumeId], references: [resumeId], onDelete: Cascade)
+  template        ResumeTemplate @relation(fields: [templateId], references: [templateId], onDelete: Cascade)
+
+  @@index([userUid])
+  @@index([resumeId])
+  @@index([templateId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("resume_template_history")
 }

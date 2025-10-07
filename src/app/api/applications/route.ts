@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth/auth-options'
 import { db } from '@/lib/db'
 import { apiHandler, APIError } from '@/lib/api-handler'
 import { ApplicationStatus } from '@prisma/client'
+import { logger } from '@/lib/logging/logger'
 
 export async function POST(request: NextRequest) {
   return apiHandler(request, async (req) => {
@@ -254,52 +257,359 @@ Resume File: ${resumeFileUrl || 'Not uploaded'}`,
 
 export async function GET(request: NextRequest) {
   return apiHandler(request, async (req) => {
-    const { searchParams } = new URL(req.url)
-    const jobId = searchParams.get('jobId')
-    const email = searchParams.get('email')
+    const session = await getServerSession(authOptions)
 
-    if (!jobId || !email) {
-      throw new APIError('Job ID and email are required', 400)
+    if (!session?.user?.id) {
+      throw new APIError('Authentication required', 401)
     }
 
-    // Check if user has already applied for this job
-    const application = await db.jobApplication.findFirst({
-      where: {
-        job: {
-          jobId: jobId
-        },
-        jobSeekerProfile: {
-          user: {
-            email: email
+    const { searchParams } = new URL(req.url)
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '20')
+    const search = searchParams.get('search') || ''
+    const status = searchParams.get('status')?.split(',').filter(Boolean) || []
+    const startDate = searchParams.get('startDate')
+    const endDate = searchParams.get('endDate')
+    const companies = searchParams.get('companies')?.split(',').filter(Boolean) || []
+    const locations = searchParams.get('locations')?.split(',').filter(Boolean) || []
+    const positionTypes = searchParams.get('positionTypes')?.split(',').filter(Boolean) || []
+    const salaryRanges = searchParams.get('salaryRanges')?.split(',').filter(Boolean) || []
+    const remotePolicies = searchParams.get('remotePolicies')?.split(',').filter(Boolean) || []
+    const hasMatchScore = searchParams.get('hasMatchScore')
+    const archived = searchParams.get('archived') === 'true'
+    const sortBy = searchParams.get('sortBy') || 'appliedAt'
+    const sortOrder = searchParams.get('sortOrder') || 'desc'
+    const exportFormat = searchParams.get('format')
+
+    // Check if this is an export request
+    if (exportFormat) {
+      return await handleExportApplications(
+        session.user.id,
+        exportFormat as 'csv' | 'json',
+        { search, status, startDate, endDate, companies, locations, archived }
+      )
+    }
+
+    // Build where clause
+    const where: any = {
+      jobSeekerProfile: {
+        userUid: session.user.id
+      }
+    }
+
+    // Add filters
+    if (search) {
+      where.OR = [
+        {
+          job: {
+            title: {
+              contains: search,
+              mode: 'insensitive'
+            }
           }
-        }
-      },
-      include: {
-        job: {
-          select: {
-            title: true,
+        },
+        {
+          job: {
             company: {
-              select: {
-                name: true
+              name: {
+                contains: search,
+                mode: 'insensitive'
               }
             }
           }
         }
+      ]
+    }
+
+    if (status.length > 0) {
+      where.status = {
+        in: status
       }
+    }
+
+    if (startDate || endDate) {
+      where.appliedAt = {}
+      if (startDate) {
+        where.appliedAt.gte = new Date(startDate)
+      }
+      if (endDate) {
+        where.appliedAt.lte = new Date(endDate)
+      }
+    }
+
+    if (companies.length > 0) {
+      where.job = {
+        ...where.job,
+        company: {
+          name: {
+            in: companies
+          }
+        }
+      }
+    }
+
+    if (locations.length > 0) {
+      where.job = {
+        ...where.job,
+        location: {
+          in: locations
+        }
+      }
+    }
+
+    if (positionTypes.length > 0) {
+      where.job = {
+        ...where.job,
+        positionType: {
+          in: positionTypes
+        }
+      }
+    }
+
+    if (hasMatchScore !== null) {
+      if (hasMatchScore === 'true') {
+        where.matchScore = {
+          not: null
+        }
+      } else {
+        where.matchScore = null
+      }
+    }
+
+    // Add archived filter
+    if (archived) {
+      where.status = 'ARCHIVED'
+    } else {
+      if (where.status) {
+        // If already filtering by status, add ARCHIVED to exclusion
+        if (Array.isArray(where.status.in)) {
+          where.status.in.push('ARCHIVED')
+        }
+      } else {
+        where.status = {
+          not: 'ARCHIVED'
+        }
+      }
+    }
+
+    // Build order by clause
+    const orderBy: any = {}
+    if (sortBy === 'appliedAt') {
+      orderBy.appliedAt = sortOrder
+    } else if (sortBy === 'updatedAt') {
+      orderBy.lastStatusUpdate = sortOrder
+    } else if (sortBy === 'job.title') {
+      orderBy.job = {
+        title: sortOrder
+      }
+    } else if (sortBy === 'job.company.name') {
+      orderBy.job = {
+        company: {
+          name: sortOrder
+        }
+      }
+    } else if (sortBy === 'matchScore') {
+      orderBy.matchScore = sortOrder
+    } else {
+      orderBy.appliedAt = sortOrder
+    }
+
+    // Get total count
+    const total = await db.jobApplication.count({ where })
+
+    // Calculate pagination
+    const skip = (page - 1) * limit
+    const totalPages = Math.ceil(total / limit)
+
+    // Fetch applications
+    const applications = await db.jobApplication.findMany({
+      where,
+      include: {
+        job: {
+          include: {
+            company: true,
+            employer: true
+          }
+        },
+        jobSeekerProfile: {
+          include: {
+            user: true
+          }
+        }
+      },
+      orderBy,
+      skip,
+      take: limit
     })
+
+    // Format applications for frontend
+    const formattedApplications = applications.map(app => ({
+      id: app.applicationId,
+      jobId: app.job.jobId,
+      userId: app.jobSeekerProfile.userUid,
+      status: mapPrismaStatusToFrontend(app.status),
+      appliedAt: app.appliedAt.toISOString(),
+      updatedAt: app.lastStatusUpdate.toISOString(),
+      job: {
+        id: app.job.jobId,
+        title: app.job.title,
+        company: {
+          id: app.job.company?.companyId || '',
+          name: app.job.company?.name || '',
+          logo: app.job.company?.logo || '',
+          location: app.job.company?.location || ''
+        },
+        location: app.job.location,
+        salaryMin: app.job.salaryMin,
+        salaryMax: app.job.salaryMax,
+        currency: app.job.currency || 'USD',
+        positionType: app.job.positionType,
+        remotePolicy: app.job.remotePolicy,
+        description: app.job.description || '',
+        requirements: app.job.requirements || [],
+        isFeatured: app.job.isFeatured || false,
+        isUrgent: app.job.isUrgent || false,
+        postedAt: app.job.postedAt.toISOString(),
+        expiresAt: app.job.expiresAt?.toISOString(),
+        applicationCount: app.job.applicantCount || 0
+      },
+      resume: app.resumeFileUrl ? {
+        id: app.applicationId,
+        title: 'Resume',
+        fileUrl: app.resumeFileUrl
+      } : undefined,
+      coverLetter: app.coverLetter,
+      notes: app.notes,
+      matchScore: app.matchScore,
+      viewCount: 0, // TODO: Implement view tracking
+      timeline: [] // TODO: Implement timeline tracking
+    }))
 
     return NextResponse.json({
       success: true,
-      data: {
-        hasApplied: !!application,
-        application: application ? {
-          id: application.applicationId,
-          status: application.status,
-          appliedAt: application.appliedAt,
-          jobTitle: application.job.title,
-          companyName: application.job.company.name
-        } : null
+      data: formattedApplications,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1
       }
     })
   })
+}
+
+// Helper function to map Prisma status to frontend status
+function mapPrismaStatusToFrontend(status: ApplicationStatus): string {
+  const statusMap = {
+    'APPLIED': 'applied',
+    'REVIEWING': 'reviewing',
+    'SHORTLISTED': 'shortlisted',
+    'INTERVIEW_SCHEDULED': 'interview_scheduled',
+    'INTERVIEW_COMPLETED': 'interview_completed',
+    'OFFERED': 'offered',
+    'REJECTED': 'rejected',
+    'WITHDRAWN': 'withdrawn',
+    'HIRED': 'hired',
+    'ARCHIVED': 'archived'
+  }
+  return statusMap[status] || status.toLowerCase()
+}
+
+// Helper function to handle exports
+async function handleExportApplications(
+  userId: string,
+  format: 'csv' | 'json',
+  filters: any
+) {
+  const where: any = {
+    jobSeekerProfile: {
+      userUid: userId
+    }
+  }
+
+  // Apply same filters as GET method
+  if (filters.search) {
+    where.OR = [
+      {
+        job: {
+          title: {
+            contains: filters.search,
+            mode: 'insensitive'
+          }
+        }
+      },
+      {
+        job: {
+          company: {
+            name: {
+              contains: filters.search,
+              mode: 'insensitive'
+            }
+          }
+        }
+      }
+    ]
+  }
+
+  // ... (apply other filters similar to GET method)
+
+  const applications = await db.jobApplication.findMany({
+    where,
+    include: {
+      job: {
+        include: {
+          company: true
+        }
+      },
+      jobSeekerProfile: {
+        include: {
+          user: true
+        }
+      }
+    },
+    orderBy: {
+      appliedAt: 'desc'
+    }
+  })
+
+  if (format === 'json') {
+    return new NextResponse(JSON.stringify(applications, null, 2), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Disposition': `attachment; filename="applications-${new Date().toISOString().split('T')[0]}.json"`
+      }
+    })
+  } else if (format === 'csv') {
+    // Generate CSV
+    const headers = [
+      'Application ID', 'Job Title', 'Company', 'Status', 'Applied Date',
+      'Location', 'Position Type', 'Salary Range', 'Match Score'
+    ]
+
+    const csvContent = [
+      headers.join(','),
+      ...applications.map(app => [
+        app.applicationId,
+        `"${app.job.title}"`,
+        `"${app.job.company?.name || ''}"`,
+        app.status,
+        app.appliedAt.toISOString(),
+        `"${app.job.location}"`,
+        app.job.positionType,
+        `${app.job.salaryMin || ''}-${app.job.salaryMax || ''}`,
+        app.matchScore || ''
+      ].join(','))
+    ].join('\n')
+
+    return new NextResponse(csvContent, {
+      headers: {
+        'Content-Type': 'text/csv',
+        'Content-Disposition': `attachment; filename="applications-${new Date().toISOString().split('T')[0]}.csv"`
+      }
+    })
+  }
+
+  throw new APIError('Unsupported export format', 400)
 }

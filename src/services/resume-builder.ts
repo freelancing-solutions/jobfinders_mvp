@@ -1,5 +1,8 @@
 import { OpenRouterClient } from '@/lib/openrouter';
 import { prisma } from '@/lib/prisma';
+import { Resume, ResumeTemplateData, IntegrationMetadata, TemplateHistoryEntry, ATSAnalysisEntry } from '@/types/resume';
+import { templateService } from '@/services/templates/template-service';
+import { templateValidator } from '@/services/templates/template-validator';
 
 export class ResumeBuilder {
   private ai: OpenRouterClient;

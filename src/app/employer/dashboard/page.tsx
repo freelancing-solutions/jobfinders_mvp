@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AppLayout } from '@/components/layout/app-layout'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { CandidateSuggestions } from '@/components/matching/candidate-suggestions'
 import { 
   Building2, 
   Users, 
@@ -443,6 +444,19 @@ export default function EmployerDashboard() {
                 ))}
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* AI-Powered Candidate Suggestions */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Recommended Candidates</CardTitle>
+            <CardDescription>
+              AI-powered candidate recommendations for your active job postings
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CandidateSuggestions employerId={user.id} />
           </CardContent>
         </Card>
       </div>

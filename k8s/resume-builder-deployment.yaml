@@ -1,0 +1,258 @@
+# Kubernetes Deployment Configuration for Resume Builder Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resume-builder
+  namespace: jobfinders
+  labels:
+    app: resume-builder
+    version: v1
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: resume-builder
+  template:
+    metadata:
+      labels:
+        app: resume-builder
+        version: v1
+    spec:
+      containers:
+      - name: resume-builder
+        image: jobfinders/resume-builder:latest
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        # Database Configuration
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: jobfinders-secrets
+              key: database-url
+        - name: POSTGRES_URL
+          valueFrom:
+            secretKeyRef:
+              name: jobfinders-secrets
+              key: postgres-url
+
+        # Authentication
+        - name: NEXTAUTH_URL
+          value: "https://jobfinders.com"
+        - name: NEXTAUTH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: jobfinders-secrets
+              key: nextauth-secret
+
+        # AI Services
+        - name: OPENROUTER_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: jobfinders-secrets
+              key: openrouter-api-key
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: jobfinders-secrets
+              key: openai-api-key
+
+        # Redis/Cache
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: jobfinders-secrets
+              key: redis-url
+
+        # File Storage
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: jobfinders-secrets
+              key: aws-access-key
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: jobfinders-secrets
+              key: aws-secret-key
+        - name: AWS_S3_BUCKET
+          valueFrom:
+            configMapKeyRef:
+              name: jobfinders-config
+              key: aws-s3-bucket
+        - name: AWS_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: jobfinders-config
+              key: aws-region
+
+        # Application Configuration
+        - name: NODE_ENV
+          value: "production"
+        - name: PORT
+          value: "3000"
+        - name: ENABLE_RESUME_BUILDER
+          value: "true"
+        - name: ENABLE_ATS_SCORING
+          value: "true"
+        - name: ENABLE_AI_ANALYSIS
+          value: "true"
+
+        # Monitoring
+        - name: SENTRY_DSN
+          valueFrom:
+            secretKeyRef:
+              name: jobfinders-secrets
+              key: sentry-dsn
+
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+
+        # Health Checks
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+        readinessProbe:
+          httpGet:
+            path: /api/ready
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+
+        # Volume Mounts
+        volumeMounts:
+        - name: temp-storage
+          mountPath: /app/temp
+        - name: log-storage
+          mountPath: /app/logs
+
+      # Volumes
+      volumes:
+      - name: temp-storage
+        emptyDir:
+          sizeLimit: 1Gi
+      - name: log-storage
+        emptyDir:
+          sizeLimit: 500Mi
+
+      # Node Configuration
+      nodeSelector:
+        node-type: application
+
+      tolerations:
+      - key: "application"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - resume-builder
+              topologyKey: kubernetes.io/hostname
+
+---
+# Service Configuration
+apiVersion: v1
+kind: Service
+metadata:
+  name: resume-builder-service
+  namespace: jobfinders
+  labels:
+    app: resume-builder
+spec:
+  selector:
+    app: resume-builder
+  ports:
+  - name: http
+    port: 80
+    targetPort: 3000
+    protocol: TCP
+  type: ClusterIP
+
+---
+# Horizontal Pod Autoscaler
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: resume-builder-hpa
+  namespace: jobfinders
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: resume-builder
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+
+---
+# ConfigMap for Application Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jobfinders-config
+  namespace: jobfinders
+data:
+  aws-region: "us-east-1"
+  aws-s3-bucket: "jobfinders-resume-storage"
+  log-level: "info"
+  cdn-url: "https://cdn.jobfinders.com"
+
+---
+# Secrets Configuration (Secrets should be created separately)
+# kubectl create secret generic jobfinders-secrets \
+#   --from-literal=database-url="postgresql://..." \
+#   --from-literal=nextauth-secret="..." \
+#   --from-literal=openrouter-api-key="..." \
+#   --from-literal=openai-api-key="..." \
+#   --from-literal=redis-url="rediss://..." \
+#   --from-literal=aws-access-key="..." \
+#   --from-literal=aws-secret-key="..." \
+#   --from-literal=sentry-dsn="..."

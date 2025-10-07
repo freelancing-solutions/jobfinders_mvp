@@ -379,3 +379,274 @@ export enum CareerLevel {
   SENIOR_LEVEL = 'senior_level',
   EXECUTIVE_LEVEL = 'executive_level'
 }
+
+// Additional types for UI integration
+export interface MatchSortOptions {
+  field: 'matchScore' | 'matchConfidence' | 'lastMatched';
+  order: 'asc' | 'desc';
+}
+
+export interface ProfileMatchResult {
+  profile: CandidateProfile | JobProfile;
+  matchScore: number;
+  matchConfidence: number;
+  matchDetails: ScoreBreakdown;
+  explanation: MatchExplanation;
+  recommendations: string[];
+  lastMatched: Date;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasMore: boolean;
+}
+
+export interface JobRecommendation {
+  id: string;
+  job: {
+    id: string;
+    title: string;
+    company: {
+      name: string;
+      logo?: string;
+    };
+    location?: {
+      city: string;
+      state: string;
+    };
+    salaryRange?: {
+      min?: number;
+      max?: number;
+    };
+    requirements?: {
+      skills: string[];
+    };
+    employmentType?: string;
+  };
+  matchScore: number;
+  matchConfidence: number;
+  matchDetails?: ScoreBreakdown;
+  explanation?: MatchExplanation;
+  lastMatched: Date;
+}
+
+export interface CandidateRecommendation {
+  id: string;
+  candidate: {
+    id: string;
+    name: string;
+    title?: string;
+    location?: {
+      city: string;
+      state: string;
+    };
+    experience?: {
+      years: number;
+      level: string;
+    };
+    skills: string[];
+    avatar?: string;
+  };
+  matchScore: number;
+  matchConfidence: number;
+  matchDetails?: ScoreBreakdown;
+  explanation?: MatchExplanation;
+  lastMatched: Date;
+}
+
+export interface MatchStats {
+  totalMatches: number;
+  averageScore: number;
+  highQualityMatches: number;
+  recentMatches: number;
+  matchRate: number;
+}
+
+// Core profile types
+export interface CandidateProfile {
+  id: string;
+  userId: string;
+  personalInfo: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone?: string;
+    location: LocationInfo;
+    linkedinUrl?: string;
+    portfolioUrl?: string;
+    headline?: string;
+  };
+  professionalSummary: string;
+  skills: Skill[];
+  experience: WorkExperience[];
+  education: Education[];
+  certifications: Certification[];
+  preferences: JobPreferences;
+  availability: AvailabilityInfo;
+  metadata: {
+    completionScore: number;
+    lastUpdated: Date;
+    visibility: 'public' | 'private' | 'employers_only';
+    isActive: boolean;
+  };
+  embedding?: number[];
+}
+
+export interface JobProfile {
+  id: string;
+  employerId: string;
+  title: string;
+  description: string;
+  requirements: {
+    skills: RequiredSkill[];
+    experience: ExperienceRequirement[];
+    education: EducationRequirement[];
+    certifications: CertificationRequirement[];
+  };
+  preferences: {
+    location: LocationPreference[];
+    workType: 'remote' | 'hybrid' | 'onsite';
+    travelRequirement: number;
+    teamSize: number;
+    companyCulture?: string[];
+  };
+  compensation: {
+    salaryRange: SalaryRange;
+    benefits: string[];
+    equity: boolean;
+    bonus: boolean;
+  };
+  company: CompanyInfo;
+  metadata: {
+    postedDate: Date;
+    expiryDate?: Date;
+    urgency: 'low' | 'medium' | 'high';
+    isActive: boolean;
+  };
+  embedding?: number[];
+}
+
+export interface Skill {
+  name: string;
+  level: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  yearsExperience?: number;
+  lastUsed?: Date;
+  category: string;
+}
+
+export interface WorkExperience {
+  id: string;
+  title: string;
+  company: string;
+  location?: string;
+  startDate: Date;
+  endDate?: Date;
+  current: boolean;
+  description: string;
+  achievements: string[];
+  skills: string[];
+  industry: string;
+  companySize?: string;
+}
+
+export interface Education {
+  id: string;
+  institution: string;
+  degree: string;
+  field: string;
+  startDate: Date;
+  endDate?: Date;
+  current: boolean;
+  gpa?: number;
+  honors?: string[];
+  activities?: string[];
+}
+
+export interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  issueDate: Date;
+  expiryDate?: Date;
+  credentialId?: string;
+  credentialUrl?: string;
+  skills: string[];
+}
+
+export interface JobPreferences {
+  jobTypes: string[];
+  workTypes: ('remote' | 'hybrid' | 'onsite')[];
+  locations: LocationPreference[];
+  salaryRange: SalaryRange;
+  industries: string[];
+  companySizes: string[];
+  remoteOnly: boolean;
+  openToRelocation: boolean;
+  travelWillingness: number;
+}
+
+export interface LocationInfo {
+  city: string;
+  state: string;
+  country: string;
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+  };
+  timezone?: string;
+  remote: boolean;
+}
+
+export interface AvailabilityInfo {
+  availableImmediately: boolean;
+  startDate?: Date;
+  workSchedule: 'full-time' | 'part-time' | 'contract' | 'internship';
+  workHours?: {
+    min: number;
+    max: number;
+  };
+  overtime: boolean;
+}
+
+export interface RequiredSkill {
+  name: string;
+  required: 'required' | 'preferred';
+  experience: number;
+  level: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+}
+
+export interface ExperienceRequirement {
+  years: number;
+  level: 'entry' | 'junior' | 'mid' | 'senior' | 'lead' | 'principal';
+  required: boolean;
+}
+
+export interface EducationRequirement {
+  degree: string;
+  field: string;
+  required: boolean;
+}
+
+export interface CertificationRequirement {
+  name: string;
+  issuer: string;
+  required: boolean;
+}
+
+export interface CompanyInfo {
+  id: string;
+  name: string;
+  description: string;
+  industry: string;
+  size: string;
+  website?: string;
+  logo?: string;
+  locations: LocationInfo[];
+  benefits: string[];
+  culture: string[];
+  values: string[];
+}
