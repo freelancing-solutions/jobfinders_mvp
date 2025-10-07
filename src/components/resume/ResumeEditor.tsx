@@ -33,8 +33,10 @@ import {
   Copy,
   Move
 } from 'lucide-react';
-import { Resume, PersonalInfo, Experience, Education, Skill, Project, Certification, Language } from '@/types/resume';
+import { Resume, PersonalInfo, Experience, Education, Skill, Project, Certification, Language, TemplateCustomization } from '@/types/resume';
 import { ResumeTemplate, RenderedTemplate } from '@/types/template';
+import { templateService } from '@/services/templates/template-service';
+import { resumeBuilder } from '@/services/resume-builder';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -62,6 +64,9 @@ interface ResumeEditorProps {
   onAnalysisRequest?: (resume: Resume) => void;
   loading?: boolean;
   className?: string;
+  userId?: string;
+  showTemplateSelector?: boolean;
+  enableTemplateCustomization?: boolean;
 }
 
 interface EditableSectionProps {
@@ -560,7 +565,10 @@ export const ResumeEditor: React.FC<ResumeEditorProps> = ({
   onExport,
   onAnalysisRequest,
   loading = false,
-  className
+  className,
+  userId,
+  showTemplateSelector = true,
+  enableTemplateCustomization = true
 }) => {
   const [resume, setResume] = useState<Resume>(
     initialResume || {
@@ -598,6 +606,12 @@ export const ResumeEditor: React.FC<ResumeEditorProps> = ({
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Template-related state
+  const [currentTemplate, setCurrentTemplate] = useState<ResumeTemplate | undefined>(template);
+  const [templateCustomization, setTemplateCustomization] = useState<TemplateCustomization | undefined>();
+  const [showTemplateDialog, setShowTemplateDialog] = useState(false);
+  const [isApplyingTemplate, setIsApplyingTemplate] = useState(false);
 
   // Auto-save functionality
   useEffect(() => {
@@ -647,6 +661,47 @@ export const ResumeEditor: React.FC<ResumeEditorProps> = ({
       setTimeout(() => setIsAnalyzing(false), 3000); // Simulate analysis time
     }
   }, [resume, onAnalysisRequest]);
+
+  // Template-related handlers
+  const handleTemplateSelect = useCallback(async (selectedTemplate: ResumeTemplate, customization?: TemplateCustomization) => {
+    if (!userId) return;
+
+    try {
+      setIsApplyingTemplate(true);
+
+      // Apply template to resume
+      const updatedResume = await templateService.applyTemplateToResume(
+        resume.id,
+        selectedTemplate.templateId,
+        userId,
+        customization?.id
+      );
+
+      setResume(updatedResume);
+      setCurrentTemplate(selectedTemplate);
+      setTemplateCustomization(customization);
+      setShowTemplateDialog(false);
+
+      if (onTemplateChange) {
+        onTemplateChange(selectedTemplate);
+      }
+
+      setHasUnsavedChanges(true);
+    } catch (error) {
+      console.error('Failed to apply template:', error);
+    } finally {
+      setIsApplyingTemplate(false);
+    }
+  }, [resume, userId, onTemplateChange]);
+
+  const handleTemplateCustomizationChange = useCallback((customization: TemplateCustomization) => {
+    setTemplateCustomization(customization);
+    setHasUnsavedChanges(true);
+  }, []);
+
+  const openTemplateSelector = useCallback(() => {
+    setShowTemplateDialog(true);
+  }, []);
 
   const sections = [
     {
@@ -711,7 +766,15 @@ export const ResumeEditor: React.FC<ResumeEditorProps> = ({
           <div>
             <h1 className="text-xl font-semibold text-gray-900">Resume Editor</h1>
             <div className="flex items-center space-x-4 text-sm text-gray-600">
-              <span>{template?.name || 'No Template Selected'}</span>
+              <span className="flex items-center gap-1">
+                <Layout className="w-3 h-3" />
+                {currentTemplate?.name || 'No Template Selected'}
+              </span>
+              {templateCustomization && (
+                <Badge variant="secondary" className="text-xs">
+                  {templateCustomization.name}
+                </Badge>
+              )}
               {lastSaved && (
                 <span className="flex items-center">
                   <CheckCircle className="w-3 h-3 text-green-500 mr-1" />
@@ -729,6 +792,38 @@ export const ResumeEditor: React.FC<ResumeEditorProps> = ({
         </div>
 
         <div className="flex items-center space-x-2">
+          {showTemplateSelector && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={openTemplateSelector}
+              disabled={isApplyingTemplate}
+            >
+              {isApplyingTemplate ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2" />
+                  Applying...
+                </>
+              ) : (
+                <>
+                  <Layout className="w-4 h-4 mr-2" />
+                  Change Template
+                </>
+              )}
+            </Button>
+          )}
+
+          {currentTemplate && enableTemplateCustomization && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {/* TODO: Open customization panel */}}
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Customize
+            </Button>
+          )}
+
           <Button
             variant="outline"
             size="sm"
@@ -897,6 +992,37 @@ export const ResumeEditor: React.FC<ResumeEditorProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Template Selector Dialog */}
+      {showTemplateDialog && userId && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-xl w-full h-full max-w-7xl max-h-[90vh] m-4">
+            <div className="p-6 border-b flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Choose a Template</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowTemplateDialog(false)}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <TemplateGallery
+                onTemplateSelect={(template) => {
+                  // Apply template directly without confirmation for better UX
+                  handleTemplateSelect(template);
+                }}
+                userId={userId}
+                jobTitle={resume.metadata?.title}
+                industry={resume.metadata?.targetIndustry}
+                experienceLevel={resume.metadata?.experienceLevel}
+                enableRecommendations={true}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
