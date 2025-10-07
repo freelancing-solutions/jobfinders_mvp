@@ -4,12 +4,13 @@ import { JobCard } from './job-card'
 interface JobGridProps {
   jobs: Job[]
   isLoading?: boolean
+  viewMode?: 'grid' | 'list'
 }
 
-export function JobGrid({ jobs, isLoading }: JobGridProps) {
+export function JobGrid({ jobs, isLoading, viewMode = 'grid' }: JobGridProps) {
   if (isLoading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className={`grid gap-4 ${viewMode === 'grid' ? 'md:grid-cols-2' : 'md:grid-cols-1'}`}>
         {[...Array(6)].map((_, i) => (
           <div
             key={i}
@@ -32,7 +33,7 @@ export function JobGrid({ jobs, isLoading }: JobGridProps) {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className={`grid gap-4 ${viewMode === 'grid' ? 'md:grid-cols-2' : 'md:grid-cols-1'}`}>
       {jobs.map(job => (
         <JobCard key={job.id} job={job} />
       ))}

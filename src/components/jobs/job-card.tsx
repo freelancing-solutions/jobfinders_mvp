@@ -81,13 +81,13 @@ export function JobCard({ job }: JobCardProps) {
                 {job.location}
               </span>
             )}
-            {job.employmentType && (
+            {job.type && (
               <span className="flex items-center gap-1">
                 <Briefcase className="w-4 h-4" />
-                {job.employmentType}
+                {job.type}
               </span>
             )}
-            {job.isRemote && (
+            {job.remote && (
               <Badge variant="secondary" className="bg-green-100 text-green-800">
                 Remote
               </Badge>
@@ -118,9 +118,9 @@ export function JobCard({ job }: JobCardProps) {
               <Badge variant="secondary" className="bg-blue-50 text-blue-700">
                 {job.applicantCount} {job.applicantCount === 1 ? 'applicant' : 'applicants'}
               </Badge>
-              {job.experienceLevel && (
+              {job.experience && (
                 <Badge variant="secondary" className="bg-purple-50 text-purple-700">
-                  {job.experienceLevel}
+                  {job.experience}
                 </Badge>
               )}
             </div>

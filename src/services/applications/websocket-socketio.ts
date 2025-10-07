@@ -339,5 +339,3 @@ export class ApplicationSocketIOService {
 // Create singleton instance
 export const applicationSocketIO = new ApplicationSocketIOService()
 
-// Export for testing
-export { ApplicationSocketIOService }

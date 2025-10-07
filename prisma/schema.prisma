@@ -262,7 +262,6 @@ model JobApplication {
   coverLetter     String?
   status          ApplicationStatus @default(APPLIED)
   matchScore      Float?   @map("match_score")
-  notes           String?
   appliedAt       DateTime @default(now()) @map("applied_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
   lastStatusUpdate DateTime @default(now()) @map("last_status_update")
@@ -343,7 +342,7 @@ model Resume {
 
   // New template relationships
   template                ResumeTemplate?         @relation(fields: [templateId], references: [templateId], onDelete: SetNull)
-  templateCustomization   ResumeTemplateCustomization? @relation(fields: [templateCustomizationId], references: [id], onDelete: SetNull)
+  templateCustomization   ResumeTemplateCustomization?
   templateHistory         ResumeTemplateHistory[]
   templateUsage           ResumeTemplateUsage[]
 
@@ -1265,10 +1264,11 @@ model ResumeTemplateCustomization {
   // Relationships
   user            User     @relation(fields: [userUid], references: [uid], onDelete: Cascade)
   template        ResumeTemplate @relation(fields: [templateId], references: [templateId], onDelete: Cascade)
-  resume          Resume?  @relation(fields: [resumeId], references: [resumeId], onDelete: Cascade)
+  resume          Resume?  @relation(fields: [resumeId], references: [resumeId])
   usage           ResumeTemplateUsage[]
 
   @@unique([userUid, templateId, name])
+  @@unique([resumeId]) // Add unique constraint for one-to-one relation
   @@index([userUid])
   @@index([templateId])
   @@index([resumeId])

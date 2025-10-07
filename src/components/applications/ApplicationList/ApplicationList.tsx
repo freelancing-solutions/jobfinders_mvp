@@ -23,7 +23,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox'
 import { ApplicationCard } from '../application-card'
 import { ApplicationFilters } from '../filter-panel'
-import { ApplicationStats } from '../ApplicationStats'
+import { ApplicationStats } from '../ApplicationStats/ApplicationStats'
 import {
   useApplications,
   useApplicationSelection,

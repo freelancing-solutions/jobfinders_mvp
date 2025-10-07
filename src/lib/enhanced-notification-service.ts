@@ -1,6 +1,6 @@
 import { Server } from 'socket.io'
 import { db } from './db'
-import { EmailService } from './email/email-service'
+import { EmailService, getEmailService } from './email/email-service'
 import { NotificationPreferencesManager } from './notification-preferences'
 import { NotificationData } from './notifications'
 
@@ -20,7 +20,7 @@ export class EnhancedNotificationService {
   private preferencesManager: NotificationPreferencesManager
 
   private constructor() {
-    this.emailService = EmailService.getInstance()
+    this.emailService = getEmailService()
     this.preferencesManager = new NotificationPreferencesManager()
   }
 

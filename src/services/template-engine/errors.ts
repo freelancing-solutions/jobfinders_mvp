@@ -461,7 +461,6 @@ export const templateErrorHandler = new TemplateErrorHandler();
 // Export error types and factory
 export {
   TemplateError,
-  TemplateValidationError,
   TemplateRenderingError,
   TemplateExportError,
   TemplateErrorCode

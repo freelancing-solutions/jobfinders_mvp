@@ -9,29 +9,28 @@
 export { TemplateRegistry } from './template-registry';
 export { TemplateRenderer } from './template-renderer';
 export { TemplateCustomizer } from './template-customizer';
-export { TemplateExporter } from './template-exporter';
+export { ExportManager as TemplateExporter } from './export/export-manager';
 
 // Template management
-export { TemplateManager } from './template-manager';
-export { TemplateCache } from './template-cache';
+export { IndustryTemplateManager as TemplateManager } from './industry-template-manager';
 export { TemplateValidator } from './template-validator';
 
 // Rendering pipeline
-export { RenderPipeline } from './render-pipeline';
+export { RenderPipeline } from './rendering-pipeline';
 export { DataBinder } from './data-binder';
-export { StyleProcessor } from './style-processor';
-export { ContentProcessor } from './content-processor';
+// export { StyleProcessor } from './style-processor';
+// export { ContentProcessor } from './content-processor';
 
 // Export services
-export { PDFExporter } from './exporters/pdf-exporter';
-export { DOCXExporter } from './exporters/docx-exporter';
-export { HTMLExporter } from './exporters/html-exporter';
-export { ExportManager } from './exporters/export-manager';
+// export { PDFExporter } from './exporters/pdf-exporter';
+// export { DOCXExporter } from './exporters/docx-exporter';
+// export { HTMLExporter } from './exporters/html-exporter';
+export { ExportManager } from './export/export-manager';
 
 // Optimization and performance
-export { TemplateOptimizer } from './template-optimizer';
-export { ATSOptimizer } from './ats-optimizer';
-export { PerformanceMonitor } from './performance-monitor';
+// export { TemplateOptimizer } from './template-optimizer';
+export { ATSOptimizer } from './ats/ats-optimization-engine';
+// export { PerformanceMonitor } from './performance-monitor';
 
 // Error handling
 export {

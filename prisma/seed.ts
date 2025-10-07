@@ -245,9 +245,9 @@ async function main() {
           preferred: ['Next.js', 'Node.js', 'GraphQL', 'Docker']
         },
         status: 'PUBLISHED',
-        createdAt: new Date('2024-01-15'),
-        updatedAt: new Date('2024-01-15'),
-        expiresAt: new Date('2024-03-15')
+        createdAt: new Date('2025-10-07'),
+        updatedAt: new Date('2025-10-07'),
+        expiresAt: new Date('2025-10-15')
       }
     }),
     db.job.create({
@@ -271,9 +271,9 @@ async function main() {
           preferred: ['TensorFlow', 'PyTorch', 'Scikit-learn', 'Pandas']
         },
         status: 'PUBLISHED',
-        createdAt: new Date('2024-01-14'),
-        updatedAt: new Date('2024-01-14'),
-        expiresAt: new Date('2024-02-28')
+        createdAt: new Date('2025-10-07'),
+        updatedAt: new Date('2025-10-07'),
+        expiresAt: new Date('2025-10-15')
       }
     }),
     db.job.create({
@@ -297,9 +297,9 @@ async function main() {
           preferred: ['JIRA', 'Figma', 'A/B Testing', 'Growth Hacking']
         },
         status: 'PUBLISHED',
-        createdAt: new Date('2024-01-13'),
-        updatedAt: new Date('2024-01-13'),
-        expiresAt: new Date('2024-03-01')
+        createdAt: new Date('2025-10-07'),
+        updatedAt: new Date('2025-10-07'),
+        expiresAt: new Date('2025-10-15')
       }
     }),
     db.job.create({
@@ -323,9 +323,9 @@ async function main() {
           preferred: ['User Research', 'Usability Testing', 'Design Systems', 'Adobe Creative Suite']
         },
         status: 'PUBLISHED',
-        createdAt: new Date('2024-01-12'),
-        updatedAt: new Date('2024-01-12'),
-        expiresAt: new Date('2024-02-15')
+        createdAt: new Date('2025-10-07'),
+        updatedAt: new Date('2025-10-07'),
+        expiresAt: new Date('2025-10-15')
       }
     }),
     db.job.create({
@@ -349,9 +349,9 @@ async function main() {
           preferred: ['Terraform', 'Ansible', 'Jenkins', 'Monitoring']
         },
         status: 'PUBLISHED',
-        createdAt: new Date('2024-01-11'),
-        updatedAt: new Date('2024-01-11'),
-        expiresAt: new Date('2024-02-20')
+        createdAt: new Date('2025-10-07'),
+        updatedAt: new Date('2025-10-07'),
+        expiresAt: new Date('2025-10-15')
       }
     }),
     db.job.create({
@@ -375,9 +375,9 @@ async function main() {
           preferred: ['Google Ads', 'Facebook Ads', 'Email Marketing', 'Marketing Automation']
         },
         status: 'PUBLISHED',
-        createdAt: new Date('2024-01-10'),
-        updatedAt: new Date('2024-01-10'),
-        expiresAt: new Date('2024-02-10')
+        createdAt: new Date('2025-10-07'),
+        updatedAt: new Date('2025-10-07'),
+        expiresAt: new Date('2025-10-15')
       }
     })
   ])
