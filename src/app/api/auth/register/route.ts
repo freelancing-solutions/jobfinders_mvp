@@ -1,7 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
-import bcrypt from 'bcryptjs'
-import { db } from '@/lib/db'
-import { z } from 'zod'
+import { NextRequest, NextResponse } from 'next/server';
+import { hash } from 'bcryptjs';
+import { db } from '@/lib/db';
+import { z } from 'zod';
+import { rateLimit } from '@/lib/rate-limiter';
+import { auditLogger } from '@/lib/audit-logger';
+import { UserRole, LegacyUserRole, hasEmployerAccess, convertLegacyToNewRole } from '@/types/roles';
 
 const registerSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -55,7 +58,7 @@ export async function POST(request: NextRequest) {
           currency: 'ZAR'
         }
       })
-    } else if (role === 'EMPLOYER') {
+    } else if (hasEmployerAccess(role)) {
       // Create a default company for employers
       const company = await db.company.create({
         data: {

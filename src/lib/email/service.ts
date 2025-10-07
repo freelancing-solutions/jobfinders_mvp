@@ -1,5 +1,12 @@
 import { Resend } from 'resend';
-import { prisma } from '@/lib/db';
+import { logger } from '../logger';
+import { db } from '../db';
+import { EmailTemplate, EmailStatus, EmailType } from '@prisma/client';
+import { z } from 'zod';
+import { rateLimit } from '../rate-limiter';
+import { encrypt, decrypt } from '../encryption';
+import { auditLogger } from '../audit-logger';
+import { UserRole, RoleDisplayText, hasEmployerAccess } from '../../types/roles';
 import crypto from 'crypto';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -401,10 +408,13 @@ function generateWelcomeTemplate({
   loginUrl,
 }: {
   name: string;
-  role: string;
+  role: UserRole | string;
   loginUrl: string;
 }) {
-  const roleText = role === 'EMPLOYER' ? 'employer' : 'job seeker';
+  // Use proper role display text mapping instead of ternary operator
+  const roleText = typeof role === 'string' 
+    ? (role === 'EMPLOYER' ? RoleDisplayText[UserRole.EMPLOYER] : RoleDisplayText[UserRole.JOB_SEEKER])
+    : RoleDisplayText[role as UserRole] || 'user';
   
   return `
 <!DOCTYPE html>
@@ -442,7 +452,7 @@ function generateWelcomeTemplate({
       
       <p>You're now ready to:</p>
       <ul>
-        ${role === 'EMPLOYER' ? `
+        ${hasEmployerAccess(role) ? `
           <li>Post job openings and reach thousands of qualified candidates</li>
           <li>Manage applications and track candidate progress</li>
           <li>Build your company profile and attract top talent</li>

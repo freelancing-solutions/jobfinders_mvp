@@ -1,0 +1,145 @@
+// Applications Schema - Job Application Management
+// This file contains job application and related models
+
+// Job Applications
+model JobApplication {
+  applicationId   String   @id @default(cuid()) @map("application_id")
+  jobId           String   @map("job_id")
+  jobSeekerProfileId String @map("jobseeker_profile_id")
+  resumeId        String?  @map("resume_id")
+  coverLetter     String?
+  status          ApplicationStatus @default(APPLIED)
+  matchScore      Float?   @map("match_score")
+  appliedAt       DateTime @default(now()) @map("applied_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  lastStatusUpdate DateTime @default(now()) @map("last_status_update")
+  viewCount       Int      @default(0) @map("view_count")
+  lastViewedAt    DateTime? @map("last_viewed_at")
+  resumeFileUrl   String?  @map("resume_file_url")
+  source          String   @default("direct") // direct, linkedin, indeed, glassdoor, other
+  referralName    String?  @map("referral_name")
+  referralEmail   String?  @map("referral_email")
+  referralRelationship String? @map("referral_relationship")
+
+  // Relationships
+  job             Job              @relation(fields: [jobId], references: [jobId], onDelete: Cascade)
+  jobSeekerProfile JobSeekerProfile @relation(fields: [jobSeekerProfileId], references: [userUid], onDelete: Cascade)
+  resume          Resume?          @relation(fields: [resumeId], references: [resumeId])
+  timeline        ApplicationTimeline[]
+  attachments     ApplicationAttachment[]
+  notes           ApplicationNote[]
+  interviews      InterviewSchedule[]
+
+  @@index([jobSeekerProfileId, status])
+  @@index([jobId, status])
+  @@index([appliedAt])
+  @@index([lastStatusUpdate])
+  @@map("job_applications")
+}
+
+// Saved Jobs
+model SavedJob {
+  savedJobId      String   @id @default(cuid()) @map("saved_job_id")
+  jobSeekerProfileId String @map("jobseeker_profile_id")
+  jobId           String   @map("job_id")
+  savedAt         DateTime @default(now()) @map("saved_at")
+  notes           String?
+
+  // Relationships
+  jobSeekerProfile JobSeekerProfile @relation(fields: [jobSeekerProfileId], references: [userUid], onDelete: Cascade)
+  job             Job              @relation(fields: [jobId], references: [jobId], onDelete: Cascade)
+
+  @@unique([jobSeekerProfileId, jobId])
+  @@map("saved_jobs")
+}
+
+// Application Timeline Events
+model ApplicationTimeline {
+  timelineId      String   @id @default(cuid()) @map("timeline_id")
+  applicationId   String   @map("application_id")
+  status          ApplicationStatus
+  notes           String?
+  createdBy       String?  @map("created_by")
+  createdByRole   String?  @map("created_by_role") // candidate, employer, system
+  createdAt       DateTime @default(now()) @map("created_at")
+  metadata        Json?    // Additional event data
+
+  // Relationships
+  application     JobApplication @relation(fields: [applicationId], references: [applicationId], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([createdByRole])
+  @@map("application_timeline")
+}
+
+// Application Attachments
+model ApplicationAttachment {
+  attachmentId    String   @id @default(cuid()) @map("attachment_id")
+  applicationId   String   @map("application_id")
+  fileName        String   @map("file_name")
+  fileUrl         String   @map("file_url")
+  fileType        String   @map("file_type")
+  fileSize        Int      @map("file_size")
+  description     String?
+  uploadedBy      String?  @map("uploaded_by")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  application     JobApplication @relation(fields: [applicationId], references: [applicationId], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([uploadedBy])
+  @@index([createdAt])
+  @@map("application_attachments")
+}
+
+// Application Notes
+model ApplicationNote {
+  noteId          String   @id @default(cuid()) @map("note_id")
+  applicationId   String   @map("application_id")
+  content         String
+  isPrivate       Boolean  @default(true) @map("is_private")
+  tags            Json?    // Array of tags as JSON
+  createdBy       String   @map("created_by")
+  createdById     String   @map("created_by_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  application     JobApplication @relation(fields: [applicationId], references: [applicationId], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([createdById])
+  @@index([createdAt])
+  @@map("application_notes")
+}
+
+// Interview Schedule
+model InterviewSchedule {
+  interviewId     String   @id @default(cuid()) @map("interview_id")
+  applicationId   String   @map("application_id")
+  type            String   // phone, video, onsite, technical, behavioral, panel
+  scheduledAt     DateTime @map("scheduled_at")
+  duration        Int      // in minutes
+  location        String?
+  meetingLink     String?  @map("meeting_link")
+  interviewers    Json?    // Array of interviewer information
+  instructions     String? @map("instructions")
+  preparation     Json?    // Array of preparation items
+  status          String   @default("scheduled") // scheduled, completed, cancelled, rescheduled
+  feedback        String?
+  rating          Int?     // 1-5 scale
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  application     JobApplication @relation(fields: [applicationId], references: [applicationId], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([scheduledAt])
+  @@index([status])
+  @@index([type])
+  @@map("interview_schedule")
+}

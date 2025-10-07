@@ -1,0 +1,260 @@
+// Matching Schema - AI Matching System Models
+// This file contains candidate profiles, job profiles, and ML matching models
+
+// Enhanced Candidate Profiles for Matching
+model CandidateProfile {
+  id                    String   @id @default(cuid()) @map("id")
+  userId                String   @unique @map("user_id")
+  personalInfo          Json     @map("personal_info")
+  professionalSummary   String?  @map("professional_summary")
+  skills                Json     @default("[]")
+  experience            Json     @default("[]")
+  education             Json     @default("[]")
+  certifications        Json     @default("[]")
+  preferences           Json     @default("{}")
+  availability          Json     @default("{}")
+  completionScore       Int      @default(0) @map("completion_score")
+  visibility            String   @default("public") @map("visibility")
+  isActive              Boolean  @default(true) @map("is_active")
+  isPublic              Boolean  @default(true) @map("is_public")
+  allowSearch           Boolean  @default(true) @map("allow_search")
+  allowDirectContact    Boolean  @default(false) @map("allow_direct_contact")
+  anonymousMatching     Boolean  @default(false) @map("anonymous_matching")
+  dataRetentionPeriod   Int      @default(365) @map("data_retention_period")
+  lastProfileView       DateTime? @map("last_profile_view")
+  profileViews          Int      @default(0) @map("profile_views")
+  searchRanking         Float    @default(0.0) @map("search_ranking")
+  verificationStatus    String   @default("unverified") @map("verification_status")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user                  User       @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  matchResults          MatchResult[]
+  profileEmbeddings     ProfileEmbedding[]
+
+  @@index([userId])
+  @@index([completionScore])
+  @@index([visibility])
+  @@index([isActive])
+  @@index([searchRanking])
+  @@map("candidate_profiles")
+}
+
+// Enhanced Job Profiles for Matching
+model JobProfile {
+  id                    String   @id @default(cuid()) @map("id")
+  jobId                 String   @unique @map("job_id")
+  employerId            String   @map("employer_id")
+  title                 String
+  description           String
+  requirements          Json     @default("{}")
+  preferences           Json     @default("{}")
+  compensation          Json     @default("{}")
+  companyInfo           Json     @default("{}")
+  location              Json     @default("{}")
+  metadata              Json     @default("{}")
+  isActive              Boolean  @default(true) @map("is_active")
+  isFeatured            Boolean  @default(false) @map("is_featured")
+  applicationCount      Int      @default(0) @map("application_count")
+  viewCount             Int      @default(0) @map("view_count")
+  searchRanking         Float    @default(0.0) @map("search_ranking")
+  postedDate            DateTime @default(now()) @map("posted_date")
+  expiryDate            DateTime? @map("expiry_date")
+  urgency               String   @default("medium") @map("urgency")
+  lastUpdated           DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  job                   Job        @relation(fields: [jobId], references: [jobId], onDelete: Cascade)
+  employer              User       @relation(fields: [employerId], references: [uid])
+  matchResults          MatchResult[]
+  profileEmbeddings     ProfileEmbedding[]
+
+  @@index([jobId])
+  @@index([employerId])
+  @@index([isActive])
+  @@index([searchRanking])
+  @@index([postedDate])
+  @@index([expiryDate])
+  @@map("job_profiles")
+}
+
+// Enhanced Match Results with Detailed Scoring
+model MatchResult {
+  id                    String   @id @default(cuid()) @map("id")
+  candidateId           String   @map("candidate_id")
+  jobId                 String   @map("job_id")
+  score                 Float
+  breakdown             Json     // ScoreBreakdown
+  explanation           Json     // MatchExplanation
+  confidence            Float
+  status                String   @default("new")
+  feedback              Json?    // MatchFeedback
+  recommendationSource  String?  @map("recommendation_source")
+  algorithmVersion      String?  @map("algorithm_version")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  candidateProfile      CandidateProfile @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  jobProfile            JobProfile       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([candidateId, jobId])
+  @@index([candidateId])
+  @@index([jobId])
+  @@index([score])
+  @@index([status])
+  @@index([createdAt])
+  @@map("match_results")
+}
+
+// User Interactions for ML Training
+model UserInteraction {
+  id                    String   @id @default(cuid()) @map("id")
+  userId                String   @map("user_id")
+  interactionType       String   @map("interaction_type")
+  targetType            String   @map("target_type")
+  targetId              String   @map("target_id")
+  metadata              Json?
+  sessionId             String?  @map("session_id")
+  timestamp             DateTime @default(now())
+
+  // Relationships
+  user                  User             @relation(fields: [userId], references: [uid], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([interactionType])
+  @@index([targetType])
+  @@index([targetId])
+  @@index([timestamp])
+  @@index([sessionId])
+  @@map("user_interactions")
+}
+
+// ML Models for Version Management
+model MLModel {
+  id                    String   @id @default(cuid()) @map("id")
+  name                  String
+  version               String
+  type                  String
+  accuracy              Float?
+  features              Json
+  modelData             Bytes?
+  isActive              Boolean  @default(false) @map("is_active")
+  trainedAt             DateTime? @map("trained_at")
+  lastEvaluated         DateTime? @map("last_evaluated")
+  metrics               Json?    // ModelMetrics
+  hyperparameters       Json?
+  trainingDataSize      Int?     @map("training_data_size")
+  validationDataSize    Int?     @map("validation_data_size")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@index([name])
+  @@index([type])
+  @@index([isActive])
+  @@index([trainedAt])
+  @@map("ml_models")
+}
+
+// Profile Embeddings for Vector Search
+model ProfileEmbedding {
+  id                    String   @id @default(cuid()) @map("id")
+  profileId             String   @map("profile_id")
+  profileType           String   @map("profile_type") // 'candidate' or 'job'
+  embedding             Float[]  // Vector representation
+  metadata              Json
+  model                 String   // Model used for embedding
+  dimensions            Int
+  confidence            Float?
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  candidateProfile      CandidateProfile? @relation(fields: [profileId], references: [id], onDelete: Cascade, map: "candidate_profile_embedding_fkey")
+  jobProfile            JobProfile?       @relation(fields: [profileId], references: [id], onDelete: Cascade, map: "job_profile_embedding_fkey")
+
+  @@index([profileId])
+  @@index([profileType])
+  @@index([model])
+  @@index([createdAt])
+  @@map("profile_embeddings")
+}
+
+// Recommendations Storage
+model Recommendation {
+  id                    String   @id @default(cuid()) @map("id")
+  userId                String   @map("user_id")
+  targetId              String   @map("target_id")
+  type                  String   // RecommendationType
+  score                 Float
+  reason                String
+  metadata              Json     // RecommendationMetadata
+  strategy              String   @map("recommendation_strategy")
+  isActive              Boolean  @default(true) @map("is_active")
+  isViewed              Boolean  @default(false) @map("is_viewed")
+  isClicked             Boolean  @default(false) @map("is_clicked")
+  isSaved               Boolean  @default(false) @map("is_saved")
+  isDismissed           Boolean  @default(false) @map("is_dismissed")
+  feedback              Json?
+  expiresAt             DateTime? @map("expires_at")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([targetId])
+  @@index([type])
+  @@index([score])
+  @@index([strategy])
+  @@index([isActive])
+  @@index([expiresAt])
+  @@map("recommendations")
+}
+
+// Batch Processing Jobs
+model BatchMatchJob {
+  id                    String   @id @default(cuid()) @map("id")
+  type                  String   // BatchMatchType
+  profileIds            String[] @map("profile_ids")
+  status                String   @default("queued") // BatchMatchStatus
+  progress              Float    @default(0.0)
+  totalProfiles         Int      @map("total_profiles")
+  processedProfiles     Int      @default(0) @map("processed_profiles")
+  results               Json?    // MatchResult[]
+  error                 String?
+  priority              Int      @default(0)
+  createdBy             String   @map("created_by")
+  startedAt             DateTime? @map("started_at")
+  completedAt           DateTime? @map("completed_at")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@index([type])
+  @@index([status])
+  @@index([priority])
+  @@index([createdBy])
+  @@index([createdAt])
+  @@map("batch_match_jobs")
+}
+
+// Matching Analytics and Metrics
+model MatchingAnalytics {
+  id                    String   @id @default(cuid()) @map("id")
+  date                  DateTime @default(now())
+  totalMatches          Int      @default(0) @map("total_matches")
+  averageScore          Float    @default(0.0) @map("average_score")
+  matchConversionRate   Float    @default(0.0) @map("match_conversion_rate")
+  userSatisfaction      Float    @default(0.0) @map("user_satisfaction")
+  algorithmAccuracy     Float    @default(0.0) @map("algorithm_accuracy")
+  averageResponseTime   Float    @default(0.0) @map("average_response_time")
+  totalRecommendations  Int      @default(0) @map("total_recommendations")
+  recommendationCTR     Float    @default(0.0) @map("recommendation_ctr")
+  activeUsers           Int      @default(0) @map("active_users")
+  newProfiles           Int      @default(0) @map("new_profiles")
+  newJobs               Int      @default(0) @map("new_jobs")
+  metadata              Json?
+
+  @@unique([date])
+  @@index([date])
+  @@map("matching_analytics")
+}

@@ -1,0 +1,68 @@
+// Jobs Schema - Job Management and Categories
+// This file contains job posting and category models
+
+// Job Management
+model Job {
+  jobId         String   @id @default(cuid()) @map("job_id")
+  title         String
+  companyId     String   @map("company_id")
+  employerId    String   @map("employer_id")
+  categoryId    String?  @map("category_id")
+  description   String
+  requirements  Json
+  location      String?
+  salary        Json?
+  status        JobStatus
+  applicantCount Int     @default(0) @map("applicant_count")
+  isRemote      Boolean  @default(false) @map("is_remote")
+  experienceLevel String? @map("experience_level")
+  employmentType String? @map("employment_type")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  expiresAt     DateTime? @map("expires_at")
+
+  // Added admin relation fields
+  adminProfileId String? @map("admin_profile_id")
+
+  // Relationships
+  company       Company        @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
+  employer      EmployerProfile @relation(fields: [employerId], references: [employerId], onDelete: Cascade)
+  category      JobCategory?   @relation(fields: [categoryId], references: [categoryId])
+  adminProfile  AdminProfile?  @relation(fields: [adminProfileId], references: [adminId])
+  applications  JobApplication[]
+  savedJobs     SavedJob[]
+  matches       Match[]
+  jobProfile    JobProfile?
+}
+
+model JobCategory {
+  categoryId      String   @id @default(cuid()) @map("category_id")
+  name            String   @unique
+  description     String?
+  slug            String   @unique
+  icon            String?
+  color           String?
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  jobs            Job[]
+
+  @@map("job_category")
+}
+
+model Match {
+  matchId      String   @id @default(cuid()) @map("match_id")
+  jobId        String   @map("job_id")
+  candidateId  String   @map("candidate_id")
+  score        Float
+  criteria     Json
+  status       MatchStatus
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  job          Job      @relation(fields: [jobId], references: [jobId], onDelete: Cascade)
+  candidate    User     @relation(fields: [candidateId], references: [uid])
+}

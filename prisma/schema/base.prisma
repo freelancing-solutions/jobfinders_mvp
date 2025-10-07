@@ -1,0 +1,77 @@
+// Base Prisma Schema - Core Configuration and User Model
+// This file contains core configuration, enums, and the base User model
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Core Enums
+enum JobStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+  PAUSED
+  EXPIRED
+  DELETED
+}
+
+enum ApplicationStatus {
+  APPLIED
+  REVIEWING
+  SHORTLISTED
+  REJECTED
+  HIRED
+}
+
+enum MatchStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+// Core User Management
+model User {
+  uid              String   @id @default(cuid()) @map("id")
+  email           String   @unique
+  passwordHash    String?  @map("password_hash")
+  name            String?
+  role            String   @default("seeker") // seeker, employer, admin
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  lastLogin       DateTime? @map("last_login")
+  lastPasswordChange DateTime? @map("last_password_change")
+
+  // Relationships
+  jobSeekerProfile JobSeekerProfile?
+  employerProfile  EmployerProfile?
+  adminProfile     AdminProfile?
+  resumes         Resume[]
+  matches         Match[]
+  passwordResetTokens PasswordResetToken[]
+
+  // New matching relationships
+  candidateProfile CandidateProfile?
+  jobProfiles     JobProfile[]
+  userInteractions UserInteraction[]
+
+  // Notification system relationships
+  notifications   Notification[]
+  notificationPreferences NotificationPreference?
+
+  // Analytics relationships
+  analyticsEvents AnalyticsEvent[]
+  userJourneys    UserJourney[]
+
+  // Template system relationships
+  templateCustomizations ResumeTemplateCustomization[]
+  templateUsage ResumeTemplateUsage[]
+  templateHistory ResumeTemplateHistory[]
+
+  @@map("users")
+}

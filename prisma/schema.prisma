@@ -10,13 +10,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// User Role Enum for type safety
+enum UserRole {
+  JOB_SEEKER
+  EMPLOYER
+  ADMIN
+}
+
 // Core User Management
 model User {
   uid              String   @id @default(cuid()) @map("id")
   email           String   @unique
   passwordHash    String?  @map("password_hash")
   name            String?
-  role            String   @default("seeker") // seeker, employer, admin
+  role            UserRole @default(JOB_SEEKER) // Use enum instead of string
   isActive        Boolean  @default(true) @map("is_active")
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")

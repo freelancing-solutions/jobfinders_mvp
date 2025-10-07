@@ -1110,7 +1110,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let hash = 0;
     for (let i = 0; i < contentString.length; i++) {
       const char = contentString.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char) & 0xffffffff;
+      hash = ((hash << 5) - hash) + char & 0xffffffff;
     }
     return hash.toString(16);
   }

@@ -1,0 +1,37 @@
+// Authentication Schema - Password Reset and Email Verification Models
+// This file contains authentication-related models
+
+// Password Reset Tokens
+model PasswordResetToken {
+  id          String   @id @default(cuid())
+  token       String   @unique // hashed token
+  userId      String   @map("user_uid")
+  user        User     @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  expiresAt   DateTime @map("expires_at")
+  used        Boolean  @default(false)
+  usedAt      DateTime? @map("used_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("password_reset_tokens")
+}
+
+// Email Logs
+model EmailLog {
+  id          String   @id @default(cuid())
+  to          String
+  subject     String
+  type        String   // 'password_reset', 'welcome', etc.
+  status      String   // 'sent', 'failed', 'pending'
+  resendId    String?  @map("resend_id") // Resend message ID
+  error       String?
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([to])
+  @@index([type])
+  @@index([createdAt])
+  @@map("email_logs")
+}

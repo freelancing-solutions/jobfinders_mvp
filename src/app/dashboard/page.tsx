@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { hasEmployerAccess } from '@/types/roles';
 import { JobRecommendations } from '@/components/matching/job-recommendations'
 import {
   Briefcase,
@@ -84,7 +85,7 @@ export default function Dashboard() {
 
     // Redirect if not a job seeker
     if (!userLoading && user && !isJobSeeker) {
-      router.push(user.role === 'EMPLOYER' ? '/employer/dashboard' : '/admin/dashboard')
+      router.push(hasEmployerAccess(user.role) ? '/employer/dashboard' : '/admin/dashboard')
       return
     }
 

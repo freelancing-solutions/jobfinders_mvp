@@ -1,3 +1,8 @@
+/**
+ * Authentication configuration for NextAuth.js
+ * Provides credential-based authentication with role-based access control
+ */
+
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
@@ -14,52 +19,57 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null
-        }
-
-        const user = await db.user.findUnique({
-          where: {
-            email: credentials.email
-          },
-          include: {
-            jobSeekerProfile: true,
-            employerProfile: true,
-            adminProfile: true
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            return null
           }
-        })
 
-        if (!user || !user.passwordHash) {
+          const user = await db.user.findUnique({
+            where: {
+              email: credentials.email
+            },
+            include: {
+              jobSeekerProfile: true,
+              employerProfile: true,
+              adminProfile: true
+            }
+          })
+
+          if (!user || !user.passwordHash) {
+            return null
+          }
+
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password,
+            user.passwordHash
+          )
+
+          if (!isPasswordValid) {
+            return null
+          }
+
+          if (!user.isActive) {
+            throw new Error('Account is deactivated')
+          }
+
+          // Update last login
+          await db.user.update({
+            where: { uid: user.uid },
+            data: { lastLogin: new Date() }
+          })
+
+          return {
+            id: user.uid,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            jobSeekerProfile: user.jobSeekerProfile,
+            employerProfile: user.employerProfile,
+            adminProfile: user.adminProfile
+          }
+        } catch (error) {
+          console.error('Authorization error:', error)
           return null
-        }
-
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.passwordHash
-        )
-
-        if (!isPasswordValid) {
-          return null
-        }
-
-        if (!user.isActive) {
-          throw new Error('Account is deactivated')
-        }
-
-        // Update last login
-        await db.user.update({
-          where: { uid: user.uid },
-          data: { lastLogin: new Date() }
-        })
-
-        return {
-          id: user.uid,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          jobSeekerProfile: user.jobSeekerProfile,
-          employerProfile: user.employerProfile,
-          adminProfile: user.adminProfile
         }
       }
     })
@@ -69,23 +79,33 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
-        token.role = user.role
-        token.jobSeekerProfile = user.jobSeekerProfile
-        token.employerProfile = user.employerProfile
-        token.adminProfile = user.adminProfile
+      try {
+        if (user) {
+          token.role = user.role
+          token.jobSeekerProfile = user.jobSeekerProfile
+          token.employerProfile = user.employerProfile
+          token.adminProfile = user.adminProfile
+        }
+        return token
+      } catch (error) {
+        console.error('JWT callback error:', error)
+        return token
       }
-      return token
     },
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.sub!
-        session.user.role = token.role as string
-        session.user.jobSeekerProfile = token.jobSeekerProfile
-        session.user.employerProfile = token.employerProfile
-        session.user.adminProfile = token.adminProfile
+      try {
+        if (token) {
+          session.user.id = token.sub || ''
+          session.user.role = (token.role as string) || ''
+          session.user.jobSeekerProfile = token.jobSeekerProfile || null
+          session.user.employerProfile = token.employerProfile || null
+          session.user.adminProfile = token.adminProfile || null
+        }
+        return session
+      } catch (error) {
+        console.error('Session callback error:', error)
+        return session
       }
-      return session
     }
   },
   pages: {

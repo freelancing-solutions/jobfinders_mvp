@@ -1,0 +1,143 @@
+// Resumes Schema - Resume/CV Management
+// This file contains resume and related experience/education models
+
+// Resume Management
+model Resume {
+  resumeId        String   @id @default(cuid()) @map("resume_id")
+  userUid         String   @map("user_uid")
+  isPrimary       Boolean  @default(false) @map("is_primary")
+  professionalTitle String @map("professional_title")
+  summary         String?
+  skills          Json?    // Array of skills
+  portfolioLinks  Json?    @map("portfolio_links")
+  resumeFileUrl   String?  @map("resume_file_url")
+  profileImageUrl String?  @map("profile_image_url")
+  location        String?
+  phone           String?
+  website         String?
+  linkedin        String?
+  github          String?
+
+  // Template integration fields
+  templateId              String?  @map("template_id")
+  templateCustomizationId String?  @map("template_customization_id")
+  templateData            Json?    @map("template_data") // Template metadata and settings
+  integrationMetadata     Json?    @map("integration_metadata") // Template history and analytics
+
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user            User            @relation(fields: [userUid], references: [uid], onDelete: Cascade)
+  applications    JobApplication[]
+  experience      Experience[]
+  education       Education[]
+  certifications  Certification[]
+  languages       Language[]
+  projects        Project[]
+
+  // New template relationships
+  template                ResumeTemplate?         @relation(fields: [templateId], references: [templateId], onDelete: SetNull)
+  templateCustomization   ResumeTemplateCustomization?
+  templateHistory         ResumeTemplateHistory[]
+  templateUsage           ResumeTemplateUsage[]
+
+  @@map("jobseeker_cvs")
+}
+
+// Experience
+model Experience {
+  experienceId    String   @id @default(cuid()) @map("experience_id")
+  resumeId        String   @map("resume_id")
+  company         String
+  position        String
+  startDate       DateTime @map("start_date")
+  endDate         DateTime? @map("end_date")
+  isCurrent       Boolean  @default(false) @map("is_current")
+  description     String?
+  location        String?
+  skills          Json?    // Array of skills gained
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  resume          Resume @relation(fields: [resumeId], references: [resumeId], onDelete: Cascade)
+
+  @@map("experience")
+}
+
+// Education
+model Education {
+  educationId     String   @id @default(cuid()) @map("education_id")
+  resumeId        String   @map("resume_id")
+  institution     String
+  degree          String
+  field           String?
+  startDate       DateTime @map("start_date")
+  endDate         DateTime? @map("end_date")
+  isCurrent       Boolean  @default(false) @map("is_current")
+  gpa             Float?
+  description     String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  resume          Resume @relation(fields: [resumeId], references: [resumeId], onDelete: Cascade)
+
+  @@map("education")
+}
+
+// Certifications
+model Certification {
+  certificationId String   @id @default(cuid()) @map("certification_id")
+  resumeId        String   @map("resume_id")
+  name            String
+  issuer          String
+  issueDate       DateTime @map("issue_date")
+  expiryDate      DateTime? @map("expiry_date")
+  credentialId    String?  @map("credential_id")
+  credentialUrl   String?  @map("credential_url")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  resume          Resume @relation(fields: [resumeId], references: [resumeId], onDelete: Cascade)
+
+  @@map("certifications")
+}
+
+// Languages
+model Language {
+  languageId      String   @id @default(cuid()) @map("language_id")
+  resumeId        String   @map("resume_id")
+  language        String
+  proficiency     String   // beginner, intermediate, advanced, native
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  resume          Resume @relation(fields: [resumeId], references: [resumeId], onDelete: Cascade)
+
+  @@map("languages")
+}
+
+// Projects
+model Project {
+  projectId       String   @id @default(cuid()) @map("project_id")
+  resumeId        String   @map("resume_id")
+  title           String
+  description     String?
+  technologies    Json?    // Array of technologies used
+  projectUrl      String?  @map("project_url")
+  githubUrl       String?  @map("github_url")
+  startDate       DateTime @map("start_date")
+  endDate         DateTime? @map("end_date")
+  isCurrent       Boolean  @default(false) @map("is_current")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  resume          Resume @relation(fields: [resumeId], references: [resumeId], onDelete: Cascade)
+
+  @@map("projects")
+}

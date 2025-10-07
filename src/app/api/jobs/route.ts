@@ -4,7 +4,7 @@ import { db } from '@/lib/db'
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    
+
     // Extract query parameters
     const query = searchParams.get('query') || ''
     const location = searchParams.get('location') || ''
@@ -286,6 +286,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { error: 'Failed to create job' },
       { status: 500 }
-    )
+    );
   }
 }

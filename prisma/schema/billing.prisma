@@ -1,0 +1,76 @@
+// Billing Schema - Billing System and Invoices
+// This file contains billing plan, invoice, and payment models
+
+// Billing System
+model BillingPlan {
+  planId          String   @id @default(cuid()) @map("plan_id")
+  name            String
+  description     String?
+  price           Float
+  currency        String   @default("ZAR")
+  durationDays    Int      @default(30) @map("duration_days")
+  isActive        Boolean  @default(true) @map("is_active")
+  isFeatured      Boolean  @default(false) @map("is_featured")
+  isTrial         Boolean  @default(false) @map("is_trial")
+
+  // Features
+  maxOpenJobs     Int?     @map("max_open_jobs")
+  maxUsers        Int?     @map("max_users")
+  maxApplicantsPerJob Int? @map("max_applicants_per_job")
+  allowPrioritySupport Boolean @default(false) @map("allow_priority_support")
+  showBranding    Boolean  @default(true) @map("show_branding")
+
+  sortOrder       Int      @default(0) @map("sort_order")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  billingProfiles CompanyBillingProfile[]
+  invoices        Invoice[]
+
+  @@map("billing_plan")
+}
+
+model CompanyBillingProfile {
+  profileId       String   @id @default(cuid()) @map("profile_id")
+  companyId       String   @map("company_id")
+  planId          String   @map("plan_id")
+  isActive        Boolean  @default(true) @map("is_active")
+  subscriptionStart DateTime @map("subscription_start")
+  subscriptionEnd DateTime @map("subscription_end")
+  autoRenew       Boolean  @default(true) @map("auto_renew")
+  paymentMethod   Json?    @map("payment_method")
+  billingEmail    String?  @map("billing_email")
+  billingAddress  Json?    @map("billing_address")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  company         Company     @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
+  billingPlan     BillingPlan @relation(fields: [planId], references: [planId], onDelete: Cascade)
+  invoices        Invoice[]
+
+  @@map("company_billing_profiles")
+}
+
+model Invoice {
+  invoiceId       String   @id @default(cuid()) @map("invoice_id")
+  companyBillingProfileId String @map("company_billing_profile_id")
+  planId          String   @map("plan_id")
+  invoiceNumber   String   @unique @map("invoice_number")
+  amount          Float
+  currency        String   @default("ZAR")
+  status          String   @default("pending") // pending, paid, overdue, cancelled
+  dueDate         DateTime @map("due_date")
+  paidAt          DateTime? @map("paid_at")
+  paymentMethod   String?  @map("payment_method")
+  paymentReference String? @map("payment_reference")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  billingProfile  CompanyBillingProfile @relation(fields: [companyBillingProfileId], references: [profileId], onDelete: Cascade)
+  billingPlan    BillingPlan @relation(fields: [planId], references: [planId], onDelete: Cascade)
+
+  @@map("invoices")
+}

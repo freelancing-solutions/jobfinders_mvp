@@ -14,8 +14,8 @@ import {
   ValidationResult
 } from '@/types/template';
 import { TemplateEngineErrorFactory } from './errors';
-import { StyleProcessor } from './style-processor';
-import { ATSOptimizer } from './ats-optimizer';
+// import { StyleProcessor } from './style-processor';
+import { ATSOptimizer } from './ats/ats-optimization-engine';
 
 export interface CustomizationResult {
   customizedTemplate: ResumeTemplate;
@@ -48,14 +48,14 @@ export interface ATSImpact {
 
 export class TemplateCustomizer {
   private config: TemplateSystemConfig;
-  private styleProcessor: StyleProcessor;
+  // private styleProcessor: StyleProcessor;
   private atsOptimizer: ATSOptimizer;
   private predefinedThemes: ColorTheme[];
   private predefinedFonts: FontFamily[];
 
   constructor(config: TemplateSystemConfig) {
     this.config = config;
-    this.styleProcessor = new StyleProcessor();
+    // this.styleProcessor = new StyleProcessor();
     this.atsOptimizer = new ATSOptimizer();
     this.predefinedThemes = this.initializeThemes();
     this.predefinedFonts = this.initializeFonts();

@@ -1,3 +1,8 @@
+/**
+ * Root layout component for the Job Finders application
+ * Provides the base HTML structure, font configuration, and global providers
+ */
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -33,6 +38,11 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Root layout component that wraps the entire application
+ * @param children - The child components to render
+ * @returns The root layout with providers and global styling
+ */
 export default function RootLayout({
   children,
 }: Readonly<{

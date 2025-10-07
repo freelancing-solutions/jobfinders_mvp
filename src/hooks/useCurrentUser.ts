@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
+import { UserRole, hasJobSeekerAccess, hasEmployerAccess, hasAdminAccess } from '../types/roles'
 
 // TypeScript interfaces for user data
 export interface JobSeekerProfile {
@@ -150,10 +151,10 @@ export function useCurrentUser() {
     // Actions
     refetch,
     
-    // Convenience getters
-    isJobSeeker: user?.role === 'SEEKER',
-    isEmployer: user?.role === 'EMPLOYER',
-    isAdmin: user?.role === 'ADMIN',
+    // Convenience getters using proper role helpers
+    isJobSeeker: hasJobSeekerAccess(user?.role || ''),
+    isEmployer: hasEmployerAccess(user?.role || ''),
+    isAdmin: hasAdminAccess(user?.role || ''),
     
     // Profile helpers
     jobSeekerProfile: user?.profile?.type === 'jobSeeker' ? user.profile : null,

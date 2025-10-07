@@ -17,6 +17,7 @@ import {
   Info,
   Mail,
 } from 'lucide-react';
+import { UserRole, LegacyUserRole, hasJobSeekerAccess, hasEmployerAccess, hasAdminAccess } from '../types/roles';
 
 export interface NavigationItem {
   href: string;
@@ -231,11 +232,12 @@ export function getNavigationItems(
 
   let navigationItems: NavigationItem[] = [];
 
-  if (role === 'SEEKER') {
+  // Use proper role helper functions instead of string comparisons
+  if (hasJobSeekerAccess(role)) {
     navigationItems = [...jobSeekerNavigationItems];
-  } else if (role === 'EMPLOYER') {
+  } else if (hasEmployerAccess(role)) {
     navigationItems = [...employerNavigationItems];
-  } else if (role === 'ADMIN') {
+  } else if (hasAdminAccess(role)) {
     navigationItems = [...adminNavigationItems];
   }
 

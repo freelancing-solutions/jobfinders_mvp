@@ -1,0 +1,114 @@
+// Company Schema - Company and Employer Management
+// This file contains company and employer profile models
+
+// Job Seeker Profile
+model JobSeekerProfile {
+  userUid         String   @id @map("user_uid")
+  professionalTitle String?  @map("professional_title")
+  summary         String?
+  skills          Json?    // Array of skills
+  experienceYears Int?     @map("experience_years")
+  location        String?
+  phone           String?
+  website         String?
+  linkedin        String?
+  github          String?
+  portfolioLinks  Json?    // Array of portfolio links
+  resumeFileUrl   String?  @map("resume_file_url")
+  profileImageUrl String?  @map("profile_image_url")
+  remoteWorkPreference Boolean? @map("remote_work_preference")
+  salaryExpectationMin Float? @map("salary_expectation_min")
+  salaryExpectationMax Float? @map("salary_expectation_max")
+  currency        String   @default("ZAR")
+  availability    String?  // immediate, 2_weeks, 1_month, 3_months
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user            User           @relation(fields: [userUid], references: [uid], onDelete: Cascade)
+  applications    JobApplication[]
+  savedJobs       SavedJob[]
+
+  @@map("jobseeker_profiles")
+}
+
+// Employer Profile
+model EmployerProfile {
+  employerId      String   @id @default(cuid()) @map("employer_id")
+  userUid         String   @unique @map("user_uid")
+  companyId       String   @map("company_id")
+  isVerified      Boolean  @default(false) @map("is_verified")
+  isAdmin         Boolean  @default(false) @map("is_admin")
+  verificationToken String? @map("verification_token")
+  verificationTokenExpiresAt DateTime? @map("verification_token_expires_at")
+  fullName        String?  @map("full_name")
+  jobTitle        String?  @map("job_title") @default("Human Resource")
+  profilePictureUrl String? @map("profile_picture_url")
+  bio             String?
+  companyEmail    String?  @map("company_email")
+  personalEmail   String?  @map("personal_email")
+  phoneNumber     String?  @map("phone_number")
+  alternatePhone  String?  @map("alternate_phone")
+  linkedinUrl     String?  @map("linkedin_url")
+  twitterHandle   String?  @map("twitter_handle")
+  department      String?
+  hireDate        DateTime? @map("hire_date")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user            User           @relation(fields: [userUid], references: [uid], onDelete: Cascade)
+  company         Company        @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
+  jobs            Job[]
+
+  @@map("employers")
+}
+
+// Admin Profile
+model AdminProfile {
+  adminId         String   @id @default(cuid()) @map("admin_id")
+  userUid         String   @unique @map("user_uid")
+  permissions     Json?    // Array of admin permissions
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user            User     @relation(fields: [userUid], references: [uid], onDelete: Cascade)
+  jobs            Job[]
+
+  @@map("admin")
+}
+
+// Company Management
+model Company {
+  companyId       String   @id @default(cuid()) @map("company_id")
+  name            String   @unique
+  description     String?
+  industry        String?
+  website         String?
+  logoUrl         String?  @map("logo_url")
+  city            String?
+  province        String?
+  country         String?
+  contactEmail    String?  @map("contact_email")
+  phoneNumber     String?  @map("phone_number")
+  billingEmail    String?  @map("billing_email")
+  sendInvoiceEmails Boolean @default(true) @map("send_invoice_emails")
+  sendTrialReminders Boolean @default(true) @map("send_trial_reminders")
+  employeeCount   Int?     @map("employee_count")
+  foundedYear     Int?     @map("founded_year")
+  techStack       Json?    // Array of technologies
+  linkedinUrl     String?  @map("linkedin_url")
+  twitterHandle   String?  @map("twitter_handle")
+  isVerified      Boolean  @default(false) @map("is_verified")
+  verificationStatus String? @map("verification_status") // pending, verified, rejected
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  employers       EmployerProfile[]
+  jobs            Job[]
+  billingProfiles  CompanyBillingProfile[]
+
+  @@map("companies")
+}

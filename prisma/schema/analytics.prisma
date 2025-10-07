@@ -1,0 +1,67 @@
+// Analytics Schema - Analytics and Tracking Models
+// This file contains analytics events, user journeys, and AI session models
+
+// AI & Analytics
+model AgentSession {
+  sessionId       String   @id @default(cuid()) @map("session_id")
+  agentName       String   @map("agent_name")
+  contextData    Json?    @map("context_data")
+  userId          String?  @map("user_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("agent_sessions")
+}
+
+// Individual analytics events for detailed tracking
+model AnalyticsEvent {
+  id              String   @id @default(cuid())
+  eventType       String   @map("event_type") // sent, delivered, opened, clicked, bounced, failed, unsubscribed, spam_reported
+  notificationId  String   @map("notification_id")
+  userId          String   @map("user_id")
+  channel         String   // email, sms, push, in_app, web
+  timestamp       DateTime @default(now())
+  metadata        Json?    // Additional event data
+  campaignId      String?  @map("campaign_id")
+  templateId      String?  @map("template_id")
+  deviceInfo      Json?    @map("device_info") // platform, device, browser, os
+  locationInfo    Json?    @map("location_info") // country, region, city, timezone
+
+  // Relationships
+  notification    Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User @relation(fields: [userId], references: [uid], onDelete: Cascade)
+
+  @@index([eventType])
+  @@index([notificationId])
+  @@index([userId])
+  @@index([channel])
+  @@index([timestamp])
+  @@index([campaignId])
+  @@index([templateId])
+  @@map("analytics_events")
+}
+
+// User journey tracking for advanced analytics
+model UserJourney {
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  sessionId       String?  @map("session_id")
+  journeyType     String   @map("journey_type") // onboarding, job_application, profile_completion, etc.
+  stepName        String   @map("step_name")
+  stepOrder       Int      @map("step_order")
+  timestamp       DateTime @default(now())
+  duration        Int?     // Time spent on this step in seconds
+  metadata        Json?    // Step-specific data
+  notificationId  String?  @map("notification_id") // If triggered by notification
+
+  // Relationships
+  user           User @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  notification   Notification? @relation(fields: [notificationId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([journeyType])
+  @@index([timestamp])
+  @@index([notificationId])
+  @@map("user_journeys")
+}
