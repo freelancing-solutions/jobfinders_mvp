@@ -385,3 +385,112 @@ export interface NetworkingEvent {
   registrationDeadline: Date;
   status: 'upcoming' | 'attended' | 'missed';
 }
+
+// Application Assistant types
+export interface ApplicationDocument {
+  id: string;
+  type: 'resume' | 'cover_letter' | 'portfolio' | 'other';
+  name: string;
+  content: string;
+  url?: string;
+  uploadedAt: Date;
+  version: number;
+  metadata?: Record<string, any>;
+}
+
+export interface ApplicationOptimization {
+  id: string;
+  documentId: string;
+  originalATSScore: number;
+  atsScore: number;
+  improvementSuggestions: Array<{
+    type: 'skills' | 'experience' | 'formatting' | 'keywords';
+    priority: 'high' | 'medium' | 'low';
+    description: string;
+    example?: string;
+  }>;
+  optimizedContent: Record<string, any>;
+  changes: Array<{
+    type: string;
+    description: string;
+    before: string;
+    after: string;
+  }>;
+  createdAt: Date;
+}
+
+export interface ApplicationStatus {
+  status: 'draft' | 'applied' | 'viewed' | 'screening' | 'interview_scheduled' |
+          'interviewing' | 'offer' | 'rejected' | 'withdrawn' | 'closed';
+  lastUpdated: Date;
+  nextSteps?: string[];
+}
+
+export interface ApplicationChecklist {
+  id: string;
+  jobId?: string;
+  applicationType: string;
+  items: Array<{
+    id: string;
+    category: 'documents' | 'profile' | 'research' | 'preparation' | 'submission';
+    item: string;
+    description: string;
+    priority: 'critical' | 'important' | 'optional';
+    completed: boolean;
+    completedAt?: Date;
+    notes?: string;
+  }>;
+  completionPercentage: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface JobPosting {
+  id: string;
+  title: string;
+  description: string;
+  requirements: string;
+  skills?: string[];
+  experienceLevel?: string;
+  salary?: {
+    min?: number;
+    max?: number;
+    currency?: string;
+  };
+  location?: string;
+  remote?: boolean;
+  company: {
+    id: string;
+    name: string;
+    description?: string;
+    industry?: string;
+    size?: string;
+  };
+  postedAt: Date;
+  deadline?: Date;
+}
+
+export interface AgentContext {
+  userId: string;
+  sessionId: string;
+  conversationHistory: any[];
+  userPreferences: Record<string, any>;
+  metadata?: Record<string, any>;
+  currentJob?: JobPosting;
+  userProfile?: any;
+}
+
+export interface AgentCapability {
+  name: string;
+  description: string;
+  enabled: boolean;
+}
+
+export interface BaseAgentConfig {
+  agentType: string;
+  version: string;
+  description: string;
+  capabilities: AgentCapability[];
+  maxTokens: number;
+  temperature: number;
+}

@@ -1,0 +1,354 @@
+// ATS (Applicant Tracking System) Schema Additions
+// Add these models to your existing Prisma schema
+
+model ATSAnalysis {
+  id                String   @id @default(cuid())
+  applicationId     String   @unique
+  overallScore      Float
+  skillsScore       Float
+  experienceScore   Float
+  educationScore    Float
+  industryScore     Float
+  confidence        Float
+  processingTime    Int      // in milliseconds
+  matchedSkills      String[] // JSON array of matched skills
+  missingSkills      String[] // JSON array of missing skills
+  recommendations    String[] // JSON array of recommendations
+  keywords           Json     // Detailed keyword analysis
+  breakdown          Json     // Detailed scoring breakdown
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Relations
+  application        Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  compliance         ATSCompliance?
+
+  @@map("ats_analyses")
+}
+
+model ATSCompliance {
+  id                String   @id @default(cuid())
+  applicationId     String   @unique
+  jobId             String?
+  status            String   // 'compliant', 'warning', 'non_compliant'
+  overallScore      Float
+  riskLevel         String   // 'low', 'medium', 'high', 'critical'
+  violations        Json     // Array of compliance violations
+  recommendations   String[] // JSON array of recommendations
+  auditTrail        String[] // JSON array of audit trail entries
+  checkResults      Json     // Detailed compliance check results
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Relations
+  application        Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  analysis           ATSAnalysis?  @relation(fields: [applicationId], references: [applicationId], onDelete: Cascade)
+  job                Job?          @relation(fields: [jobId], references: [id], onDelete: SetNull)
+
+  @@map("ats_compliance")
+}
+
+model ATSInsights {
+  id                String   @id @default(cuid())
+  jobId             String   @unique
+  totalApplications Int      @default(0)
+  averageScore      Float    @default(0)
+  complianceRate    Float    @default(0)
+  topMissingSkills  Json     // Array of { skill: string, count: number }
+  scoreDistribution Json     // Score distribution data
+  industryBreakdown Json     // Industry-specific insights
+  skillGapAnalysis  Json     // Skills gap analysis
+  recommendations   String[] // JSON array of recommendations
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  job               Job     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@map("ats_insights")
+}
+
+model JobAnalysis {
+  id                String   @id @default(cuid())
+  jobId             String   @unique
+  industry          String   // Detected industry
+  industryConfidence Float  // Confidence score for industry detection
+  keywords          Json     // Extracted keywords with categories and weights
+  complianceScore   Float?
+  riskLevel         String?
+  requiredSkills    String[] // Array of required skills
+  preferredSkills   String[] // Array of preferred skills
+  experienceLevel   String?  // Required experience level
+  educationLevel    String?  // Required education level
+  salaryRange       Json?    // Min/max salary information
+  location          String?  // Job location details
+  workMode          String?  // remote, hybrid, onsite
+  parsedAt          DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  job               Job     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@map("job_analyses")
+}
+
+model ATSSettings {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  skillWeights      Json     // Custom skill weighting configuration
+  experienceWeights Json     // Custom experience weighting
+  educationWeights  Json     // Custom education weighting
+  enableBiasDetection Boolean @default(true)
+  enableComplianceChecking Boolean @default(true)
+  customKeywords    String[] // Custom keywords to include
+  excludedKeywords  String[] // Keywords to exclude from analysis
+  industryWeights   Json     // Industry-specific weight adjustments
+  notificationSettings Json  // Notification preferences
+  reportFrequency   String   @default("weekly") // daily, weekly, monthly
+  autoAnalysisEnabled Boolean @default(true)
+  dataRetentionDays Int      @default(2555) // 7 years default
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ats_settings")
+}
+
+model ATSBulkJob {
+  id                String   @id @default(cuid())
+  userId            String
+  applicationIds    String[] // JSON array of application IDs
+  settings          Json     // Bulk processing settings
+  status            String   @default("pending") // pending, processing, completed, failed
+  priority          String   @default("medium") // low, medium, high
+  progress          Int      @default(0) // Progress percentage
+  totalApplications Int      @default(0)
+  processedCount    Int      @default(0)
+  successCount      Int      @default(0)
+  failureCount      Int      @default(0)
+  results           Json?    // Processing results
+  error             String?  // Error message if failed
+  startedAt         DateTime?
+  completedAt       DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ats_bulk_jobs")
+}
+
+model AuditLog {
+  id                String   @id @default(cuid())
+  userId            String
+  action            String   // Action performed (e.g., ATS_ANALYSIS, DATA_ACCESS)
+  resource          String   // Resource identifier (e.g., application:123)
+  details           Json     // Additional details about the action
+  ipAddress         String
+  userAgent         String
+  timestamp         DateTime @default(now())
+  sessionId         String?
+  requestId         String?
+  severity          String   @default("info") // info, warning, error, critical
+  category          String   // security, compliance, performance, user_action
+
+  // Relations
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, timestamp])
+  @@index([action, timestamp])
+  @@index([resource, timestamp])
+  @@index([timestamp])
+  @@map("audit_logs")
+}
+
+model ComplianceCheck {
+  id                String   @id @default(cuid())
+  jobId             String?
+  userId            String?
+  text              String   // Text that was checked
+  report            Json     // Full compliance report
+  status            String   // Overall compliance status
+  overallScore      Float
+  riskLevel         String
+  jurisdiction      String[] // Applicable jurisdictions
+  checkedAt         DateTime @default(now())
+  createdAt         DateTime @default(now())
+
+  // Relations
+  job               Job?    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@map("compliance_checks")
+}
+
+model SkillEmbedding {
+  id                String   @id @default(cuid())
+  skill             String   @unique
+  embedding         Float[]  // Vector representation for semantic similarity
+  category          String   // technical, soft, certification, etc.
+  weight            Float    @default(1.0)
+  frequency         Int      @default(0) // How often this skill appears
+  demand            Float    @default(0) // Current market demand
+  industry          String[] // Industries where this skill is relevant
+  synonyms          String[] // Alternative terms for this skill
+  relatedSkills     String[] // Related skills
+  lastUpdated       DateTime @default(now())
+  createdAt         DateTime @default(now())
+
+  @@map("skill_embeddings")
+}
+
+model IndustryConfig {
+  id                String   @id @default(cuid())
+  industry          String   @unique
+  category          String
+  keywords          Json     // Industry-specific keywords
+  weighting         Json     // Scoring weights for this industry
+  complianceRules   Json     // Industry-specific compliance rules
+  certifications    String[] // Relevant certifications
+  tools             String[] // Industry-specific tools
+  experienceLevels  Json     // Experience level definitions
+  educationLevels   Json     // Education level definitions
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("industry_configs")
+}
+
+model ComplianceRule {
+  id                String   @id @default(cuid())
+  name              String   @unique
+  category          String   // eeoc, gdpr, ada, bias, etc.
+  description       String
+  severity          String   // low, medium, high, critical
+  jurisdiction      String[] // Applicable jurisdictions
+  industry          String[] // Relevant industries
+  ruleDefinition    Json     // Rule logic and parameters
+  isActive          Boolean  @default(true)
+  version           String   @default("1.0.0")
+  lastUpdated       DateTime @default(now())
+  createdAt         DateTime @default(now())
+
+  @@map("compliance_rules")
+}
+
+model BiasDetection {
+  id                String   @id @default(cuid())
+  textId            String   // Reference to the analyzed text
+  textType          String   // job, resume, application
+  biasedTerms       Json     // Array of detected biased terms
+  biasScore         Float    // Overall bias score (0-1)
+  biasCategories    Json     // Bias categories and scores
+  recommendations   String[] // Suggestions to reduce bias
+  reviewedBy        String?  // User who reviewed the detection
+  reviewStatus      String?  // approved, rejected, needs_review
+  reviewNotes       String?
+  detectedAt        DateTime @default(now())
+  createdAt         DateTime @default(now())
+
+  @@index([textType, biasScore])
+  @@index([reviewStatus])
+  @@map("bias_detections")
+}
+
+model ATSTemplate {
+  id                String   @id @default(cuid())
+  name              String
+  description       String
+  type              String   // job_description, evaluation_criteria, etc.
+  industry          String?
+  content           Json     // Template content structure
+  variables         Json     // Template variables and defaults
+  isActive          Boolean  @default(true)
+  usageCount        Int      @default(0)
+  createdBy         String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  creator           User     @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@map("ats_templates")
+}
+
+model ATSReport {
+  id                String   @id @default(cuid())
+  userId            String
+  reportType        String   // analytics, compliance, performance, etc.
+  title             String
+  description       String?
+  parameters        Json     // Report parameters and filters
+  data              Json     // Report data
+  format            String   @default("json") // json, pdf, csv
+  status            String   @default("generating") // generating, completed, failed
+  filePath          String?  // Path to generated file
+  fileSize          Int?     // File size in bytes
+  generatedAt       DateTime?
+  expiresAt         DateTime?
+  createdAt         DateTime @default(now())
+
+  // Relations
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ats_reports")
+}
+
+model ATSNotification {
+  id                String   @id @default(cuid())
+  userId            String
+  type              String   // compliance_alert, analysis_complete, report_ready, etc.
+  title             String
+  message           String
+  data              Json?    // Additional notification data
+  isRead            Boolean  @default(false)
+  priority          String   @default("medium") // low, medium, high, urgent
+  actionUrl         String?  // URL for action button
+  actionText        String?  // Text for action button
+  expiresAt         DateTime?
+  createdAt         DateTime @default(now())
+
+  // Relations
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([type, createdAt])
+  @@map("ats_notifications")
+}
+
+// Update existing User model
+model User {
+  // ... existing fields ...
+
+  // Add ATS-related relations
+  atsSettings       ATSSettings?
+  atsBulkJobs       ATSBulkJob[]
+  auditLogs         AuditLog[]
+  complianceChecks  ComplianceCheck[]
+  atsReports        ATSReport[]
+  atsNotifications  ATSNotification[]
+  atsTemplates      ATSTemplate[]
+}
+
+// Update existing Job model
+model Job {
+  // ... existing fields ...
+
+  // Add ATS-related relations
+  atsInsights       ATSInsights?
+  jobAnalysis       JobAnalysis?
+  complianceChecks  ComplianceCheck[]
+}
+
+// Update existing Application model
+model Application {
+  // ... existing fields ...
+
+  // Add ATS-related relations
+  atsAnalysis       ATSAnalysis?
+  atsCompliance     ATSCompliance?
+}

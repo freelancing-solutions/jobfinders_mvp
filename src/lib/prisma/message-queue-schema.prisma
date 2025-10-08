@@ -1,0 +1,357 @@
+// Message Queue System Schema Additions
+// Add these models to your existing Prisma schema
+
+model MessageMetadata {
+  id                String   @id @default(cuid())
+  messageId         String   @unique
+  type              String
+  queue             String
+  priority          String   @default("normal")
+  status            String   @default("queued") // queued, processing, completed, failed, dead_letter
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  attempts          Int      @default(0)
+  processedAt       DateTime?
+  completedAt       DateTime?
+  failedAt          DateTime?
+  error             String?
+  metadata          Json
+  correlationId     String?
+  expiresAt         DateTime?
+
+  @@map("message_metadata")
+}
+
+model RecurringSchedule {
+  id                String   @id @default(cuid())
+  name              String
+  description       String?
+  queueName         String
+  type              String
+  payload           Json
+  cronExpression    String
+  timezone          String?
+  isActive          Boolean  @default(true)
+  maxOccurrences    Int?
+  occurrenceCount   Int      @default(0)
+  nextRun           DateTime
+  lastRun           DateTime?
+  options           Json     // { correlationId, replyTo, metadata, priority, delay, expiresAt }
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("recurring_schedules")
+}
+
+model QueueMetrics {
+  id                String   @id @default(cuid())
+  queueName         String   @unique
+  depth             Int      @default(0)
+  processingRate    Float    @default(0)
+  errorRate         Float    @default(0)
+  averageLatency    Float    @default(0)
+  consumerCount     Int      @default(0)
+  lastProcessed     DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("queue_metrics")
+}
+
+systemMetrics Model {
+  id                String   @id @default(cuid())
+  totalMessages     Int      @default(0)
+  totalProcessingRate Float   @default(0)
+  totalErrorRate    Float    @default(0)
+  averageLatency    Float    @default(0)
+  activeConsumers   Int      @default(0)
+  memoryUsage       BigInt   @default(0)
+  cpuUsage          Float    @default(0)
+  redisMemoryUsage  BigInt   @default(0)
+  redisConnections  Int      @default(0)
+  timestamp         DateTime @default(now())
+
+  @@map("system_metrics")
+}
+
+model Alert {
+  id                String   @id @default(cuid())
+  ruleId            String
+  type              String   // queue_depth, error_rate, latency, consumer_health, system_health
+  severity          String   // info, warning, critical
+  queueName         String?
+  message           String
+  details           Json?
+  resolved          Boolean  @default(false)
+  resolvedAt        DateTime?
+  resolvedBy        String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("alerts")
+}
+
+model AlertRule {
+  id                String   @id @default(cuid())
+  name              String
+  type              String   // queue_depth, error_rate, latency, consumer_health, system_health
+  condition         String   // The field to check
+  threshold         Float
+  comparison        String   // gt, lt, eq, gte, lte
+  severity          String   // info, warning, critical
+  queueFilter       String?
+  cooldownPeriod    Int      @default(300) // seconds
+  enabled           Boolean  @default(true)
+  notificationChannels String[] @default([])
+  lastTriggered     DateTime?
+  createdBy         String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("alert_rules")
+}
+
+model ScalingEvent {
+  id                String   @id @default(cuid())
+  policyId          String
+  queueName         String
+  action            String   // scale_up, scale_down
+  fromConsumers     Int
+  toConsumers       Int
+  triggerMetric     String
+  triggerValue      Float
+  threshold         Float
+  reason            String
+  timestamp         DateTime @default(now())
+  completedAt       DateTime?
+  status            String   // pending, in_progress, completed, failed
+  error             String?
+  metadata          Json?
+
+  @@map("scaling_events")
+}
+
+model ScalingPolicy {
+  id                String   @id @default(cuid())
+  name              String
+  description       String?
+  queueName         String
+  metric            String   // queue_depth, processing_rate, error_rate, latency, cpu_usage, memory_usage
+  operator          String   // gt, lt, gte, lte
+  threshold         Float
+  cooldownPeriod    Int      @default(300) // seconds
+  minConsumers      Int      @default(1)
+  maxConsumers      Int      @default(10)
+  scaleUpStep       Int      @default(1)
+  scaleDownStep     Int      @default(1)
+  isActive          Boolean  @default(true)
+  createdBy         String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("scaling_policies")
+}
+
+model ConsumerInstance {
+  id                String   @id @default(cuid())
+  queueName         String
+  groupName         String
+  consumerName      String
+  status            String   // starting, active, stopping, stopped, error
+  startTime         DateTime?
+  lastActivity      DateTime?
+  processedCount    BigInt   @default(0)
+  errorCount        BigInt   @default(0)
+  averageProcessingTime Float @default(0)
+  hostInfo          Json     // { hostname, pid, memoryUsage, cpuUsage }
+  metadata          Json
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("consumer_instances")
+}
+
+model PriorityRule {
+  id                String   @id @default(cuid())
+  name              String
+  condition         String   // Rule condition (would be parsed in application)
+  priority          Int
+  queue             String
+  transform         Json?    // Transformation rules
+  metadata          Json?
+  isActive          Boolean  @default(true)
+  createdBy         String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("priority_rules")
+}
+
+model RoutingRule {
+  id                String   @id @default(cuid())
+  name              String
+  condition         String   // Rule condition
+  targetQueue       String
+  transform         Json?    // Transformation rules
+  metadata          Json?
+  isActive          Boolean  @default(true)
+  createdBy         String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("routing_rules")
+}
+
+model FilterRule {
+  id                String   @id @default(cuid())
+  name              String
+  condition         String   // Rule condition
+  action            String   // accept, reject, transform
+  transform         Json?    // Transformation rules
+  rejectionReason   String?
+  metadata          Json?
+  isActive          Boolean  @default(true)
+  createdBy         String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("filter_rules")
+}
+
+model ThrottleRule {
+  id                String   @id @default(cuid())
+  name              String
+  keyExtractor      String   // Key extraction logic (would be parsed in application)
+  limit             Int
+  windowMs          Int      // Time window in milliseconds
+  queueFilter       String?
+  metadata          Json?
+  isActive          Boolean  @default(true)
+  createdBy         String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("throttle_rules")
+}
+
+model DeadLetterMessage {
+  id                String   @id @default(cuid())
+  originalMessageId String
+  queueName         String
+  originalQueue     String
+  type              String
+  payload           Json
+  priority          String
+  attempts          Int
+  maxAttempts       Int
+  error             String
+  failedAt          DateTime
+  metadata          Json
+  correlationId     String?
+  createdAt         DateTime @default(now())
+
+  @@index([queueName, createdAt])
+  @@index([originalQueue])
+  @@index([failedAt])
+  @@map("dead_letter_messages")
+}
+
+model QueueConfig {
+  id                String   @id @default(cuid())
+  queueName         String   @unique
+  priority          Int      @default(50)
+  maxLength         Int?
+  batchSize         Int      @default(50)
+  processingTimeout Int      @default(60000)
+  retryPolicy       Json     // { maxAttempts, backoffType, initialDelay, maxDelay, multiplier, jitter }
+  deadLetterQueue   String?
+  persistent        Boolean  @default(true)
+  visibilityTimeout Int      @default(60000)
+  isActive          Boolean  @default(true)
+  configuration     Json     // Additional configuration options
+  createdBy         String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("queue_configs")
+}
+
+model ThrottleCounter {
+  id                String   @id @default(cuid())
+  key               String   @unique
+  count             Int      @default(0)
+  windowStart       DateTime @default(now())
+  windowEnd         DateTime
+  expiryAt          DateTime
+  createdAt         DateTime @default(now())
+
+  @@index([key, windowStart])
+  @@index([expiryAt])
+  @@map("throttle_counters")
+}
+
+model MessageTrace {
+  id                String   @id @default(cuid())
+  messageId         String
+  traceId           String
+  spanId            String
+  parentSpanId      String?
+  operationName     String
+  serviceName       String
+  resource          String
+  startTime         DateTime
+  endTime           DateTime?
+  duration          Float?   // in milliseconds
+  status            String   // started, completed, failed
+  tags              Json?
+  logs              Json[]
+  error             Json?
+  metadata          Json
+
+  @@index([messageId])
+  @@index([traceId])
+  @@index([spanId])
+  @@index([startTime])
+  @@map("message_traces")
+}
+
+model QueueSnapshot {
+  id                String   @id @default(cuid())
+  queueName         String
+  timestamp         DateTime @default(now())
+  depth             Int
+  processingRate    Float
+  errorRate         Float
+  averageLatency    Float
+  consumerCount     Int
+  memoryUsage       BigInt
+  messagesEnqueued  BigInt
+  messagesDequeued  BigInt
+  messagesFailed    BigInt
+  systemLoad        Json     // CPU, memory, etc.
+
+  @@index([queueName, timestamp])
+  @@map("queue_snapshots")
+}
+
+// Update existing User model
+model User {
+  // ... existing fields ...
+
+  // Add message queue related relations
+  createdAlertRules    AlertRule[]
+  createdPriorityRules PriorityRule[]
+  createdRoutingRules   RoutingRule[]
+  createdFilterRules    FilterRule[]
+  createdThrottleRules  ThrottleRule[]
+  createdScalingPolicies ScalingPolicy[]
+  createdQueueConfigs   QueueConfig[]
+}
+
+// Update existing Application model to include correlation IDs if needed
+model Application {
+  // ... existing fields ...
+
+  // Optional: Add correlation ID tracking for distributed tracing
+  correlationId      String?
+}
