@@ -1,0 +1,306 @@
+// Matching System Schema Additions
+// Add these models to your existing Prisma schema
+
+model MatchingPreference {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  jobTitles         String[] @default([])
+  locations         String[] @default([])
+  jobTypes          String[] @default([])
+  experienceLevels  String[] @default([])
+  salaryMin         Int?
+  salaryMax         Int?
+  industries        String[] @default([])
+  companySizes      String[] @default([])
+  skills            String[] @default([])
+  workMode          String?  // ONSITE, HYBRID, REMOTE
+  travelRequirement String?  // NONE, OCCASIONAL, FREQUENT
+  educationLevel    String?  // HIGH_SCHOOL, ASSOCIATE, BACHELOR, MASTER, PHD
+  excludeCompanies  String[] @default([])
+  requiredBenefits  String[] @default([])
+  lastMatchAt       DateTime?
+  matchScoreThreshold Float  @default(0.5)
+  autoApplyEnabled  Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  savedJobs         SavedJob[]
+  rejectedJobs      RejectedJob[]
+  savedCandidates   SavedCandidate[]
+  rejectedCandidates RejectedCandidate[]
+
+  @@map("matching_preferences")
+}
+
+model SavedJob {
+  id        String   @id @default(cuid())
+  userId    String
+  jobId     String
+  matchScore Float?
+  savedAt   DateTime @default(now())
+  notes     String?
+
+  // Relations
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job       Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  preference MatchingPreference @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@unique([userId, jobId])
+  @@map("saved_jobs")
+}
+
+model RejectedJob {
+  id        String   @id @default(cuid())
+  userId    String
+  jobId     String
+  reason    String?
+  rejectedAt DateTime @default(now())
+
+  // Relations
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job       Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  preference MatchingPreference @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@unique([userId, jobId])
+  @@map("rejected_jobs")
+}
+
+model SavedCandidate {
+  id         String   @id @default(cuid())
+  employerId String
+  candidateId String
+  matchScore Float?
+  savedAt    DateTime @default(now())
+  notes      String?
+
+  // Relations
+  employer   User              @relation("EmployerSavedCandidates", fields: [employerId], references: [id], onDelete: Cascade)
+  candidate  User              @relation("CandidateSavedBy", fields: [candidateId], references: [id], onDelete: Cascade)
+  preference MatchingPreference @relation(fields: [employerId], references: [userId], onDelete: Cascade)
+
+  @@unique([employerId, candidateId])
+  @@map("saved_candidates")
+}
+
+model RejectedCandidate {
+  id         String   @id @default(cuid())
+  employerId String
+  candidateId String
+  reason     String?
+  rejectedAt DateTime @default(now())
+
+  // Relations
+  employer   User              @relation("EmployerRejectedCandidates", fields: [employerId], references: [id], onDelete: Cascade)
+  candidate  User              @relation("CandidateRejectedBy", fields: [candidateId], references: [id], onDelete: Cascade)
+  preference MatchingPreference @relation(fields: [employerId], references: [userId], onDelete: Cascade)
+
+  @@unique([employerId, candidateId])
+  @@map("rejected_candidates")
+}
+
+model MatchingAnalytics {
+  id            String   @id @default(cuid())
+  userId        String
+  type          String   // 'seeker' or 'employer'
+  date          DateTime @default(now())
+  totalMatches  Int      @default(0)
+  newMatches    Int      @default(0)
+  averageScore  Float    @default(0)
+  responseRate  Float    @default(0)
+  conversionRate Float   @default(0)
+  topSkills     Json?    // Array of skill analytics
+  topLocations  Json?    // Array of location analytics
+  topIndustries Json?    // Array of industry analytics
+  timeframe     String   @default("daily") // daily, weekly, monthly
+
+  // Relations
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type, date, timeframe])
+  @@map("matching_analytics")
+}
+
+model MatchInteraction {
+  id            String   @id @default(cuid())
+  userId        String
+  matchId       String   // Job ID for seekers, Candidate ID for employers
+  matchType     String   // 'job' or 'candidate'
+  interactionType String // 'view', 'save', 'reject', 'apply', 'contact'
+  matchScore    Float?
+  interactionAt DateTime @default(now())
+  metadata      Json?    // Additional interaction data
+
+  // Relations
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("match_interactions")
+}
+
+model MatchingFeedback {
+  id            String   @id @default(cuid())
+  userId        String
+  matchId       String
+  matchType     String   // 'job' or 'candidate'
+  feedbackType  String   // 'positive', 'negative', 'neutral'
+  feedbackScore Int?     // 1-5 rating
+  comments      String?
+  helpful       Boolean? // Was the match helpful?
+  outcome       String?  // 'hired', 'rejected', 'withdrew', 'pending'
+  feedbackAt    DateTime @default(now())
+
+  // Relations
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("matching_feedback")
+}
+
+model MatchingModel {
+  id            String   @id @default(cuid())
+  name          String   @unique
+  version       String   @default("1.0.0")
+  type          String   // 'skills', 'experience', 'combined', 'ml'
+  algorithm     String   // 'cosine', 'jaccard', 'ml', 'hybrid'
+  isActive      Boolean  @default(true)
+  accuracy      Float?   // Model accuracy metrics
+  precision     Float?   // Model precision metrics
+  recall        Float?   // Model recall metrics
+  f1Score       Float?   // Model F1 score
+  trainingDataSize Int?  // Number of training examples
+  lastTrainedAt  DateTime?
+  modelConfig   Json?    // Model configuration parameters
+  features      Json?    // Feature importance and weights
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("matching_models")
+}
+
+model SkillEmbedding {
+  id            String   @id @default(cuid())
+  skill         String   @unique
+  embedding     Float[]  // Vector representation of the skill
+  category      String?  // Skill category (frontend, backend, devops, etc.)
+  frequency     Int      @default(0) // How often this skill appears
+  demand        Float    @default(0) // Current market demand
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("skill_embeddings")
+}
+
+model MatchingJobQueue {
+  id            String   @id @default(cuid())
+  userId        String
+  type          String   // 'refresh_matches', 'train_model', 'update_embeddings'
+  priority      Int      @default(0) // Higher number = higher priority
+  status        String   @default("pending") // pending, processing, completed, failed
+  data          Json?    // Job data
+  errorMessage  String?
+  attempts      Int      @default(0)
+  maxAttempts   Int      @default(3)
+  scheduledFor  DateTime @default(now())
+  startedAt     DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime @default(now())
+
+  @@map("matching_job_queue")
+}
+
+// Update existing User model
+model User {
+  // ... existing fields ...
+
+  // Add matching-related relations
+  matchingPreference MatchingPreference?
+  matchingAnalytics  MatchingAnalytics[]
+  matchInteractions  MatchInteraction[]
+  matchingFeedback   MatchingFeedback[]
+
+  // Employer matching relations
+  savedCandidates    SavedCandidate[] @relation("EmployerSavedCandidates")
+  rejectedCandidates RejectedCandidate[] @relation("EmployerRejectedCandidates")
+
+  // Candidate matching relations
+  savedByEmployers   SavedCandidate[] @relation("CandidateSavedBy")
+  rejectedByEmployers RejectedCandidate[] @relation("CandidateRejectedBy")
+}
+
+// Update existing Job model
+model Job {
+  // ... existing fields ...
+
+  // Add matching-related relations
+  savedJobs         SavedJob[]
+  rejectedJobs      RejectedJob[]
+  matchInteractions MatchInteraction[] @relation("JobMatches")
+}
+
+// Update existing Resume model
+model Resume {
+  // ... existing fields ...
+
+  // Add matching-related fields
+  skills            ResumeSkill[]
+  experiences       ResumeExperience[]
+  educations        ResumeEducation[]
+}
+
+// Add new models for resume components if they don't exist
+model ResumeSkill {
+  id          String   @id @default(cuid())
+  resumeId    String
+  name        String
+  level       String?  // BEGINNER, INTERMEDIATE, ADVANCED, EXPERT
+  years       Float?   // Years of experience
+  lastUsed    String?  // When this skill was last used
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  // Relations
+  resume      Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  @@map("resume_skills")
+}
+
+model ResumeExperience {
+  id          String   @id @default(cuid())
+  resumeId    String
+  title       String
+  company     String
+  location    String?
+  description String?
+  startDate   DateTime
+  endDate     DateTime?
+  current     Boolean  @default(false)
+  skills      String[] // Skills used in this experience
+  achievements String[] // Key achievements
+  createdAt   DateTime @default(now())
+
+  // Relations
+  resume      Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  @@map("resume_experiences")
+}
+
+model ResumeEducation {
+  id          String   @id @default(cuid())
+  resumeId    String
+  degree      String
+  field       String?
+  school      String
+  location    String?
+  startDate   DateTime?
+  endDate     DateTime?
+  current     Boolean  @default(false)
+  gpa         Float?
+  achievements String[] // Academic achievements
+  createdAt   DateTime @default(now())
+
+  // Relations
+  resume      Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  @@map("resume_educations")
+}
