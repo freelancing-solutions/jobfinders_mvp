@@ -260,9 +260,12 @@ class SpecGuardian {
 
     // Check git status for uncommitted changes in .kiro/
     try {
-      const gitStatus = execSync('git status --porcelain .kiro/', {
+      // Handle Windows vs Unix path separators
+      const gitCmd = process.platform === 'win32' ? 'git status --porcelain .kiro\\' : 'git status --porcelain .kiro/';
+      const gitStatus = execSync(gitCmd, {
         encoding: 'utf8',
-        cwd: this.basePath
+        cwd: this.basePath,
+        shell: true
       });
 
       if (gitStatus.trim()) {
@@ -270,7 +273,8 @@ class SpecGuardian {
           'These changes should be reviewed before commit');
       }
     } catch (error) {
-      // Git not available or not in git repo
+      // Git not available or not in git repo - continue without error
+      console.log('ℹ️ Git status check skipped - not a git repository or git unavailable');
     }
 
     console.log('✅ Implementation coherence check completed');

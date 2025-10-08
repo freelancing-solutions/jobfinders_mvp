@@ -9,6 +9,9 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
+// Handle Windows path issues
+const isWindows = process.platform === 'win32';
+
 class AutoImplementer {
   constructor() {
     this.basePath = path.resolve(__dirname, '..');
@@ -55,7 +58,8 @@ class AutoImplementer {
     try {
       execSync('node scripts/guardian.js', {
         stdio: 'inherit',
-        cwd: this.basePath
+        cwd: this.basePath,
+        shell: true
       });
       console.log('✅ Guardian passed');
     } catch (error) {
