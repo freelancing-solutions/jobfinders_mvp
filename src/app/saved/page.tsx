@@ -705,6 +705,10 @@ export default function SavedJobsPage() {
                     )}
                   </TabsContent>
 
+                  <TabsContent value="analytics">
+                    <SavedJobsAnalytics />
+                  </TabsContent>
+
                   {/* Collection Tabs */}
                   {collections.map(collection => (
                     <TabsContent key={collection.id} value={collection.id}>
