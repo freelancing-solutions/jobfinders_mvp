@@ -53,6 +53,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+import { TemplateGallery } from '@/components/templates/TemplateGallery';
+import { Layout, Settings, X } from 'lucide-react';
 
 interface ResumeEditorProps {
   initialResume?: Resume;
