@@ -1,0 +1,360 @@
+// Integration Schema - Critical Integration Issues Database Updates
+// This file extends the main schema with integration-specific models
+
+// Enhanced User Profile for Integration
+model UserProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  skills      Json[]   // Array of skill objects
+  experience  Json     // Experience details
+  education   Json     // Education details
+  preferences Json     // User preferences for matching
+  location    String?
+  remote      Boolean  @default(false)
+  salaryMin   Int?
+  salaryMax   Int?
+  jobTypes    String[] // full-time, part-time, contract, remote
+  industries  String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resumes            Resume[]
+  jobMatches         JobMatch[]
+  candidateMatches   CandidateMatch[]
+  notifications       Notification[]
+  notificationPrefs  NotificationPreferences
+
+  @@map("user_profiles")
+}
+
+// Resume Management
+model Resume {
+  id           String   @id @default(cuid())
+  userId       String
+  name         String
+  originalName String
+  fileUrl      String
+  fileSize     Int
+  fileType     String
+  status       String   // processing, completed, failed
+  isActive     Boolean  @default(false)
+  analysisResult Json?  // Resume analysis data
+  uploadedAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  user               User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userProfile         UserProfile     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  resumeVersions     ResumeVersion[]
+  jobMatches         JobMatch[]
+
+  @@map("resumes")
+}
+
+// Resume Versions for Comparison
+model ResumeVersion {
+  id            String   @id @default(cuid())
+  resumeId      String
+  userId        String
+  name          String
+  content       String   // Processed content
+  analysisResult Json    // Analysis data
+  downloadUrl   String
+  createdAt     DateTime @default(now())
+
+  // Relationships
+  resume Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  @@map("resume_versions")
+}
+
+// Job Matching Results
+model JobMatch {
+  id              String   @id @default(cuid())
+  userId          String
+  resumeId        String?
+  jobId           String
+  score           Float
+  breakdown       Json     // Score breakdown by category
+  reasons         String[] // Reasons for match
+  suggestions     String[] // Improvement suggestions
+  feedback        String?  // user feedback
+  feedbackAt      DateTime?
+  viewedAt        DateTime?
+  savedAt         DateTime?
+  appliedAt       DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relationships
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userProfile UserProfile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  resume     Resume?    @relation(fields: [resumeId], references: [id], onDelete: SetNull)
+  job        Job        @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, jobId])
+  @@map("job_matches")
+}
+
+// Candidate Matching for Employers
+model CandidateMatch {
+  id              String   @id @default(cuid())
+  employerId      String
+  jobId           String
+  candidateId     String
+  resumeId        String?
+  score           Float
+  breakdown       Json     // Score breakdown
+  reasons         String[]
+  contacted       Boolean  @default(false)
+  contactedAt     DateTime?
+  saved           Boolean  @default(false)
+  savedAt         DateTime?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relationships
+  employer    User        @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  userProfile UserProfile  @relation(fields: [candidateId], references: [userId], onDelete: Cascade)
+  job         Job         @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([employerId, jobId, candidateId])
+  @@map("candidate_matches")
+}
+
+// Enhanced Notifications
+model Notification {
+  id           String     @id @default(cuid())
+  userId       String
+  type         String
+  title        String
+  message      String
+  data         Json?      // Notification-specific data
+  channels     Json       // Channel information
+  status       String     @default("pending") // pending, sent, failed, read
+  readAt       DateTime?
+  scheduledFor DateTime?
+  sentAt       DateTime?
+  expiresAt    DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  // Relationships
+  user       User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userProfile UserProfile        @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  events     NotificationEvent[]
+
+  @@index([userId, status])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}
+
+// Notification Preferences
+model NotificationPreferences {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  channels  Json     // Channel preferences
+  quietHours Json    // Quiet hours settings
+  categories Json    // Category-specific preferences
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  userProfile UserProfile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("notification_preferences")
+}
+
+// Notification Events
+model NotificationEvent {
+  id            String   @id @default(cuid())
+  notificationId String
+  eventType     String   // sent, delivered, read, failed
+  channel       String   // in_app, email, sms, push
+  data          Json?
+  error         String?
+  timestamp     DateTime @default(now())
+
+  // Relationships
+  notification Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@index([notificationId, eventType])
+  @@map("notification_events")
+}
+
+// Real-time Events
+model RealtimeEvent {
+  id        String   @id @default(cuid())
+  type      String
+  userId    String?
+  data      Json
+  metadata  Json?
+  timestamp DateTime @default(now())
+
+  @@index([type, timestamp])
+  @@index([userId, timestamp])
+  @@map("realtime_events")
+}
+
+// Event Subscriptions
+model EventSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  socketId  String?
+  eventTypes String[] // Array of event types
+  filters   Json?    // Subscription filters
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([userId])
+  @@index([socketId])
+  @@map("event_subscriptions")
+}
+
+// Matching Analytics
+model MatchingAnalytics {
+  id            String   @id @default(cuid())
+  userId        String?
+  type          String   // user_match, job_match, system_performance
+  period        String   // daily, weekly, monthly
+  data          Json     // Analytics data
+  createdAt     DateTime @default(now())
+
+  @@index([userId, type, period])
+  @@index([type, period])
+  @@map("matching_analytics")
+}
+
+// User Interaction Tracking
+model UserInteraction {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // view, save, apply, feedback
+  entityType String  // job, resume, notification
+  entityId  String
+  data      Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId, type, createdAt])
+  @@index([entityType, entityId])
+  @@map("user_interactions")
+}
+
+// Cache Management
+model CacheEntry {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+  @@map("cache_entries")
+}
+
+// Background Jobs
+model BackgroundJob {
+  id        String   @id @default(cuid())
+  type      String   // resume_analysis, matching_process, notification_send
+  status    String   @default("pending") // pending, running, completed, failed
+  data      Json
+  result    Json?
+  error     String?
+  attempts  Int      @default(0)
+  maxAttempts Int    @default(3)
+  scheduledAt DateTime @default(now())
+  startedAt DateTime?
+  completedAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([status, scheduledAt])
+  @@index([type, status])
+  @@map("background_jobs")
+}
+
+// System Metrics
+model SystemMetric {
+  id        String   @id @default(cuid())
+  name      String
+  value     Float
+  unit      String?
+  tags      Json?
+  timestamp DateTime @default(now())
+
+  @@index([name, timestamp])
+  @@index([timestamp])
+  @@map("system_metrics")
+}
+
+// Update existing User model to include relationships
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  role          UserRole  @default(SEEKER)
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Authentication
+  accounts      Account[]
+  sessions      Session[]
+
+  // Enhanced relationships
+  userProfile    UserProfile?
+  resumes        Resume[]
+  jobMatches     JobMatch[]
+  notifications  Notification[]
+
+  // Employer-specific
+  jobs          Job[]
+  candidateMatches CandidateMatch[]
+
+  // Existing relationships
+  applications  Application[]
+  savedJobs     SavedJob[]
+  company       Company?
+
+  @@map("users")
+}
+
+// Update existing Job model
+model Job {
+  id          String      @id @default(cuid())
+  title       String
+  description String
+  location    String?
+  remote      Boolean     @default(false)
+  salary      Json?
+  type        String?     // full-time, part-time, contract, internship
+  experience  String?     // entry, junior, mid, senior, executive
+  skills      String[]
+  benefits    String[]?
+  requirements String[]
+  status      JobStatus   @default(ACTIVE)
+  postedAt    DateTime    @default(now())
+  expiresAt   DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relationships
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  company     Company?    @relation(fields: [companyId], references: [id])
+  companyId   String?
+
+  // Enhanced relationships
+  jobMatches     JobMatch[]
+  candidateMatches CandidateMatch[]
+
+  // Existing relationships
+  applications   Application[]
+  savedJobs      SavedJob[]
+
+  @@map("jobs")
+}
