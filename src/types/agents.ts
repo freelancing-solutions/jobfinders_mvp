@@ -276,3 +276,112 @@ export interface AgentAlert {
   acknowledgedBy?: string;
   acknowledgedAt?: Date;
 }
+
+// Networking-specific types
+export interface NetworkingRequest {
+  action: 'generate_strategy' | 'generate_outreach' | 'track_networking' | 'analyze_events' |
+          'get_recommendations' | 'manage_contacts' | 'plan_networking';
+  data: any;
+}
+
+export interface NetworkingResponse {
+  strategy?: NetworkingStrategy;
+  actionPlan?: any;
+  recommendations?: any[];
+  message?: OutreachMessage;
+  followUps?: string[];
+  analysis?: any;
+  insights?: any[];
+  metrics?: any;
+  events?: any[];
+  opportunities?: any[];
+  contacts?: any[];
+  plan?: any;
+  schedule?: any;
+  trackingSystem?: any;
+  milestones?: any[];
+  resources?: any[];
+}
+
+export interface NetworkingStrategy {
+  overview: string;
+  targetNetworks: any[];
+  platformStrategies: any[];
+  contentStrategy: any;
+  goals: NetworkingGoal[];
+  actionPlan: any;
+  metrics: any;
+  timeline: string;
+  estimatedTimeCommitment: string;
+  expectedOutcomes: string[];
+}
+
+export interface NetworkingGoal {
+  title: string;
+  description: string;
+  target: string | number;
+  timeframe: string;
+  category: string;
+  priority: 'low' | 'medium' | 'high';
+}
+
+export interface OutreachMessage {
+  content: string;
+  subjectLine?: string;
+  platform: string;
+  tone: string;
+  purpose: string;
+  personalizationElements: any[];
+  callToAction: string;
+  followUpTiming: string;
+  effectiveness: number;
+  template: string;
+  tips: string[];
+}
+
+export interface NetworkingTemplate {
+  id: string;
+  name: string;
+  category: 'outreach' | 'follow_up' | 'thank_you' | 'introduction';
+  platform: string;
+  purpose: string;
+  content: string;
+  variables: string[];
+  tone: string;
+  effectiveness: number;
+}
+
+export interface NetworkingContact {
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  company?: string;
+  role?: string;
+  industry?: string;
+  location?: string;
+  relationshipType: 'prospect' | 'contact' | 'connection' | 'mentor' | 'mentee';
+  strength: 'weak' | 'moderate' | 'strong';
+  lastContact?: Date;
+  notes?: string;
+  tags: string[];
+  source: string;
+  dateAdded: Date;
+}
+
+export interface NetworkingEvent {
+  id: string;
+  title: string;
+  description: string;
+  type: 'virtual' | 'in-person' | 'hybrid';
+  date: Date;
+  location?: string;
+  organizer: string;
+  attendees: number;
+  cost: number;
+  tags: string[];
+  relevanceScore: number;
+  networkingValue: 'low' | 'medium' | 'high';
+  registrationDeadline: Date;
+  status: 'upcoming' | 'attended' | 'missed';
+}
