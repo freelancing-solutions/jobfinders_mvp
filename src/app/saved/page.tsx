@@ -331,6 +331,7 @@ export default function SavedJobsPage() {
                   <div className="flex justify-between items-center mb-6">
                     <TabsList>
                       <TabsTrigger value="all-jobs">All Jobs ({savedJobs.length})</TabsTrigger>
+                      <TabsTrigger value="analytics">Analytics</TabsTrigger>
                       {collections.map(collection => (
                         <TabsTrigger key={collection.id} value={collection.id}>
                           {collection.name} ({collection.jobCount})
