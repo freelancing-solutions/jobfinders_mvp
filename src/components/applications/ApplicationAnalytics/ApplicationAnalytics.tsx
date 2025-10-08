@@ -13,8 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useApplicationStats } from '@/hooks/applications/use-applications'
-import { ApplicationStats as ApplicationStatsType } from '@/types/applications'
+import { useApplications } from '@/hooks/use-applications'
+import { ApplicationStats } from '@/types/applications'
 import {
   BarChart3,
   TrendingUp,
@@ -48,8 +48,8 @@ export function ApplicationAnalytics({
   const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d' | '1y' | 'all'>('30d')
   const [isLoading, setIsLoading] = useState(false)
 
-  const { stats, refresh } = useApplicationStats({
-    dateFrom: getDateFromRange(dateRange),
+  const { stats, refresh } = useApplications({
+    autoFetch: true,
   })
 
   const handleRefresh = async () => {
@@ -251,7 +251,7 @@ function MetricCard({ title, value, icon: Icon, trend, color }: MetricCardProps)
 }
 
 // Status Breakdown Card
-function StatusBreakdownCard({ stats }: { stats: ApplicationStatsType }) {
+function StatusBreakdownCard({ stats }: { stats: ApplicationStats }) {
   const statusEntries = Object.entries(stats.byStatus).filter(([_, count]) => count > 0)
 
   return (
@@ -514,7 +514,7 @@ function SkillsAnalysisCard({ skills }: { skills: Array<{ skill: string; count: 
 }
 
 // Insights Card
-function InsightsCard({ stats }: { stats: ApplicationStatsType }) {
+function InsightsCard({ stats }: { stats: ApplicationStats }) {
   const insights = generateInsights(stats)
 
   return (
@@ -549,7 +549,7 @@ function formatPeriod(period: string): string {
 }
 
 // Generate insights based on stats
-function generateInsights(stats: ApplicationStatsType) {
+function generateInsights(stats: ApplicationStats) {
   const insights = []
 
   // Success rate insights

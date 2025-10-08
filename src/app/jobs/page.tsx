@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
-import { SearchHistory } from '@/components/search/search-history'
+import { SearchHistory } from '@/components/jobs/search-history'
 import { 
   Search, 
   Filter, 
@@ -35,8 +35,9 @@ import {
   getJobTypeLabel,
   getExperienceLabel
 } from '@/lib/search-utils'
-import { useState, Suspense } from 'react'
+import { useState, Suspense, useRef } from 'react'
 import Link from 'next/link'
+import { useSavedJobs } from '@/hooks/use-saved-jobs'
 
 function JobsPageContent() {
   const {
@@ -49,9 +50,26 @@ function JobsPageContent() {
     setView,
     search,
     resetSearch,
+    error,
   } = useJobSearch()
 
+  const { getSavedJobIds, toggleSave } = useSavedJobs()
+  const savedJobIds = getSavedJobIds()
+
   const [filtersVisible, setFiltersVisible] = useState(false)
+  const searchHistoryRef = useRef<any>(null)
+
+  // Enhanced search function that saves to history
+  const handleSearch = async (resetPage = false) => {
+    await search(resetPage)
+
+    // Save to search history after successful search
+    if (searchState.results.length >= 0 && searchHistoryRef.current) {
+      // Note: The saveToHistory method would need to be exposed from SearchHistory component
+      // For now, this is a placeholder for the functionality
+      console.log('Saving to search history:', searchState.filters)
+    }
+  }
 
   const LoadingSkeleton = () => (
     <div className="space-y-4">
@@ -105,9 +123,9 @@ function JobsPageContent() {
         </div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">Something went wrong</h3>
         <p className="text-gray-600 mb-6">
-          {searchState.error || 'Failed to load jobs. Please try again.'}
+          {error?.message || searchState.error || 'Failed to load jobs. Please try again.'}
         </p>
-        <Button onClick={() => search()} className="w-full">
+        <Button onClick={() => handleSearch()} className="w-full">
           Try Again
         </Button>
       </CardContent>
@@ -177,13 +195,13 @@ function JobsPageContent() {
                   onChange={(e) => updateFilters({ query: e.target.value })}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
-                      search(true);
+                      handleSearch(true);
                     }
                   }}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 <Button
-                  onClick={() => search(true)}
+                  onClick={() => handleSearch(true)}
                   disabled={searchState.isLoading}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2"
                   size="sm"
@@ -390,10 +408,11 @@ function JobsPageContent() {
                   </div>
 
                   {/* Search History */}
-                  <SearchHistory 
+                  <SearchHistory
+                    ref={searchHistoryRef}
                     onSelect={(filters) => {
                       updateFilters(filters);
-                      search(true);
+                      handleSearch(true);
                     }}
                   />
                 </CardContent>
@@ -402,22 +421,22 @@ function JobsPageContent() {
 
             {/* Main Content */}
             <main className="flex-1">
-              {searchState.error && (
+              {(searchState.error || error) && (
                 <Alert variant="destructive" className="mb-6">
                   <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{searchState.error}</AlertDescription>
+                  <AlertDescription>{error?.message || searchState.error}</AlertDescription>
                 </Alert>
               )}
 
               {searchState.isLoading && <LoadingSkeleton />}
+
+              {!searchState.isLoading && (searchState.error || error) && <ErrorState />}
               
-              {!searchState.isLoading && searchState.error && <ErrorState />}
-              
-              {!searchState.isLoading && !searchState.error && searchState.results.length === 0 && searchState.hasSearched && (
+              {!searchState.isLoading && !searchState.error && !error && searchState.results.length === 0 && searchState.hasSearched && (
                 <EmptyState />
               )}
-              
-              {!searchState.isLoading && !searchState.error && searchState.results.length > 0 && (
+
+              {!searchState.isLoading && !searchState.error && !error && searchState.results.length > 0 && (
                 <>
                   <div className="mb-6 flex items-center justify-between">
                     <p className="text-sm text-gray-600">
@@ -445,9 +464,11 @@ function JobsPageContent() {
                     </div>
                   </div>
 
-                  <JobGrid 
-                    jobs={searchState.results} 
+                  <JobGrid
+                    jobs={searchState.results}
                     viewMode={searchState.view}
+                    savedJobs={savedJobIds}
+                    onToggleSave={toggleSave}
                   />
 
                   {/* Pagination */}

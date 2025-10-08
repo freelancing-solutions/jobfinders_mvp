@@ -73,5 +73,18 @@ model User {
   templateUsage ResumeTemplateUsage[]
   templateHistory ResumeTemplateHistory[]
 
+  // AI Agent system relationships
+  agentSessions      AgentSession[]
+  agentMessages      AgentMessage[]
+  agentPreferences   UserAgentPreferences?
+  agentFeedback      AgentFeedback[]
+  agentWorkflows     AgentWorkflow[]
+  agentWorkflowExecutions AgentWorkflowExecution[]
+  agentTemplates     AgentTemplate[]
+  agentIntegrations  AgentIntegration[]
+  agentLearning      AgentLearning[]
+  acknowledgedAlerts AgentAlert[] @relation("AlertAcknowledgments")
+  resolvedAlerts     AgentAlert[] @relation("AlertResolutions")
+
   @@map("users")
 }

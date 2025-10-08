@@ -1,0 +1,11 @@
+{
+  "action": "implement",
+  "specName": "ai-agents",
+  "promptPath": ".kiro\\prompts\\worker-ai-agents.md",
+  "attachments": [
+    ".kiro\\specs\\ai-agents\\requirements.md",
+    ".kiro\\specs\\ai-agents\\design.md",
+    ".kiro\\specs\\ai-agents\\tasks.md",
+    ".kiro\\architecture"
+  ]
+}

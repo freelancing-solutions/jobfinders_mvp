@@ -1,0 +1,8 @@
+{
+  "name": "spec-guardian",
+  "description": "Validates .kiro/ folder consistency",
+  "prompt_file": ".kiro/prompts/guardian.md",
+  "watch_paths": [".kiro/**/*"],
+  "run_on": ["pre-commit", "manual"],
+  "fail_on_conflicts": true
+}

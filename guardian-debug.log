@@ -1,0 +1,2199 @@
+Testing Full Guardian validation...
+Guardian instance created successfully
+≡ƒôï Validating specifications...
+Γ£à Validated 17 specification folders
+≡ƒÅù∩╕Å Validating architecture documents...
+Γ£à Validated 3 architecture documents
+≡ƒöñ Checking naming consistency...
+Γ£à Naming consistency check completed
+≡ƒöä Checking for duplicate features...
+Γ£à Duplicate feature check completed
+≡ƒöù Validating cross-references...
+Γ£à Cross-reference validation completed
+≡ƒöì Checking implementation coherence...
+warning: could not open directory '.kiro/.kiro/': No such file or directory
+Γ£à Implementation coherence check completed
+
+=== GUARDIAN RESULTS ===
+Conflicts found: 413
+Warnings found: 36
+
+≡ƒÜ¿ CONFLICTS:
+1. [MISSING_SECTIONS] Missing required sections: ## Requirements
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\ai-agents\requirements.md
+   Impact: Requirements file structure is incomplete
+   Resolution: Add missing sections to follow template format
+
+2. [MISSING_SECTIONS] Missing required sections: ## Requirements
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\applications-management\requirements.md
+   Impact: Requirements file structure is incomplete
+   Resolution: Add missing sections to follow template format
+
+3. [MISSING_SECTIONS] Missing required sections: ## Requirements
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\ats-system-development\requirements.md
+   Impact: Requirements file structure is incomplete
+   Resolution: Add missing sections to follow template format
+
+4. [MISSING_SECTIONS] Missing required sections: ## Requirements
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\candidate-matching-system\requirements.md
+   Impact: Requirements file structure is incomplete
+   Resolution: Add missing sections to follow template format
+
+5. [MISSING_SECTIONS] Missing required sections: ## Requirements
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\critical-integration-issues\requirements.md
+   Impact: Requirements file structure is incomplete
+   Resolution: Add missing sections to follow template format
+
+6. [MISSING_SECTIONS] Missing required sections: ## Requirements
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\dashboard-user-details-fix\requirements.md
+   Impact: Requirements file structure is incomplete
+   Resolution: Add missing sections to follow template format
+
+7. [MISSING_SECTIONS] Missing required sections: ## Overview, ## Requirements
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\design-system\requirements.md
+   Impact: Requirements file structure is incomplete
+   Resolution: Add missing sections to follow template format
+
+8. [MISSING_SECTIONS] Missing required sections: ## Overview, ## Requirements
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\forgot-password-resend\requirements.md
+   Impact: Requirements file structure is incomplete
+   Resolution: Add missing sections to follow template format
+
+9. [MISSING_SECTIONS] Missing required sections: ## Requirements
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\message-queue-system\requirements.md
+   Impact: Requirements file structure is incomplete
+   Resolution: Add missing sections to follow template format
+
+10. [MISSING_SECTIONS] Missing required sections: ## Overview, ## Requirements
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\notification-analytics-unified\requirements.md
+   Impact: Requirements file structure is incomplete
+   Resolution: Add missing sections to follow template format
+
+11. [MISSING_SECTIONS] Missing required sections: ## Overview, ## Requirements
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\notification-system-unified\requirements.md
+   Impact: Requirements file structure is incomplete
+   Resolution: Add missing sections to follow template format
+
+12. [INVALID_REQUIREMENT_NUMBER] Requirement number 999 exceeds maximum (899)
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\notification-system-unified\requirements.md
+   Impact: Use standard requirement numbering scheme
+   Resolution: Use standard numbering: REQ-001-499 (functional), REQ-500-699 (non-functional)
+
+13. [MISSING_SECTIONS] Missing required sections: ## Requirements
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\resume-builder-integration\requirements.md
+   Impact: Requirements file structure is incomplete
+   Resolution: Add missing sections to follow template format
+
+14. [MISSING_SECTIONS] Missing required sections: ## Requirements
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\resume-builder-templates\requirements.md
+   Impact: Requirements file structure is incomplete
+   Resolution: Add missing sections to follow template format
+
+15. [MISSING_SECTIONS] Missing required sections: ## Requirements
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\resume-builder-ui\requirements.md
+   Impact: Requirements file structure is incomplete
+   Resolution: Add missing sections to follow template format
+
+16. [MISSING_SECTIONS] Missing required sections: ## Requirements
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\saved-jobs\requirements.md
+   Impact: Requirements file structure is incomplete
+   Resolution: Add missing sections to follow template format
+
+17. [MISSING_SECTIONS] Missing required sections: ## Requirements
+   Files: E:\projects\jobfinders_mvp\.kiro\specs\TEMPLATE\requirements.md
+   Impact: Requirements file structure is incomplete
+   Resolution: Add missing sections to follow template format
+
+18. [NAMING_INCONSISTENCY] Term "Requirements" appears with different naming: ai agents, applications management, ARCHIVED IMPLEMENTED, ats system development, candidate matching system, critical integration issues, dashboard user details fix, design system, forgot password resend, message queue system, notification analytics unified, notification system unified, resume builder integration, resume builder templates, resume builder ui, saved jobs, TEMPLATE
+   Files: ai-agents, applications-management, ARCHIVED-IMPLEMENTED, ats-system-development, candidate-matching-system, critical-integration-issues, dashboard-user-details-fix, design-system, forgot-password-resend, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+19. [NAMING_INCONSISTENCY] Term "Specification" appears with different naming: ai agents, forgot password resend, message queue system, notification analytics unified, notification system unified, TEMPLATE
+   Files: ai-agents, forgot-password-resend, message-queue-system, notification-analytics-unified, notification-system-unified, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+20. [NAMING_INCONSISTENCY] Term "Overview" appears with different naming: ai agents, applications management, ARCHIVED IMPLEMENTED, ats system development, candidate matching system, critical integration issues, dashboard user details fix, design system, message queue system, resume builder integration, resume builder templates, resume builder ui, saved jobs, TEMPLATE
+   Files: ai-agents, applications-management, ARCHIVED-IMPLEMENTED, ats-system-development, candidate-matching-system, critical-integration-issues, dashboard-user-details-fix, design-system, message-queue-system, resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+21. [NAMING_INCONSISTENCY] Term "This" appears with different naming: ai agents, ARCHIVED IMPLEMENTED, critical integration issues, design system, notification analytics unified, notification system unified, resume builder ui, saved jobs, TEMPLATE
+   Files: ai-agents, ARCHIVED-IMPLEMENTED, critical-integration-issues, design-system, notification-analytics-unified, notification-system-unified, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+22. [NAMING_INCONSISTENCY] Term "Functional" appears with different naming: ai agents, applications management, ats system development, candidate matching system, critical integration issues, dashboard user details fix, design system, forgot password resend, message queue system, notification analytics unified, notification system unified, resume builder integration, resume builder templates, resume builder ui, saved jobs, TEMPLATE
+   Files: ai-agents, applications-management, ats-system-development, candidate-matching-system, critical-integration-issues, dashboard-user-details-fix, design-system, forgot-password-resend, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+23. [NAMING_INCONSISTENCY] Term "Analysis" appears with different naming: ai agents, applications management, candidate matching system, critical integration issues, resume builder integration, resume builder ui
+   Files: ai-agents, applications-management, candidate-matching-system, critical-integration-issues, resume-builder-integration, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+24. [NAMING_INCONSISTENCY] Term "Requirement" appears with different naming: ai agents, TEMPLATE
+   Files: ai-agents, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+25. [NAMING_INCONSISTENCY] Term "Priority" appears with different naming: ai agents, applications management, ARCHIVED IMPLEMENTED, ats system development, notification analytics unified, resume builder integration, resume builder templates, resume builder ui, TEMPLATE
+   Files: ai-agents, applications-management, ARCHIVED-IMPLEMENTED, ats-system-development, notification-analytics-unified, resume-builder-integration, resume-builder-templates, resume-builder-ui, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+26. [NAMING_INCONSISTENCY] Term "High" appears with different naming: ai agents, applications management, ats system development, critical integration issues, design system, message queue system, notification analytics unified, resume builder integration, resume builder templates, resume builder ui, saved jobs, TEMPLATE
+   Files: ai-agents, applications-management, ats-system-development, critical-integration-issues, design-system, message-queue-system, notification-analytics-unified, resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+27. [NAMING_INCONSISTENCY] Term "Acceptance" appears with different naming: ai agents, ats system development, critical integration issues, message queue system, resume builder integration, resume builder templates, TEMPLATE
+   Files: ai-agents, ats-system-development, critical-integration-issues, message-queue-system, resume-builder-integration, resume-builder-templates, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+28. [NAMING_INCONSISTENCY] Term "Criteria" appears with different naming: ai agents, applications management, ats system development, critical integration issues, dashboard user details fix, design system, forgot password resend, message queue system, resume builder integration, resume builder templates, resume builder ui, saved jobs, TEMPLATE
+   Files: ai-agents, applications-management, ats-system-development, critical-integration-issues, dashboard-user-details-fix, design-system, forgot-password-resend, message-queue-system, resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+29. [NAMING_INCONSISTENCY] Term "Analyze" appears with different naming: ai agents, notification analytics unified, notification system unified
+   Files: ai-agents, notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+30. [NAMING_INCONSISTENCY] Term "Identify" appears with different naming: ai agents, applications management, ats system development, notification analytics unified, resume builder integration
+   Files: ai-agents, applications-management, ats-system-development, notification-analytics-unified, resume-builder-integration
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+31. [NAMING_INCONSISTENCY] Term "Provide" appears with different naming: ai agents, ats system development, notification analytics unified, notification system unified, resume builder integration, resume builder ui
+   Files: ai-agents, ats-system-development, notification-analytics-unified, notification-system-unified, resume-builder-integration, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+32. [NAMING_INCONSISTENCY] Term "Generate" appears with different naming: ai agents, ats system development, forgot password resend, notification system unified, resume builder integration, resume builder templates, saved jobs
+   Files: ai-agents, ats-system-development, forgot-password-resend, notification-system-unified, resume-builder-integration, resume-builder-templates, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+33. [NAMING_INCONSISTENCY] Term "Skill" appears with different naming: ai agents, resume builder ui
+   Files: ai-agents, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+34. [NAMING_INCONSISTENCY] Term "Compare" appears with different naming: ai agents, notification analytics unified
+   Files: ai-agents, notification-analytics-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+35. [NAMING_INCONSISTENCY] Term "Track" appears with different naming: ai agents, notification analytics unified, notification system unified, saved jobs
+   Files: ai-agents, notification-analytics-unified, notification-system-unified, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+36. [NAMING_INCONSISTENCY] Term "Integrate" appears with different naming: ai agents, notification analytics unified, notification system unified, resume builder integration, resume builder ui
+   Files: ai-agents, notification-analytics-unified, notification-system-unified, resume-builder-integration, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+37. [NAMING_INCONSISTENCY] Term "Market" appears with different naming: ai agents, applications management
+   Files: ai-agents, applications-management
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+38. [NAMING_INCONSISTENCY] Term "Intelligence" appears with different naming: ai agents, applications management, notification system unified
+   Files: ai-agents, applications-management, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+39. [NAMING_INCONSISTENCY] Term "Medium" appears with different naming: ai agents, ats system development, notification analytics unified, resume builder integration, resume builder ui, TEMPLATE
+   Files: ai-agents, ats-system-development, notification-analytics-unified, resume-builder-integration, resume-builder-ui, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+40. [NAMING_INCONSISTENCY] Term "Interview" appears with different naming: ai agents, applications management, ats system development
+   Files: ai-agents, applications-management, ats-system-development
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+41. [NAMING_INCONSISTENCY] Term "Preparation" appears with different naming: ai agents, applications management
+   Files: ai-agents, applications-management
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+42. [NAMING_INCONSISTENCY] Term "System" appears with different naming: ai agents, applications management, ats system development, candidate matching system, critical integration issues, design system, forgot password resend, message queue system, notification analytics unified, notification system unified, resume builder integration, resume builder ui, saved jobs, TEMPLATE
+   Files: ai-agents, applications-management, ats-system-development, candidate-matching-system, critical-integration-issues, design-system, forgot-password-resend, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-integration, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+43. [NAMING_INCONSISTENCY] Term "Support" appears with different naming: ai agents, applications management, ats system development, critical integration issues, design system, notification analytics unified, notification system unified, resume builder integration, resume builder templates, resume builder ui, saved jobs, TEMPLATE
+   Files: ai-agents, applications-management, ats-system-development, critical-integration-issues, design-system, notification-analytics-unified, notification-system-unified, resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+44. [NAMING_INCONSISTENCY] Term "Optimization" appears with different naming: ai agents, applications management, notification system unified, resume builder templates, resume builder ui
+   Files: ai-agents, applications-management, notification-system-unified, resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+45. [NAMING_INCONSISTENCY] Term "Offer" appears with different naming: ai agents, ats system development
+   Files: ai-agents, ats-system-development
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+46. [NAMING_INCONSISTENCY] Term "Scheduling" appears with different naming: ai agents, message queue system, notification system unified
+   Files: ai-agents, message-queue-system, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+47. [NAMING_INCONSISTENCY] Term "Coordinate" appears with different naming: ai agents, notification system unified
+   Files: ai-agents, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+48. [NAMING_INCONSISTENCY] Term "Send" appears with different naming: ai agents, forgot password resend
+   Files: ai-agents, forgot-password-resend
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+49. [NAMING_INCONSISTENCY] Term "Application" appears with different naming: ai agents, applications management, critical integration issues, notification system unified, resume builder ui, saved jobs
+   Files: ai-agents, applications-management, critical-integration-issues, notification-system-unified, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+50. [NAMING_INCONSISTENCY] Term "Optimize" appears with different naming: ai agents, notification system unified
+   Files: ai-agents, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+51. [NAMING_INCONSISTENCY] Term "Tracking" appears with different naming: ai agents, applications management, ats system development, notification analytics unified, notification system unified, resume builder templates, saved jobs
+   Files: ai-agents, applications-management, ats-system-development, notification-analytics-unified, notification-system-unified, resume-builder-templates, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+52. [NAMING_INCONSISTENCY] Term "Monitor" appears with different naming: ai agents, notification analytics unified, notification system unified
+   Files: ai-agents, notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+53. [NAMING_INCONSISTENCY] Term "Automated" appears with different naming: ai agents, applications management, ats system development, notification analytics unified, notification system unified
+   Files: ai-agents, applications-management, ats-system-development, notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+54. [NAMING_INCONSISTENCY] Term "Maintain" appears with different naming: ai agents, ARCHIVED IMPLEMENTED, forgot password resend, notification system unified, resume builder templates
+   Files: ai-agents, ARCHIVED-IMPLEMENTED, forgot-password-resend, notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+55. [NAMING_INCONSISTENCY] Term "Handle" appears with different naming: ai agents, applications management, ats system development, dashboard user details fix, forgot password resend, notification analytics unified, notification system unified, resume builder integration
+   Files: ai-agents, applications-management, ats-system-development, dashboard-user-details-fix, forgot-password-resend, notification-analytics-unified, notification-system-unified, resume-builder-integration
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+56. [NAMING_INCONSISTENCY] Term "Respect" appears with different naming: ai agents, applications management
+   Files: ai-agents, applications-management
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+57. [NAMING_INCONSISTENCY] Term "Employer" appears with different naming: ai agents, ats system development, critical integration issues
+   Files: ai-agents, ats-system-development, critical-integration-issues
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+58. [NAMING_INCONSISTENCY] Term "Candidate" appears with different naming: ai agents, ats system development, candidate matching system, critical integration issues
+   Files: ai-agents, ats-system-development, candidate-matching-system, critical-integration-issues
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+59. [NAMING_INCONSISTENCY] Term "Posting" appears with different naming: ai agents, ats system development
+   Files: ai-agents, ats-system-development
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+60. [NAMING_INCONSISTENCY] Term "Coordination" appears with different naming: ai agents, notification system unified
+   Files: ai-agents, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+61. [NAMING_INCONSISTENCY] Term "Connection" appears with different naming: ai agents, applications management
+   Files: ai-agents, applications-management
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+62. [NAMING_INCONSISTENCY] Term "Recommendations" appears with different naming: ai agents, critical integration issues
+   Files: ai-agents, critical-integration-issues
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+63. [NAMING_INCONSISTENCY] Term "Communication" appears with different naming: ai agents, applications management, ats system development
+   Files: ai-agents, applications-management, ats-system-development
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+64. [NAMING_INCONSISTENCY] Term "Multi" appears with different naming: ai agents, applications management, message queue system, notification analytics unified, notification system unified, resume builder integration, saved jobs
+   Files: ai-agents, applications-management, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-integration, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+65. [NAMING_INCONSISTENCY] Term "Share" appears with different naming: ai agents, saved jobs
+   Files: ai-agents, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+66. [NAMING_INCONSISTENCY] Term "Natural" appears with different naming: ai agents, applications management
+   Files: ai-agents, applications-management
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+67. [NAMING_INCONSISTENCY] Term "Interface" appears with different naming: ai agents, applications management, critical integration issues, resume builder ui
+   Files: ai-agents, applications-management, critical-integration-issues, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+68. [NAMING_INCONSISTENCY] Term "Customization" appears with different naming: ai agents, resume builder templates
+   Files: ai-agents, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+69. [NAMING_INCONSISTENCY] Term "Configure" appears with different naming: ai agents, forgot password resend
+   Files: ai-agents, forgot-password-resend
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+70. [NAMING_INCONSISTENCY] Term "Enable" appears with different naming: ai agents, notification analytics unified
+   Files: ai-agents, notification-analytics-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+71. [NAMING_INCONSISTENCY] Term "Performance" appears with different naming: ai agents, applications management, ats system development, candidate matching system, critical integration issues, dashboard user details fix, design system, forgot password resend, message queue system, notification analytics unified, notification system unified, resume builder integration, resume builder templates, resume builder ui, saved jobs, TEMPLATE
+   Files: ai-agents, applications-management, ats-system-development, candidate-matching-system, critical-integration-issues, dashboard-user-details-fix, design-system, forgot-password-resend, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+72. [NAMING_INCONSISTENCY] Term "Response" appears with different naming: ai agents, applications management, dashboard user details fix, TEMPLATE
+   Files: ai-agents, applications-management, dashboard-user-details-fix, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+73. [NAMING_INCONSISTENCY] Term "Time" appears with different naming: ai agents, applications management, message queue system, notification analytics unified, notification system unified
+   Files: ai-agents, applications-management, message-queue-system, notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+74. [NAMING_INCONSISTENCY] Term "Concurrent" appears with different naming: ai agents, resume builder templates, saved jobs, TEMPLATE
+   Files: ai-agents, resume-builder-templates, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+75. [NAMING_INCONSISTENCY] Term "Users" appears with different naming: ai agents, candidate matching system, critical integration issues, design system, forgot password resend, resume builder integration, resume builder templates, resume builder ui, saved jobs
+   Files: ai-agents, candidate-matching-system, critical-integration-issues, design-system, forgot-password-resend, resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+76. [NAMING_INCONSISTENCY] Term "Load" appears with different naming: ai agents, TEMPLATE
+   Files: ai-agents, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+77. [NAMING_INCONSISTENCY] Term "Throughput" appears with different naming: ai agents, message queue system, notification system unified, TEMPLATE
+   Files: ai-agents, message-queue-system, notification-system-unified, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+78. [NAMING_INCONSISTENCY] Term "Request" appears with different naming: ai agents, forgot password resend
+   Files: ai-agents, forgot-password-resend
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+79. [NAMING_INCONSISTENCY] Term "Scalability" appears with different naming: ai agents, ats system development, candidate matching system, critical integration issues, message queue system, notification analytics unified, notification system unified, resume builder integration, TEMPLATE
+   Files: ai-agents, ats-system-development, candidate-matching-system, critical-integration-issues, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-integration, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+80. [NAMING_INCONSISTENCY] Term "Horizontal" appears with different naming: ai agents, message queue system, notification system unified, TEMPLATE
+   Files: ai-agents, message-queue-system, notification-system-unified, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+81. [NAMING_INCONSISTENCY] Term "Scaling" appears with different naming: ai agents, applications management, message queue system, notification system unified, TEMPLATE
+   Files: ai-agents, applications-management, message-queue-system, notification-system-unified, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+82. [NAMING_INCONSISTENCY] Term "Auto" appears with different naming: ai agents, applications management, ats system development, resume builder integration, resume builder ui
+   Files: ai-agents, applications-management, ats-system-development, resume-builder-integration, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+83. [NAMING_INCONSISTENCY] Term "Linear" appears with different naming: ai agents, message queue system
+   Files: ai-agents, message-queue-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+84. [NAMING_INCONSISTENCY] Term "Reliability" appears with different naming: ai agents, applications management, candidate matching system, dashboard user details fix, message queue system, notification system unified, TEMPLATE
+   Files: ai-agents, applications-management, candidate-matching-system, dashboard-user-details-fix, message-queue-system, notification-system-unified, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+85. [NAMING_INCONSISTENCY] Term "Availability" appears with different naming: ai agents, message queue system, notification system unified
+   Files: ai-agents, message-queue-system, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+86. [NAMING_INCONSISTENCY] Term "Error" appears with different naming: ai agents, applications management, critical integration issues, dashboard user details fix, forgot password resend, message queue system, notification analytics unified, notification system unified, resume builder templates, saved jobs, TEMPLATE
+   Files: ai-agents, applications-management, critical-integration-issues, dashboard-user-details-fix, forgot-password-resend, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-templates, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+87. [NAMING_INCONSISTENCY] Term "Handling" appears with different naming: ai agents, applications management, notification system unified, saved jobs
+   Files: ai-agents, applications-management, notification-system-unified, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+88. [NAMING_INCONSISTENCY] Term "Fault" appears with different naming: ai agents, message queue system, notification system unified
+   Files: ai-agents, message-queue-system, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+89. [NAMING_INCONSISTENCY] Term "Tolerance" appears with different naming: ai agents, message queue system, notification system unified
+   Files: ai-agents, message-queue-system, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+90. [NAMING_INCONSISTENCY] Term "Security" appears with different naming: ai agents, applications management, ats system development, candidate matching system, critical integration issues, forgot password resend, message queue system, notification system unified, resume builder integration, resume builder templates, resume builder ui, saved jobs, TEMPLATE
+   Files: ai-agents, applications-management, ats-system-development, candidate-matching-system, critical-integration-issues, forgot-password-resend, message-queue-system, notification-system-unified, resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+91. [NAMING_INCONSISTENCY] Term "Data" appears with different naming: ai agents, applications management, ats system development, candidate matching system, critical integration issues, dashboard user details fix, message queue system, notification analytics unified, notification system unified, resume builder integration, resume builder templates, resume builder ui, saved jobs, TEMPLATE
+   Files: ai-agents, applications-management, ats-system-development, candidate-matching-system, critical-integration-issues, dashboard-user-details-fix, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+92. [NAMING_INCONSISTENCY] Term "Protection" appears with different naming: ai agents, applications management, candidate matching system, notification system unified, resume builder templates, saved jobs
+   Files: ai-agents, applications-management, candidate-matching-system, notification-system-unified, resume-builder-templates, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+93. [NAMING_INCONSISTENCY] Term "Zero" appears with different naming: ai agents, applications management, resume builder ui
+   Files: ai-agents, applications-management, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+94. [NAMING_INCONSISTENCY] Term "Privacy" appears with different naming: ai agents, applications management, ats system development, candidate matching system, message queue system, notification analytics unified, notification system unified, resume builder templates, saved jobs
+   Files: ai-agents, applications-management, ats-system-development, candidate-matching-system, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-templates, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+95. [NAMING_INCONSISTENCY] Term "Compliance" appears with different naming: ai agents, applications management, ats system development, candidate matching system, message queue system, notification analytics unified, notification system unified, resume builder templates, resume builder ui
+   Files: ai-agents, applications-management, ats-system-development, candidate-matching-system, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+96. [NAMING_INCONSISTENCY] Term "Full" appears with different naming: ai agents, applications management
+   Files: ai-agents, applications-management
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+97. [NAMING_INCONSISTENCY] Term "Access" appears with different naming: ai agents, ats system development, notification system unified, resume builder integration, saved jobs
+   Files: ai-agents, ats-system-development, notification-system-unified, resume-builder-integration, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+98. [NAMING_INCONSISTENCY] Term "Control" appears with different naming: ai agents, ats system development, candidate matching system, notification system unified, resume builder ui
+   Files: ai-agents, ats-system-development, candidate-matching-system, notification-system-unified, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+99. [NAMING_INCONSISTENCY] Term "Role" appears with different naming: ai agents, dashboard user details fix, notification system unified, resume builder integration, TEMPLATE
+   Files: ai-agents, dashboard-user-details-fix, notification-system-unified, resume-builder-integration, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+100. [NAMING_INCONSISTENCY] Term "Usability" appears with different naming: ai agents, applications management, candidate matching system, critical integration issues, resume builder integration, saved jobs, TEMPLATE
+   Files: ai-agents, applications-management, candidate-matching-system, critical-integration-issues, resume-builder-integration, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+101. [NAMING_INCONSISTENCY] Term "User" appears with different naming: ai agents, applications management, ats system development, candidate matching system, critical integration issues, dashboard user details fix, design system, forgot password resend, notification analytics unified, notification system unified, resume builder integration, resume builder templates, resume builder ui, saved jobs, TEMPLATE
+   Files: ai-agents, applications-management, ats-system-development, candidate-matching-system, critical-integration-issues, dashboard-user-details-fix, design-system, forgot-password-resend, notification-analytics-unified, notification-system-unified, resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+102. [NAMING_INCONSISTENCY] Term "Experience" appears with different naming: ai agents, applications management, ats system development, candidate matching system, critical integration issues, dashboard user details fix, design system, forgot password resend, resume builder templates, resume builder ui
+   Files: ai-agents, applications-management, ats-system-development, candidate-matching-system, critical-integration-issues, dashboard-user-details-fix, design-system, forgot-password-resend, resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+103. [NAMING_INCONSISTENCY] Term "Accessibility" appears with different naming: ai agents, applications management, ats system development, critical integration issues, design system, resume builder integration, resume builder templates, resume builder ui, saved jobs, TEMPLATE
+   Files: ai-agents, applications-management, ats-system-development, critical-integration-issues, design-system, resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+104. [NAMING_INCONSISTENCY] Term "Maintainability" appears with different naming: ai agents, design system, message queue system
+   Files: ai-agents, design-system, message-queue-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+105. [NAMING_INCONSISTENCY] Term "Code" appears with different naming: ai agents, resume builder templates, saved jobs
+   Files: ai-agents, resume-builder-templates, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+106. [NAMING_INCONSISTENCY] Term "Quality" appears with different naming: ai agents, ats system development, candidate matching system, resume builder templates
+   Files: ai-agents, ats-system-development, candidate-matching-system, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+107. [NAMING_INCONSISTENCY] Term "Monitoring" appears with different naming: ai agents, critical integration issues, message queue system, notification analytics unified, notification system unified, TEMPLATE
+   Files: ai-agents, critical-integration-issues, message-queue-system, notification-analytics-unified, notification-system-unified, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+108. [NAMING_INCONSISTENCY] Term "Observability" appears with different naming: ai agents, message queue system
+   Files: ai-agents, message-queue-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+109. [NAMING_INCONSISTENCY] Term "Business" appears with different naming: ai agents, applications management, ats system development, candidate matching system, critical integration issues, design system, notification analytics unified, notification system unified, resume builder integration, resume builder templates
+   Files: ai-agents, applications-management, ats-system-development, candidate-matching-system, critical-integration-issues, design-system, notification-analytics-unified, notification-system-unified, resume-builder-integration, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+110. [NAMING_INCONSISTENCY] Term "Rules" appears with different naming: ai agents, ats system development, candidate matching system, critical integration issues, resume builder integration
+   Files: ai-agents, ats-system-development, candidate-matching-system, critical-integration-issues, resume-builder-integration
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+111. [NAMING_INCONSISTENCY] Term "Usage" appears with different naming: ai agents, applications management, resume builder integration, resume builder templates, TEMPLATE
+   Files: ai-agents, applications-management, resume-builder-integration, resume-builder-templates, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+112. [NAMING_INCONSISTENCY] Term "Personal" appears with different naming: ai agents, resume builder ui, saved jobs
+   Files: ai-agents, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+113. [NAMING_INCONSISTENCY] Term "Transparency" appears with different naming: ai agents, ats system development
+   Files: ai-agents, ats-system-development
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+114. [NAMING_INCONSISTENCY] Term "Integration" appears with different naming: ai agents, applications management, ats system development, candidate matching system, critical integration issues, dashboard user details fix, forgot password resend, message queue system, notification analytics unified, notification system unified, resume builder integration, resume builder templates, resume builder ui, saved jobs, TEMPLATE
+   Files: ai-agents, applications-management, ats-system-development, candidate-matching-system, critical-integration-issues, dashboard-user-details-fix, forgot-password-resend, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+115. [NAMING_INCONSISTENCY] Term "Platform" appears with different naming: ai agents, applications management, notification system unified
+   Files: ai-agents, applications-management, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+116. [NAMING_INCONSISTENCY] Term "External" appears with different naming: ai agents, candidate matching system, critical integration issues, message queue system, notification analytics unified, notification system unified, resume builder templates
+   Files: ai-agents, candidate-matching-system, critical-integration-issues, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+117. [NAMING_INCONSISTENCY] Term "Service" appears with different naming: ai agents, applications management, ats system development, forgot password resend, message queue system, notification system unified, resume builder templates
+   Files: ai-agents, applications-management, ats-system-development, forgot-password-resend, message-queue-system, notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+118. [NAMING_INCONSISTENCY] Term "California" appears with different naming: ai agents, ats system development, candidate matching system
+   Files: ai-agents, ats-system-development, candidate-matching-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+119. [NAMING_INCONSISTENCY] Term "Right" appears with different naming: ai agents, applications management, ats system development
+   Files: ai-agents, applications-management, ats-system-development
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+120. [NAMING_INCONSISTENCY] Term "Bias" appears with different naming: ai agents, ats system development
+   Files: ai-agents, ats-system-development
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+121. [NAMING_INCONSISTENCY] Term "Explainable" appears with different naming: ai agents, ats system development
+   Files: ai-agents, ats-system-development
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+122. [NAMING_INCONSISTENCY] Term "Employment" appears with different naming: ai agents, candidate matching system
+   Files: ai-agents, candidate-matching-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+123. [NAMING_INCONSISTENCY] Term "Recommendation" appears with different naming: ai agents, candidate matching system
+   Files: ai-agents, candidate-matching-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+124. [NAMING_INCONSISTENCY] Term "Context" appears with different naming: ai agents, applications management
+   Files: ai-agents, applications-management
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+125. [NAMING_INCONSISTENCY] Term "Management" appears with different naming: applications management, ARCHIVED IMPLEMENTED, candidate matching system, critical integration issues, dashboard user details fix, forgot password resend, message queue system, notification analytics unified, notification system unified, saved jobs
+   Files: applications-management, ARCHIVED-IMPLEMENTED, candidate-matching-system, critical-integration-issues, dashboard-user-details-fix, forgot-password-resend, message-queue-system, notification-analytics-unified, notification-system-unified, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+126. [NAMING_INCONSISTENCY] Term "Comprehensive" appears with different naming: applications management, critical integration issues, message queue system, notification system unified
+   Files: applications-management, critical-integration-issues, message-queue-system, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+127. [NAMING_INCONSISTENCY] Term "Enhanced" appears with different naming: applications management, critical integration issues, resume builder templates, saved jobs
+   Files: applications-management, critical-integration-issues, resume-builder-templates, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+128. [NAMING_INCONSISTENCY] Term "Current" appears with different naming: applications management, critical integration issues, dashboard user details fix, saved jobs
+   Files: applications-management, critical-integration-issues, dashboard-user-details-fix, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+129. [NAMING_INCONSISTENCY] Term "Status" appears with different naming: applications management, ARCHIVED IMPLEMENTED, ats system development, critical integration issues, dashboard user details fix, notification analytics unified, notification system unified, resume builder ui, saved jobs, TEMPLATE
+   Files: applications-management, ARCHIVED-IMPLEMENTED, ats-system-development, critical-integration-issues, dashboard-user-details-fix, notification-analytics-unified, notification-system-unified, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+130. [NAMING_INCONSISTENCY] Term "Implementation" appears with different naming: applications management, ARCHIVED IMPLEMENTED, dashboard user details fix, notification analytics unified, resume builder ui, saved jobs, TEMPLATE
+   Files: applications-management, ARCHIVED-IMPLEMENTED, dashboard-user-details-fix, notification-analytics-unified, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+131. [NAMING_INCONSISTENCY] Term "Ready" appears with different naming: applications management, resume builder templates
+   Files: applications-management, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+132. [NAMING_INCONSISTENCY] Term "Development" appears with different naming: applications management, ats system development, design system
+   Files: applications-management, ats-system-development, design-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+133. [NAMING_INCONSISTENCY] Term "Documentation" appears with different naming: applications management, ARCHIVED IMPLEMENTED, saved jobs, TEMPLATE
+   Files: applications-management, ARCHIVED-IMPLEMENTED, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+134. [NAMING_INCONSISTENCY] Term "Location" appears with different naming: applications management, candidate matching system, saved jobs
+   Files: applications-management, candidate-matching-system, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+135. [NAMING_INCONSISTENCY] Term "Navigation" appears with different naming: applications management, design system, saved jobs
+   Files: applications-management, design-system, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+136. [NAMING_INCONSISTENCY] Term "WebSocket" appears with different naming: applications management, critical integration issues, notification system unified
+   Files: applications-management, critical-integration-issues, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+137. [NAMING_INCONSISTENCY] Term "Dependencies" appears with different naming: applications management, critical integration issues, notification analytics unified, resume builder templates, resume builder ui, saved jobs, TEMPLATE
+   Files: applications-management, critical-integration-issues, notification-analytics-unified, resume-builder-templates, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+138. [NAMING_INCONSISTENCY] Term "Authentication" appears with different naming: applications management, critical integration issues, forgot password resend, message queue system, notification system unified, resume builder integration, resume builder ui, saved jobs, TEMPLATE
+   Files: applications-management, critical-integration-issues, forgot-password-resend, message-queue-system, notification-system-unified, resume-builder-integration, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+139. [NAMING_INCONSISTENCY] Term "Real" appears with different naming: applications management, ats system development, candidate matching system, critical integration issues, dashboard user details fix, notification analytics unified, notification system unified, resume builder integration, resume builder templates, resume builder ui, saved jobs
+   Files: applications-management, ats-system-development, candidate-matching-system, critical-integration-issues, dashboard-user-details-fix, notification-analytics-unified, notification-system-unified, resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+140. [NAMING_INCONSISTENCY] Term "Live" appears with different naming: applications management, saved jobs
+   Files: applications-management, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+141. [NAMING_INCONSISTENCY] Term "Applied" appears with different naming: applications management, saved jobs
+   Files: applications-management, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+142. [NAMING_INCONSISTENCY] Term "Scheduled" appears with different naming: applications management, message queue system, notification analytics unified
+   Files: applications-management, message-queue-system, notification-analytics-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+143. [NAMING_INCONSISTENCY] Term "Interactive" appears with different naming: applications management, notification system unified
+   Files: applications-management, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+144. [NAMING_INCONSISTENCY] Term "Visual" appears with different naming: applications management, design system, saved jobs
+   Files: applications-management, design-system, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+145. [NAMING_INCONSISTENCY] Term "Push" appears with different naming: applications management, message queue system, notification analytics unified, notification system unified
+   Files: applications-management, message-queue-system, notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+146. [NAMING_INCONSISTENCY] Term "Notifications" appears with different naming: applications management, critical integration issues, saved jobs
+   Files: applications-management, critical-integration-issues, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+147. [NAMING_INCONSISTENCY] Term "Browser" appears with different naming: applications management, design system, notification system unified, resume builder templates, saved jobs, TEMPLATE
+   Files: applications-management, design-system, notification-system-unified, resume-builder-templates, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+148. [NAMING_INCONSISTENCY] Term "Event" appears with different naming: applications management, critical integration issues, notification system unified
+   Files: applications-management, critical-integration-issues, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+149. [NAMING_INCONSISTENCY] Term "Intelligent" appears with different naming: applications management, notification system unified, resume builder templates
+   Files: applications-management, notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+150. [NAMING_INCONSISTENCY] Term "Organization" appears with different naming: applications management, saved jobs
+   Files: applications-management, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+151. [NAMING_INCONSISTENCY] Term "Smart" appears with different naming: applications management, notification system unified
+   Files: applications-management, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+152. [NAMING_INCONSISTENCY] Term "Advanced" appears with different naming: applications management, notification system unified, resume builder templates
+   Files: applications-management, notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+153. [NAMING_INCONSISTENCY] Term "Filtering" appears with different naming: applications management, message queue system
+   Files: applications-management, message-queue-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+154. [NAMING_INCONSISTENCY] Term "Semantic" appears with different naming: applications management, saved jobs
+   Files: applications-management, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+155. [NAMING_INCONSISTENCY] Term "Search" appears with different naming: applications management, saved jobs
+   Files: applications-management, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+156. [NAMING_INCONSISTENCY] Term "Automatic" appears with different naming: applications management, ats system development, message queue system, resume builder templates
+   Files: applications-management, ats-system-development, message-queue-system, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+157. [NAMING_INCONSISTENCY] Term "Scoring" appears with different naming: applications management, ats system development, candidate matching system
+   Files: applications-management, ats-system-development, candidate-matching-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+158. [NAMING_INCONSISTENCY] Term "Details" appears with different naming: applications management, ARCHIVED IMPLEMENTED, dashboard user details fix, notification analytics unified, saved jobs
+   Files: applications-management, ARCHIVED-IMPLEMENTED, dashboard-user-details-fix, notification-analytics-unified, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+159. [NAMING_INCONSISTENCY] Term "Complete" appears with different naming: applications management, critical integration issues, design system, forgot password resend, saved jobs
+   Files: applications-management, critical-integration-issues, design-system, forgot-password-resend, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+160. [NAMING_INCONSISTENCY] Term "Information" appears with different naming: applications management, resume builder ui
+   Files: applications-management, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+161. [NAMING_INCONSISTENCY] Term "Company" appears with different naming: applications management, saved jobs
+   Files: applications-management, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+162. [NAMING_INCONSISTENCY] Term "Analytics" appears with different naming: applications management, candidate matching system, message queue system, notification analytics unified, notification system unified, resume builder templates, saved jobs
+   Files: applications-management, candidate-matching-system, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-templates, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+163. [NAMING_INCONSISTENCY] Term "Rich" appears with different naming: applications management, notification system unified, resume builder ui
+   Files: applications-management, notification-system-unified, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+164. [NAMING_INCONSISTENCY] Term "Features" appears with different naming: applications management, critical integration issues, dashboard user details fix, notification system unified, resume builder templates, resume builder ui, saved jobs
+   Files: applications-management, critical-integration-issues, dashboard-user-details-fix, notification-system-unified, resume-builder-templates, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+165. [NAMING_INCONSISTENCY] Term "Sharing" appears with different naming: applications management, resume builder ui, saved jobs
+   Files: applications-management, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+166. [NAMING_INCONSISTENCY] Term "Bulk" appears with different naming: applications management, ats system development, notification system unified, resume builder integration, saved jobs
+   Files: applications-management, ats-system-development, notification-system-unified, resume-builder-integration, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+167. [NAMING_INCONSISTENCY] Term "Calendar" appears with different naming: applications management, notification system unified
+   Files: applications-management, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+168. [NAMING_INCONSISTENCY] Term "Insights" appears with different naming: applications management, candidate matching system, notification analytics unified, saved jobs
+   Files: applications-management, candidate-matching-system, notification-analytics-unified, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+169. [NAMING_INCONSISTENCY] Term "Success" appears with different naming: applications management, critical integration issues, dashboard user details fix, design system, forgot password resend, message queue system, resume builder templates, resume builder ui, saved jobs, TEMPLATE
+   Files: applications-management, critical-integration-issues, dashboard-user-details-fix, design-system, forgot-password-resend, message-queue-system, resume-builder-templates, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+170. [NAMING_INCONSISTENCY] Term "Rate" appears with different naming: applications management, critical integration issues, forgot password resend, message queue system, resume builder integration, resume builder templates
+   Files: applications-management, critical-integration-issues, forgot-password-resend, message-queue-system, resume-builder-integration, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+171. [NAMING_INCONSISTENCY] Term "Anonymous" appears with different naming: applications management, candidate matching system
+   Files: applications-management, candidate-matching-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+172. [NAMING_INCONSISTENCY] Term "Return" appears with different naming: applications management, forgot password resend
+   Files: applications-management, forgot-password-resend
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+173. [NAMING_INCONSISTENCY] Term "Unified" appears with different naming: applications management, critical integration issues, notification analytics unified, notification system unified
+   Files: applications-management, critical-integration-issues, notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+174. [NAMING_INCONSISTENCY] Term "Messaging" appears with different naming: applications management, notification system unified
+   Files: applications-management, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+175. [NAMING_INCONSISTENCY] Term "Email" appears with different naming: applications management, ats system development, design system, forgot password resend, message queue system, notification analytics unified, notification system unified, resume builder integration, resume builder templates
+   Files: applications-management, ats-system-development, design-system, forgot-password-resend, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-integration, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+176. [NAMING_INCONSISTENCY] Term "Templates" appears with different naming: applications management, resume builder integration, resume builder templates
+   Files: applications-management, resume-builder-integration, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+177. [NAMING_INCONSISTENCY] Term "Message" appears with different naming: applications management, message queue system, notification system unified
+   Files: applications-management, message-queue-system, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+178. [NAMING_INCONSISTENCY] Term "Scalable" appears with different naming: applications management, design system
+   Files: applications-management, design-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+179. [NAMING_INCONSISTENCY] Term "Architecture" appears with different naming: applications management, resume builder templates
+   Files: applications-management, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+180. [NAMING_INCONSISTENCY] Term "Efficient" appears with different naming: applications management, ats system development, resume builder integration, resume builder ui, saved jobs
+   Files: applications-management, ats-system-development, resume-builder-integration, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+181. [NAMING_INCONSISTENCY] Term "Caching" appears with different naming: applications management, critical integration issues, resume builder templates, resume builder ui
+   Files: applications-management, critical-integration-issues, resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+182. [NAMING_INCONSISTENCY] Term "Progressive" appears with different naming: applications management, resume builder templates, resume builder ui
+   Files: applications-management, resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+183. [NAMING_INCONSISTENCY] Term "Loading" appears with different naming: applications management, critical integration issues, dashboard user details fix, design system, forgot password resend, resume builder ui
+   Files: applications-management, critical-integration-issues, dashboard-user-details-fix, design-system, forgot-password-resend, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+184. [NAMING_INCONSISTENCY] Term "Background" appears with different naming: applications management, critical integration issues
+   Files: applications-management, critical-integration-issues
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+185. [NAMING_INCONSISTENCY] Term "Adaptive" appears with different naming: applications management, resume builder ui
+   Files: applications-management, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+186. [NAMING_INCONSISTENCY] Term "Voice" appears with different naming: applications management, notification system unified
+   Files: applications-management, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+187. [NAMING_INCONSISTENCY] Term "Touch" appears with different naming: applications management, resume builder ui
+   Files: applications-management, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+188. [NAMING_INCONSISTENCY] Term "Dark" appears with different naming: applications management, design system
+   Files: applications-management, design-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+189. [NAMING_INCONSISTENCY] Term "Audit" appears with different naming: applications management, ats system development, critical integration issues, message queue system, notification system unified, resume builder templates, saved jobs, TEMPLATE
+   Files: applications-management, ats-system-development, critical-integration-issues, message-queue-system, notification-system-unified, resume-builder-templates, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+190. [NAMING_INCONSISTENCY] Term "Controls" appears with different naming: applications management, saved jobs
+   Files: applications-management, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+191. [NAMING_INCONSISTENCY] Term "Granular" appears with different naming: applications management, notification system unified
+   Files: applications-management, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+192. [NAMING_INCONSISTENCY] Term "Deployment" appears with different naming: applications management, TEMPLATE
+   Files: applications-management, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+193. [NAMING_INCONSISTENCY] Term "Backup" appears with different naming: applications management, message queue system, resume builder ui, TEMPLATE
+   Files: applications-management, message-queue-system, resume-builder-ui, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+194. [NAMING_INCONSISTENCY] Term "Continuous" appears with different naming: applications management, ats system development
+   Files: applications-management, ats-system-development
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+195. [NAMING_INCONSISTENCY] Term "Self" appears with different naming: applications management, notification analytics unified
+   Files: applications-management, notification-analytics-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+196. [NAMING_INCONSISTENCY] Term "Disaster" appears with different naming: applications management, message queue system
+   Files: applications-management, message-queue-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+197. [NAMING_INCONSISTENCY] Term "Recovery" appears with different naming: applications management, message queue system, notification system unified
+   Files: applications-management, message-queue-system, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+198. [NAMING_INCONSISTENCY] Term "Circuit" appears with different naming: applications management, message queue system
+   Files: applications-management, message-queue-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+199. [NAMING_INCONSISTENCY] Term "Existing" appears with different naming: applications management, critical integration issues, dashboard user details fix, design system, saved jobs
+   Files: applications-management, critical-integration-issues, dashboard-user-details-fix, design-system, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+200. [NAMING_INCONSISTENCY] Term "Infrastructure" appears with different naming: applications management, design system, message queue system, notification analytics unified, notification system unified
+   Files: applications-management, design-system, message-queue-system, notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+201. [NAMING_INCONSISTENCY] Term "Stream" appears with different naming: applications management, notification system unified
+   Files: applications-management, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+202. [NAMING_INCONSISTENCY] Term "Matching" appears with different naming: applications management, candidate matching system, critical integration issues
+   Files: applications-management, candidate-matching-system, critical-integration-issues
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+203. [NAMING_INCONSISTENCY] Term "Services" appears with different naming: applications management, notification system unified
+   Files: applications-management, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+204. [NAMING_INCONSISTENCY] Term "Resume" appears with different naming: applications management, ats system development, critical integration issues, resume builder integration, resume builder templates, resume builder ui
+   Files: applications-management, ats-system-development, critical-integration-issues, resume-builder-integration, resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+205. [NAMING_INCONSISTENCY] Term "Google" appears with different naming: applications management, notification analytics unified, notification system unified
+   Files: applications-management, notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+206. [NAMING_INCONSISTENCY] Term "Outlook" appears with different naming: applications management, notification system unified
+   Files: applications-management, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+207. [NAMING_INCONSISTENCY] Term "LinkedIn" appears with different naming: applications management, ats system development, candidate matching system, resume builder ui
+   Files: applications-management, ats-system-development, candidate-matching-system, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+208. [NAMING_INCONSISTENCY] Term "Profile" appears with different naming: applications management, candidate matching system, critical integration issues, dashboard user details fix
+   Files: applications-management, candidate-matching-system, critical-integration-issues, dashboard-user-details-fix
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+209. [NAMING_INCONSISTENCY] Term "Meet" appears with different naming: applications management, notification analytics unified
+   Files: applications-management, notification-analytics-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+210. [NAMING_INCONSISTENCY] Term "Premium" appears with different naming: applications management, resume builder integration, resume builder templates
+   Files: applications-management, resume-builder-integration, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+211. [NAMING_INCONSISTENCY] Term "Quick" appears with different naming: applications management, saved jobs
+   Files: applications-management, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+212. [NAMING_INCONSISTENCY] Term "Global" appears with different naming: applications management, notification system unified
+   Files: applications-management, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+213. [NAMING_INCONSISTENCY] Term "Keyboard" appears with different naming: applications management, ats system development, resume builder templates, resume builder ui, saved jobs
+   Files: applications-management, ats-system-development, resume-builder-templates, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+214. [NAMING_INCONSISTENCY] Term "State" appears with different naming: applications management, ats system development, critical integration issues, dashboard user details fix, notification system unified, saved jobs
+   Files: applications-management, ats-system-development, critical-integration-issues, dashboard-user-details-fix, notification-system-unified, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+215. [NAMING_INCONSISTENCY] Term "Offline" appears with different naming: applications management, resume builder ui, saved jobs
+   Files: applications-management, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+216. [NAMING_INCONSISTENCY] Term "Persistence" appears with different naming: applications management, message queue system, notification system unified
+   Files: applications-management, message-queue-system, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+217. [NAMING_INCONSISTENCY] Term "Predictive" appears with different naming: applications management, notification system unified
+   Files: applications-management, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+218. [NAMING_INCONSISTENCY] Term "Endpoints" appears with different naming: applications management, dashboard user details fix, forgot password resend, saved jobs
+   Files: applications-management, dashboard-user-details-fix, forgot-password-resend, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+219. [NAMING_INCONSISTENCY] Term "Batch" appears with different naming: applications management, notification system unified, resume builder templates
+   Files: applications-management, notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+220. [NAMING_INCONSISTENCY] Term "Technical" appears with different naming: applications management, critical integration issues, design system, resume builder templates, TEMPLATE
+   Files: applications-management, critical-integration-issues, design-system, resume-builder-templates, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+221. [NAMING_INCONSISTENCY] Term "Constraints" appears with different naming: applications management, design system, resume builder templates, saved jobs
+   Files: applications-management, design-system, resume-builder-templates, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+222. [NAMING_INCONSISTENCY] Term "Component" appears with different naming: applications management, dashboard user details fix, design system, resume builder templates, saved jobs
+   Files: applications-management, dashboard-user-details-fix, design-system, resume-builder-templates, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+223. [NAMING_INCONSISTENCY] Term "Library" appears with different naming: applications management, resume builder templates
+   Files: applications-management, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+224. [NAMING_INCONSISTENCY] Term "Must" appears with different naming: applications management, dashboard user details fix, design system, resume builder templates, saved jobs
+   Files: applications-management, dashboard-user-details-fix, design-system, resume-builder-templates, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+225. [NAMING_INCONSISTENCY] Term "Mobile" appears with different naming: applications management, critical integration issues, design system, forgot password resend, resume builder integration, resume builder templates, resume builder ui, saved jobs, TEMPLATE
+   Files: applications-management, critical-integration-issues, design-system, forgot-password-resend, resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+226. [NAMING_INCONSISTENCY] Term "Memory" appears with different naming: applications management, resume builder templates
+   Files: applications-management, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+227. [NAMING_INCONSISTENCY] Term "Optimized" appears with different naming: applications management, resume builder ui
+   Files: applications-management, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+228. [NAMING_INCONSISTENCY] Term "Compatibility" appears with different naming: applications management, design system, resume builder templates
+   Files: applications-management, design-system, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+229. [NAMING_INCONSISTENCY] Term "Chrome" appears with different naming: applications management, design system, notification system unified, resume builder templates
+   Files: applications-management, design-system, notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+230. [NAMING_INCONSISTENCY] Term "Firefox" appears with different naming: applications management, design system, notification system unified, resume builder templates
+   Files: applications-management, design-system, notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+231. [NAMING_INCONSISTENCY] Term "Safari" appears with different naming: applications management, design system, notification system unified, resume builder templates
+   Files: applications-management, design-system, notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+232. [NAMING_INCONSISTENCY] Term "Edge" appears with different naming: applications management, design system, notification system unified, resume builder templates, saved jobs
+   Files: applications-management, design-system, notification-system-unified, resume-builder-templates, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+233. [NAMING_INCONSISTENCY] Term "Android" appears with different naming: applications management, notification system unified
+   Files: applications-management, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+234. [NAMING_INCONSISTENCY] Term "Screen" appears with different naming: applications management, ats system development, resume builder templates, resume builder ui, saved jobs
+   Files: applications-management, ats-system-development, resume-builder-templates, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+235. [NAMING_INCONSISTENCY] Term "Network" appears with different naming: applications management, saved jobs
+   Files: applications-management, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+236. [NAMING_INCONSISTENCY] Term "Responsive" appears with different naming: applications management, forgot password resend, resume builder templates, resume builder ui
+   Files: applications-management, forgot-password-resend, resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+237. [NAMING_INCONSISTENCY] Term "Metrics" appears with different naming: applications management, critical integration issues, message queue system, notification analytics unified, notification system unified, resume builder templates
+   Files: applications-management, critical-integration-issues, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+238. [NAMING_INCONSISTENCY] Term "Engagement" appears with different naming: applications management, critical integration issues, notification analytics unified, notification system unified
+   Files: applications-management, critical-integration-issues, notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+239. [NAMING_INCONSISTENCY] Term "Feature" appears with different naming: applications management, critical integration issues
+   Files: applications-management, critical-integration-issues
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+240. [NAMING_INCONSISTENCY] Term "Completion" appears with different naming: applications management, forgot password resend
+   Files: applications-management, forgot-password-resend
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+241. [NAMING_INCONSISTENCY] Term "Improvement" appears with different naming: applications management, ats system development, resume builder ui
+   Files: applications-management, ats-system-development, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+242. [NAMING_INCONSISTENCY] Term "Retention" appears with different naming: applications management, ats system development, message queue system, resume builder integration
+   Files: applications-management, ats-system-development, message-queue-system, resume-builder-integration
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+243. [NAMING_INCONSISTENCY] Term "Uptime" appears with different naming: applications management, TEMPLATE
+   Files: applications-management, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+244. [NAMING_INCONSISTENCY] Term "Lighthouse" appears with different naming: applications management, design system
+   Files: applications-management, design-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+245. [NAMING_INCONSISTENCY] Term "Cases" appears with different naming: applications management, saved jobs
+   Files: applications-management, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+246. [NAMING_INCONSISTENCY] Term "Jobs" appears with different naming: applications management, saved jobs
+   Files: applications-management, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+247. [NAMING_INCONSISTENCY] Term "Duplicate" appears with different naming: applications management, ats system development, candidate matching system, notification system unified, resume builder ui, saved jobs
+   Files: applications-management, ats-system-development, candidate-matching-system, notification-system-unified, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+248. [NAMING_INCONSISTENCY] Term "Prevention" appears with different naming: applications management, notification system unified
+   Files: applications-management, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+249. [NAMING_INCONSISTENCY] Term "Graceful" appears with different naming: applications management, dashboard user details fix, design system, message queue system
+   Files: applications-management, dashboard-user-details-fix, design-system, message-queue-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+250. [NAMING_INCONSISTENCY] Term "Cross" appears with different naming: applications management, dashboard user details fix, notification system unified, resume builder templates, saved jobs
+   Files: applications-management, dashboard-user-details-fix, notification-system-unified, resume-builder-templates, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+251. [NAMING_INCONSISTENCY] Term "Synchronization" appears with different naming: applications management, dashboard user details fix, saved jobs
+   Files: applications-management, dashboard-user-details-fix, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+252. [NAMING_INCONSISTENCY] Term "Ensure" appears with different naming: applications management, ats system development, design system, forgot password resend, notification analytics unified, notification system unified, resume builder templates, resume builder ui, TEMPLATE
+   Files: applications-management, ats-system-development, design-system, forgot-password-resend, notification-analytics-unified, notification-system-unified, resume-builder-templates, resume-builder-ui, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+253. [NAMING_INCONSISTENCY] Term "International" appears with different naming: applications management, ats system development, resume builder templates
+   Files: applications-management, ats-system-development, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+254. [NAMING_INCONSISTENCY] Term "Testing" appears with different naming: applications management, dashboard user details fix, forgot password resend, notification system unified, saved jobs, TEMPLATE
+   Files: applications-management, dashboard-user-details-fix, forgot-password-resend, notification-system-unified, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+255. [NAMING_INCONSISTENCY] Term "Unit" appears with different naming: applications management, forgot password resend, saved jobs, TEMPLATE
+   Files: applications-management, forgot-password-resend, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+256. [NAMING_INCONSISTENCY] Term "Tests" appears with different naming: applications management, forgot password resend, saved jobs
+   Files: applications-management, forgot-password-resend, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+257. [NAMING_INCONSISTENCY] Term "Third" appears with different naming: applications management, notification analytics unified, notification system unified, TEMPLATE
+   Files: applications-management, notification-analytics-unified, notification-system-unified, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+258. [NAMING_INCONSISTENCY] Term "Consistent" appears with different naming: applications management, dashboard user details fix, design system, resume builder ui, saved jobs
+   Files: applications-management, dashboard-user-details-fix, design-system, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+259. [NAMING_INCONSISTENCY] Term "Reader" appears with different naming: applications management, saved jobs
+   Files: applications-management, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+260. [NAMING_INCONSISTENCY] Term "Clear" appears with different naming: applications management, ats system development, dashboard user details fix, forgot password resend, resume builder templates, resume builder ui, saved jobs
+   Files: applications-management, ats-system-development, dashboard-user-details-fix, forgot-password-resend, resume-builder-templates, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+261. [NAMING_INCONSISTENCY] Term "Progress" appears with different naming: applications management, resume builder integration, resume builder ui, TEMPLATE
+   Files: applications-management, resume-builder-integration, resume-builder-ui, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+262. [NAMING_INCONSISTENCY] Term "Accessible" appears with different naming: applications management, forgot password resend, saved jobs
+   Files: applications-management, forgot-password-resend, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+263. [NAMING_INCONSISTENCY] Term "Multiple" appears with different naming: applications management, critical integration issues
+   Files: applications-management, critical-integration-issues
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+264. [NAMING_INCONSISTENCY] Term "Color" appears with different naming: applications management, design system, resume builder templates, saved jobs
+   Files: applications-management, design-system, resume-builder-templates, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+265. [NAMING_INCONSISTENCY] Term "Text" appears with different naming: applications management, notification system unified, resume builder ui, saved jobs
+   Files: applications-management, notification-system-unified, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+266. [NAMING_INCONSISTENCY] Term "Smooth" appears with different naming: applications management, dashboard user details fix, resume builder templates, saved jobs
+   Files: applications-management, dashboard-user-details-fix, resume-builder-templates, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+267. [NAMING_INCONSISTENCY] Term "Focus" appears with different naming: applications management, design system, saved jobs
+   Files: applications-management, design-system, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+268. [NAMING_INCONSISTENCY] Term "Considerations" appears with different naming: applications management, saved jobs
+   Files: applications-management, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+269. [NAMING_INCONSISTENCY] Term "Encryption" appears with different naming: applications management, TEMPLATE
+   Files: applications-management, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+270. [NAMING_INCONSISTENCY] Term "Client" appears with different naming: applications management, dashboard user details fix, resume builder templates
+   Files: applications-management, dashboard-user-details-fix, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+271. [NAMING_INCONSISTENCY] Term "Secure" appears with different naming: applications management, ats system development, forgot password resend, resume builder integration, resume builder templates, resume builder ui, saved jobs
+   Files: applications-management, ats-system-development, forgot-password-resend, resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+272. [NAMING_INCONSISTENCY] Term "Consent" appears with different naming: applications management, ats system development, candidate matching system
+   Files: applications-management, ats-system-development, candidate-matching-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+273. [NAMING_INCONSISTENCY] Term "Dashboard" appears with different naming: applications management, dashboard user details fix, notification analytics unified, resume builder ui
+   Files: applications-management, dashboard-user-details-fix, notification-analytics-unified, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+274. [NAMING_INCONSISTENCY] Term "List" appears with different naming: applications management, saved jobs, TEMPLATE
+   Files: applications-management, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+275. [NAMING_INCONSISTENCY] Term "Shared" appears with different naming: applications management, notification analytics unified, saved jobs
+   Files: applications-management, notification-analytics-unified, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+276. [NAMING_INCONSISTENCY] Term "Launch" appears with different naming: applications management, resume builder templates
+   Files: applications-management, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+277. [NAMING_INCONSISTENCY] Term "Critical" appears with different naming: applications management, critical integration issues, resume builder ui
+   Files: applications-management, critical-integration-issues, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+278. [NAMING_INCONSISTENCY] Term "Complex" appears with different naming: applications management, saved jobs
+   Files: applications-management, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+279. [NAMING_INCONSISTENCY] Term "Archive" appears with different naming: ARCHIVED IMPLEMENTED, message queue system
+   Files: ARCHIVED-IMPLEMENTED, message-queue-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+280. [NAMING_INCONSISTENCY] Term "Description" appears with different naming: ARCHIVED IMPLEMENTED, ats system development, notification analytics unified, resume builder integration, resume builder templates, resume builder ui, TEMPLATE
+   Files: ARCHIVED-IMPLEMENTED, ats-system-development, notification-analytics-unified, resume-builder-integration, resume-builder-templates, resume-builder-ui, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+281. [NAMING_INCONSISTENCY] Term "Preserve" appears with different naming: ARCHIVED IMPLEMENTED, forgot password resend
+   Files: ARCHIVED-IMPLEMENTED, forgot-password-resend
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+282. [NAMING_INCONSISTENCY] Term "Verify" appears with different naming: ARCHIVED IMPLEMENTED, dashboard user details fix
+   Files: ARCHIVED-IMPLEMENTED, dashboard-user-details-fix
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+283. [NAMING_INCONSISTENCY] Term "Each" appears with different naming: ARCHIVED IMPLEMENTED, resume builder templates
+   Files: ARCHIVED-IMPLEMENTED, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+284. [NAMING_INCONSISTENCY] Term "Reference" appears with different naming: ARCHIVED IMPLEMENTED, resume builder ui, TEMPLATE
+   Files: ARCHIVED-IMPLEMENTED, resume-builder-ui, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+285. [NAMING_INCONSISTENCY] Term "Applicant" appears with different naming: ats system development, resume builder templates
+   Files: ats-system-development, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+286. [NAMING_INCONSISTENCY] Term "Keyword" appears with different naming: ats system development, resume builder integration, resume builder templates
+   Files: ats-system-development, resume-builder-integration, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+287. [NAMING_INCONSISTENCY] Term "Extract" appears with different naming: ats system development, resume builder integration
+   Files: ats-system-development, resume-builder-integration
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+288. [NAMING_INCONSISTENCY] Term "English" appears with different naming: ats system development, resume builder integration
+   Files: ats-system-development, resume-builder-integration
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+289. [NAMING_INCONSISTENCY] Term "Spanish" appears with different naming: ats system development, resume builder integration
+   Files: ats-system-development, resume-builder-integration
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+290. [NAMING_INCONSISTENCY] Term "Algorithm" appears with different naming: ats system development, candidate matching system
+   Files: ats-system-development, candidate-matching-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+291. [NAMING_INCONSISTENCY] Term "Implement" appears with different naming: ats system development, design system, notification system unified, resume builder integration, resume builder templates, resume builder ui
+   Files: ats-system-development, design-system, notification-system-unified, resume-builder-integration, resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+292. [NAMING_INCONSISTENCY] Term "Score" appears with different naming: ats system development, resume builder integration
+   Files: ats-system-development, resume-builder-integration
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+293. [NAMING_INCONSISTENCY] Term "Industry" appears with different naming: ats system development, resume builder integration, resume builder templates, resume builder ui
+   Files: ats-system-development, resume-builder-integration, resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+294. [NAMING_INCONSISTENCY] Term "Specific" appears with different naming: ats system development, resume builder integration, resume builder templates, TEMPLATE
+   Files: ats-system-development, resume-builder-integration, resume-builder-templates, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+295. [NAMING_INCONSISTENCY] Term "Tech" appears with different naming: ats system development, resume builder integration, resume builder templates
+   Files: ats-system-development, resume-builder-integration, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+296. [NAMING_INCONSISTENCY] Term "Healthcare" appears with different naming: ats system development, resume builder integration, resume builder templates
+   Files: ats-system-development, resume-builder-integration, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+297. [NAMING_INCONSISTENCY] Term "Finance" appears with different naming: ats system development, resume builder integration, resume builder templates
+   Files: ats-system-development, resume-builder-integration, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+298. [NAMING_INCONSISTENCY] Term "Custom" appears with different naming: ats system development, notification analytics unified, notification system unified, resume builder templates
+   Files: ats-system-development, notification-analytics-unified, notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+299. [NAMING_INCONSISTENCY] Term "Accuracy" appears with different naming: ats system development, candidate matching system
+   Files: ats-system-development, candidate-matching-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+300. [NAMING_INCONSISTENCY] Term "Distributed" appears with different naming: ats system development, message queue system
+   Files: ats-system-development, message-queue-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+301. [NAMING_INCONSISTENCY] Term "Encrypted" appears with different naming: ats system development, resume builder integration
+   Files: ats-system-development, resume-builder-integration
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+302. [NAMING_INCONSISTENCY] Term "Education" appears with different naming: ats system development, resume builder ui
+   Files: ats-system-development, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+303. [NAMING_INCONSISTENCY] Term "Additional" appears with different naming: ats system development, resume builder templates
+   Files: ats-system-development, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+304. [NAMING_INCONSISTENCY] Term "Employers" appears with different naming: ats system development, candidate matching system, critical integration issues
+   Files: ats-system-development, candidate-matching-system, critical-integration-issues
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+305. [NAMING_INCONSISTENCY] Term "Indeed" appears with different naming: ats system development, candidate matching system
+   Files: ats-system-development, candidate-matching-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+306. [NAMING_INCONSISTENCY] Term "Systems" appears with different naming: ats system development, notification system unified, resume builder templates
+   Files: ats-system-development, notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+307. [NAMING_INCONSISTENCY] Term "Legal" appears with different naming: ats system development, resume builder templates
+   Files: ats-system-development, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+308. [NAMING_INCONSISTENCY] Term "Regular" appears with different naming: ats system development, resume builder ui
+   Files: ats-system-development, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+309. [NAMING_INCONSISTENCY] Term "Alternative" appears with different naming: ats system development, message queue system
+   Files: ats-system-development, message-queue-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+310. [NAMING_INCONSISTENCY] Term "Mitigation" appears with different naming: ats system development, critical integration issues
+   Files: ats-system-development, critical-integration-issues
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+311. [NAMING_INCONSISTENCY] Term "Machine" appears with different naming: ats system development, candidate matching system, notification system unified
+   Files: ats-system-development, candidate-matching-system, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+312. [NAMING_INCONSISTENCY] Term "Engine" appears with different naming: candidate matching system, notification analytics unified, notification system unified, resume builder templates
+   Files: candidate-matching-system, notification-analytics-unified, notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+313. [NAMING_INCONSISTENCY] Term "Preference" appears with different naming: candidate matching system, notification system unified
+   Files: candidate-matching-system, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+314. [NAMING_INCONSISTENCY] Term "Capabilities" appears with different naming: candidate matching system, resume builder ui
+   Files: candidate-matching-system, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+315. [NAMING_INCONSISTENCY] Term "Logic" appears with different naming: candidate matching system, notification system unified
+   Files: candidate-matching-system, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+316. [NAMING_INCONSISTENCY] Term "Salary" appears with different naming: candidate matching system, saved jobs
+   Files: candidate-matching-system, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+317. [NAMING_INCONSISTENCY] Term "Expired" appears with different naming: candidate matching system, saved jobs
+   Files: candidate-matching-system, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+318. [NAMING_INCONSISTENCY] Term "Match" appears with different naming: candidate matching system, critical integration issues
+   Files: candidate-matching-system, critical-integration-issues
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+319. [NAMING_INCONSISTENCY] Term "Internal" appears with different naming: candidate matching system, notification system unified, resume builder templates
+   Files: candidate-matching-system, notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+320. [NAMING_INCONSISTENCY] Term "Issues" appears with different naming: critical integration issues, dashboard user details fix
+   Files: critical-integration-issues, dashboard-user-details-fix
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+321. [NAMING_INCONSISTENCY] Term "JobFinders" appears with different naming: critical integration issues, design system, notification system unified, resume builder ui, TEMPLATE
+   Files: critical-integration-issues, design-system, notification-system-unified, resume-builder-ui, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+322. [NAMING_INCONSISTENCY] Term "Builder" appears with different naming: critical integration issues, resume builder integration, resume builder templates, resume builder ui
+   Files: critical-integration-issues, resume-builder-integration, resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+323. [NAMING_INCONSISTENCY] Term "Components" appears with different naming: critical integration issues, resume builder ui, saved jobs
+   Files: critical-integration-issues, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+324. [NAMING_INCONSISTENCY] Term "Notification" appears with different naming: critical integration issues, message queue system, notification analytics unified, notification system unified, resume builder integration, saved jobs
+   Files: critical-integration-issues, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-integration, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+325. [NAMING_INCONSISTENCY] Term "Database" appears with different naming: critical integration issues, dashboard user details fix, forgot password resend, message queue system, TEMPLATE
+   Files: critical-integration-issues, dashboard-user-details-fix, forgot-password-resend, message-queue-system, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+326. [NAMING_INCONSISTENCY] Term "Next" appears with different naming: critical integration issues, design system
+   Files: critical-integration-issues, design-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+327. [NAMING_INCONSISTENCY] Term "Driven" appears with different naming: critical integration issues, notification system unified
+   Files: critical-integration-issues, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+328. [NAMING_INCONSISTENCY] Term "Schema" appears with different naming: critical integration issues, forgot password resend
+   Files: critical-integration-issues, forgot-password-resend
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+329. [NAMING_INCONSISTENCY] Term "File" appears with different naming: critical integration issues, resume builder integration, resume builder templates
+   Files: critical-integration-issues, resume-builder-integration, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+330. [NAMING_INCONSISTENCY] Term "Delivery" appears with different naming: critical integration issues, notification analytics unified, notification system unified
+   Files: critical-integration-issues, notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+331. [NAMING_INCONSISTENCY] Term "Daily" appears with different naming: critical integration issues, message queue system
+   Files: critical-integration-issues, message-queue-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+332. [NAMING_INCONSISTENCY] Term "Risk" appears with different naming: critical integration issues, TEMPLATE
+   Files: critical-integration-issues, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+333. [NAMING_INCONSISTENCY] Term "Assessment" appears with different naming: critical integration issues, TEMPLATE
+   Files: critical-integration-issues, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+334. [NAMING_INCONSISTENCY] Term "Items" appears with different naming: critical integration issues, TEMPLATE
+   Files: critical-integration-issues, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+335. [NAMING_INCONSISTENCY] Term "Session" appears with different naming: dashboard user details fix, resume builder integration
+   Files: dashboard-user-details-fix, resume-builder-integration
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+336. [NAMING_INCONSISTENCY] Term "Validation" appears with different naming: dashboard user details fix, resume builder ui
+   Files: dashboard-user-details-fix, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+337. [NAMING_INCONSISTENCY] Term "NextAuth" appears with different naming: dashboard user details fix, design system, forgot password resend
+   Files: dashboard-user-details-fix, design-system, forgot-password-resend
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+338. [NAMING_INCONSISTENCY] Term "Proper" appears with different naming: dashboard user details fix, design system
+   Files: dashboard-user-details-fix, design-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+339. [NAMING_INCONSISTENCY] Term "Retry" appears with different naming: dashboard user details fix, message queue system
+   Files: dashboard-user-details-fix, message-queue-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+340. [NAMING_INCONSISTENCY] Term "Layout" appears with different naming: dashboard user details fix, design system, resume builder templates, resume builder ui
+   Files: dashboard-user-details-fix, design-system, resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+341. [NAMING_INCONSISTENCY] Term "Route" appears with different naming: dashboard user details fix, notification system unified, saved jobs
+   Files: dashboard-user-details-fix, notification-system-unified, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+342. [NAMING_INCONSISTENCY] Term "Based" appears with different naming: dashboard user details fix, notification system unified
+   Files: dashboard-user-details-fix, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+343. [NAMING_INCONSISTENCY] Term "Routing" appears with different naming: dashboard user details fix, message queue system, notification system unified
+   Files: dashboard-user-details-fix, message-queue-system, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+344. [NAMING_INCONSISTENCY] Term "Design" appears with different naming: design system, resume builder ui, TEMPLATE
+   Files: design-system, resume-builder-ui, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+345. [NAMING_INCONSISTENCY] Term "Define" appears with different naming: design system, TEMPLATE
+   Files: design-system, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+346. [NAMING_INCONSISTENCY] Term "Typography" appears with different naming: design system, resume builder templates
+   Files: design-system, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+347. [NAMING_INCONSISTENCY] Term "Establish" appears with different naming: design system, resume builder integration
+   Files: design-system, resume-builder-integration
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+348. [NAMING_INCONSISTENCY] Term "Create" appears with different naming: design system, forgot password resend, saved jobs
+   Files: design-system, forgot-password-resend, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+349. [NAMING_INCONSISTENCY] Term "Page" appears with different naming: design system, saved jobs
+   Files: design-system, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+350. [NAMING_INCONSISTENCY] Term "Template" appears with different naming: design system, notification system unified, resume builder templates, resume builder ui, TEMPLATE
+   Files: design-system, notification-system-unified, resume-builder-templates, resume-builder-ui, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+351. [NAMING_INCONSISTENCY] Term "Technology" appears with different naming: design system, message queue system
+   Files: design-system, message-queue-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+352. [NAMING_INCONSISTENCY] Term "Stack" appears with different naming: design system, message queue system
+   Files: design-system, message-queue-system
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+353. [NAMING_INCONSISTENCY] Term "Brand" appears with different naming: design system, resume builder templates
+   Files: design-system, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+354. [NAMING_INCONSISTENCY] Term "Core" appears with different naming: design system, message queue system, notification analytics unified, notification system unified, resume builder templates
+   Files: design-system, message-queue-system, notification-analytics-unified, notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+355. [NAMING_INCONSISTENCY] Term "Marketing" appears with different naming: design system, notification analytics unified, resume builder templates
+   Files: design-system, notification-analytics-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+356. [NAMING_INCONSISTENCY] Term "Reset" appears with different naming: forgot password resend, resume builder templates
+   Files: forgot-password-resend, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+357. [NAMING_INCONSISTENCY] Term "Token" appears with different naming: forgot password resend, resume builder integration
+   Files: forgot-password-resend, resume-builder-integration
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+358. [NAMING_INCONSISTENCY] Term "Professional" appears with different naming: forgot password resend, resume builder templates
+   Files: forgot-password-resend, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+359. [NAMING_INCONSISTENCY] Term "Fallback" appears with different naming: forgot password resend, notification system unified, resume builder integration
+   Files: forgot-password-resend, notification-system-unified, resume-builder-integration
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+360. [NAMING_INCONSISTENCY] Term "Maximum" appears with different naming: forgot password resend, message queue system, resume builder ui
+   Files: forgot-password-resend, message-queue-system, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+361. [NAMING_INCONSISTENCY] Term "Validate" appears with different naming: forgot password resend, notification system unified
+   Files: forgot-password-resend, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+362. [NAMING_INCONSISTENCY] Term "Update" appears with different naming: forgot password resend, saved jobs, TEMPLATE
+   Files: forgot-password-resend, saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+363. [NAMING_INCONSISTENCY] Term "Intuitive" appears with different naming: forgot password resend, resume builder integration, resume builder templates, saved jobs
+   Files: forgot-password-resend, resume-builder-integration, resume-builder-templates, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+364. [NAMING_INCONSISTENCY] Term "Queue" appears with different naming: message queue system, notification analytics unified, notification system unified
+   Files: message-queue-system, notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+365. [NAMING_INCONSISTENCY] Term "Processing" appears with different naming: message queue system, notification system unified
+   Files: message-queue-system, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+366. [NAMING_INCONSISTENCY] Term "Resource" appears with different naming: message queue system, notification system unified, TEMPLATE
+   Files: message-queue-system, notification-system-unified, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+367. [NAMING_INCONSISTENCY] Term "Kafka" appears with different naming: message queue system, notification system unified
+   Files: message-queue-system, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+368. [NAMING_INCONSISTENCY] Term "Functionality" appears with different naming: message queue system, resume builder templates
+   Files: message-queue-system, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+369. [NAMING_INCONSISTENCY] Term "Detailed" appears with different naming: message queue system, TEMPLATE
+   Files: message-queue-system, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+370. [NAMING_INCONSISTENCY] Term "Seamless" appears with different naming: message queue system, resume builder templates
+   Files: message-queue-system, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+371. [NAMING_INCONSISTENCY] Term "Primary" appears with different naming: message queue system, saved jobs
+   Files: message-queue-system, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+372. [NAMING_INCONSISTENCY] Term "Cloud" appears with different naming: message queue system, resume builder templates, resume builder ui
+   Files: message-queue-system, resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+373. [NAMING_INCONSISTENCY] Term "Logging" appears with different naming: message queue system, TEMPLATE
+   Files: message-queue-system, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+374. [NAMING_INCONSISTENCY] Term "Latency" appears with different naming: message queue system, notification system unified
+   Files: message-queue-system, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+375. [NAMING_INCONSISTENCY] Term "Type" appears with different naming: message queue system, resume builder templates
+   Files: message-queue-system, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+376. [NAMING_INCONSISTENCY] Term "Version" appears with different naming: notification analytics unified, notification system unified, resume builder integration, resume builder ui
+   Files: notification-analytics-unified, notification-system-unified, resume-builder-integration, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+377. [NAMING_INCONSISTENCY] Term "Last" appears with different naming: notification analytics unified, notification system unified
+   Files: notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+378. [NAMING_INCONSISTENCY] Term "Updated" appears with different naming: notification analytics unified, notification system unified
+   Files: notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+379. [NAMING_INCONSISTENCY] Term "Active" appears with different naming: notification analytics unified, notification system unified, saved jobs
+   Files: notification-analytics-unified, notification-system-unified, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+380. [NAMING_INCONSISTENCY] Term "Owner" appears with different naming: notification analytics unified, notification system unified
+   Files: notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+381. [NAMING_INCONSISTENCY] Term "Product" appears with different naming: notification analytics unified, notification system unified
+   Files: notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+382. [NAMING_INCONSISTENCY] Term "Engineering" appears with different naming: notification analytics unified, notification system unified
+   Files: notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+383. [NAMING_INCONSISTENCY] Term "Team" appears with different naming: notification analytics unified, notification system unified
+   Files: notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+384. [NAMING_INCONSISTENCY] Term "Stakeholders" appears with different naming: notification analytics unified, notification system unified
+   Files: notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+385. [NAMING_INCONSISTENCY] Term "Executive" appears with different naming: notification analytics unified, notification system unified, resume builder templates
+   Files: notification-analytics-unified, notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+386. [NAMING_INCONSISTENCY] Term "Summary" appears with different naming: notification analytics unified, notification system unified
+   Files: notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+387. [NAMING_INCONSISTENCY] Term "Process" appears with different naming: notification analytics unified, notification system unified
+   Files: notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+388. [NAMING_INCONSISTENCY] Term "Channel" appears with different naming: notification analytics unified, notification system unified
+   Files: notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+389. [NAMING_INCONSISTENCY] Term "Campaign" appears with different naming: notification analytics unified, notification system unified
+   Files: notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+390. [NAMING_INCONSISTENCY] Term "Provider" appears with different naming: notification analytics unified, notification system unified
+   Files: notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+391. [NAMING_INCONSISTENCY] Term "Reporting" appears with different naming: notification analytics unified, notification system unified
+   Files: notification-analytics-unified, notification-system-unified
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+392. [NAMING_INCONSISTENCY] Term "Storage" appears with different naming: notification analytics unified, resume builder integration
+   Files: notification-analytics-unified, resume-builder-integration
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+393. [NAMING_INCONSISTENCY] Term "Efficiently" appears with different naming: notification analytics unified, resume builder templates
+   Files: notification-analytics-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+394. [NAMING_INCONSISTENCY] Term "Pipeline" appears with different naming: notification system unified, resume builder templates
+   Files: notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+395. [NAMING_INCONSISTENCY] Term "Content" appears with different naming: notification system unified, resume builder integration, resume builder ui
+   Files: notification-system-unified, resume-builder-integration, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+396. [NAMING_INCONSISTENCY] Term "Personalization" appears with different naming: notification system unified, resume builder templates
+   Files: notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+397. [NAMING_INCONSISTENCY] Term "Allow" appears with different naming: notification system unified, resume builder templates
+   Files: notification-system-unified, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+398. [NAMING_INCONSISTENCY] Term "Collection" appears with different naming: notification system unified, saved jobs
+   Files: notification-system-unified, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+399. [NAMING_INCONSISTENCY] Term "Minimum" appears with different naming: resume builder integration, resume builder templates
+   Files: resume-builder-integration, resume-builder-templates
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+400. [NAMING_INCONSISTENCY] Term "Customizable" appears with different naming: resume builder integration, resume builder ui
+   Files: resume-builder-integration, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+401. [NAMING_INCONSISTENCY] Term "Export" appears with different naming: resume builder integration, resume builder templates, resume builder ui, saved jobs
+   Files: resume-builder-integration, resume-builder-templates, resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+402. [NAMING_INCONSISTENCY] Term "Word" appears with different naming: resume builder integration, resume builder templates, resume builder ui
+   Files: resume-builder-integration, resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+403. [NAMING_INCONSISTENCY] Term "Suggestions" appears with different naming: resume builder integration, resume builder ui
+   Files: resume-builder-integration, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+404. [NAMING_INCONSISTENCY] Term "Format" appears with different naming: resume builder integration, resume builder templates, resume builder ui
+   Files: resume-builder-integration, resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+405. [NAMING_INCONSISTENCY] Term "Section" appears with different naming: resume builder templates, resume builder ui
+   Files: resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+406. [NAMING_INCONSISTENCY] Term "Print" appears with different naming: resume builder templates, resume builder ui
+   Files: resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+407. [NAMING_INCONSISTENCY] Term "Font" appears with different naming: resume builder templates, resume builder ui
+   Files: resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+408. [NAMING_INCONSISTENCY] Term "Skills" appears with different naming: resume builder templates, resume builder ui
+   Files: resume-builder-templates, resume-builder-ui
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+409. [NAMING_INCONSISTENCY] Term "Pending" appears with different naming: resume builder ui, TEMPLATE
+   Files: resume-builder-ui, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+410. [NAMING_INCONSISTENCY] Term "Conflict" appears with different naming: resume builder ui, saved jobs
+   Files: resume-builder-ui, saved-jobs
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+411. [NAMING_INCONSISTENCY] Term "Total" appears with different naming: resume builder ui, TEMPLATE
+   Files: resume-builder-ui, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+412. [NAMING_INCONSISTENCY] Term "Completed" appears with different naming: resume builder ui, TEMPLATE
+   Files: resume-builder-ui, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+413. [NAMING_INCONSISTENCY] Term "Remove" appears with different naming: saved jobs, TEMPLATE
+   Files: saved-jobs, TEMPLATE
+   Impact: May cause confusion in implementation
+   Resolution: Standardize terminology across all specifications
+
+
+ΓÜá∩╕Å WARNINGS:
+1. Architecture overview E:\projects\jobfinders_mvp\.kiro\architecture\system-overview.md lacks diagrams
+   Suggestion: Consider adding Mermaid diagrams for better visualization
+
+2. Prisma model "PasswordResetToken" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+3. Prisma model "EmailLog" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+4. Prisma model "JobCategory" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+5. Prisma model "JobApplication" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+6. Prisma model "ApplicationTimeline" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+7. Prisma model "ApplicationAttachment" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+8. Prisma model "ApplicationNote" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+9. Prisma model "InterviewSchedule" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+10. Prisma model "JobSeekerProfile" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+11. Prisma model "EmployerProfile" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+12. Prisma model "AdminProfile" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+13. Prisma model "BillingPlan" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+14. Prisma model "CompanyBillingProfile" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+15. Prisma model "Invoice" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+16. Prisma model "NotificationPreference" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+17. Prisma model "NotificationTemplate" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+18. Prisma model "NotificationDeliveryLog" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+19. Prisma model "NotificationCampaign" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+20. Prisma model "CampaignAnalytics" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+21. Prisma model "NotificationAnalytics" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+22. Prisma model "AgentSession" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+23. Prisma model "AnalyticsEvent" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+24. Prisma model "UserJourney" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+25. Prisma model "ResumeTemplate" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+26. Prisma model "ResumeTemplateCustomization" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+27. Prisma model "ResumeTemplateUsage" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+28. Prisma model "ResumeTemplateHistory" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+29. Prisma model "CandidateProfile" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+30. Prisma model "JobProfile" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+31. Prisma model "MatchResult" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+32. Prisma model "UserInteraction" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+33. Prisma model "MLModel" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+34. Prisma model "ProfileEmbedding" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+35. Prisma model "BatchMatchJob" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+36. Prisma model "MatchingAnalytics" not referenced in any spec
+   Suggestion: Consider documenting this model in relevant specifications
+
+
+≡ƒôè SUMMARY: 17 specs, 3 architecture docs checked
+≡ƒÜ¿ 413 conflicts, 36 warnings

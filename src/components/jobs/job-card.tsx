@@ -2,16 +2,90 @@ import { Job } from '@/types/jobs'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Briefcase, MapPin, Clock, Building2 } from 'lucide-react'
+import { Briefcase, MapPin, Clock, Building2, Bookmark, BookmarkCheck } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useSession } from 'next-auth/react'
+import { useToast } from '@/hooks/use-toast'
+import { useState } from 'react'
 
 interface JobCardProps {
   job: Job
+  isSaved?: boolean
+  onToggleSave?: (jobId: string) => void
 }
 
-export function JobCard({ job }: JobCardProps) {
+export function JobCard({ job, isSaved = false, onToggleSave }: JobCardProps) {
+  const { data: session } = useSession()
+  const { toast } = useToast()
+  const [isSaving, setIsSaving] = useState(false)
+
+  const handleToggleSave = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (!session?.user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to save jobs.",
+        variant: "destructive"
+      })
+      return
+    }
+
+    if (session.user.role !== 'seeker') {
+      toast({
+        title: "Access Denied",
+        description: "Only job seekers can save jobs.",
+        variant: "destructive"
+      })
+      return
+    }
+
+    setIsSaving(true)
+
+    try {
+      if (onToggleSave) {
+        onToggleSave(job.id)
+      } else {
+        // Default save functionality if no handler provided
+        const method = isSaved ? 'DELETE' : 'POST'
+        const url = isSaved ? `/api/saved-jobs/${job.id}` : '/api/saved-jobs'
+
+        const response = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          ...(method === 'POST' && { body: JSON.stringify({ jobId: job.id }) })
+        })
+
+        if (!response.ok) {
+          const error = await response.json()
+          throw new Error(error.error || 'Failed to save job')
+        }
+
+        const data = await response.json()
+
+        toast({
+          title: isSaved ? "Job Removed" : "Job Saved",
+          description: isSaved
+            ? "The job has been removed from your saved list."
+            : "The job has been added to your saved list."
+        })
+      }
+    } catch (error) {
+      console.error('Error toggling save:', error)
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to save job. Please try again.",
+        variant: "destructive"
+      })
+    } finally {
+      setIsSaving(false)
+    }
+  }
   return (
     <Card className="p-6 hover:border-primary transition-colors">
       <div className="flex items-start gap-4">
@@ -125,11 +199,28 @@ export function JobCard({ job }: JobCardProps) {
               )}
             </div>
 
-            <Button asChild>
-              <Link href={`/jobs/${job.id}/apply`}>
-                Apply Now
-              </Link>
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleToggleSave}
+                disabled={isSaving}
+                className={isSaved ? "text-blue-600 border-blue-200 hover:bg-blue-50" : ""}
+              >
+                {isSaving ? (
+                  <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+                ) : isSaved ? (
+                  <BookmarkCheck className="h-4 w-4" />
+                ) : (
+                  <Bookmark className="h-4 w-4" />
+                )}
+              </Button>
+              <Button asChild>
+                <Link href={`/jobs/${job.id}/apply`}>
+                  Apply Now
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>

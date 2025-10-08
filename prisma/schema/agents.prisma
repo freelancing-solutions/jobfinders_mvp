@@ -1,0 +1,331 @@
+// AI Agents Schema - AI Agent System Models
+// This file contains all models related to the AI agent system
+
+// Agent Enums
+enum AgentType {
+  CAREER_GUIDANCE
+  INTERVIEW_PREPARATION
+  APPLICATION_ASSISTANT
+  EMPLOYER_ASSISTANT
+  NETWORKING_ASSISTANT
+}
+
+enum AgentIntent {
+  CAREER_GUIDANCE
+  SKILL_ANALYSIS
+  MARKET_INTELLIGENCE
+  MOCK_INTERVIEW
+  INTERVIEW_PREPARATION
+  APPLICATION_OPTIMIZATION
+  APPLICATION_TRACKING
+  APPLICATION_ASSISTANCE
+  CANDIDATE_SCREENING
+  JOB_POSTING_OPTIMIZATION
+  EMPLOYER_ASSISTANCE
+  CONNECTION_RECOMMENDATIONS
+  NETWORKING_ASSISTANCE
+  GENERAL_ASSISTANCE
+}
+
+enum AgentStatus {
+  ACTIVE
+  INACTIVE
+  BUSY
+  ERROR
+  MAINTENANCE
+}
+
+enum MessageType {
+  TEXT
+  AUDIO
+  FILE
+  STRUCTURED_DATA
+}
+
+enum SessionStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  ERROR
+  TIMEOUT
+}
+
+// Agent Session Management
+model AgentSession {
+  id          String   @id @default(cuid())
+  sessionId   String   @unique
+  userId      String   @map("user_uid")
+  user        User     @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  agentType   AgentType
+  startTime   DateTime @default(now())
+  lastActivity DateTime @default(now())
+  context     Json?
+  status      SessionStatus @default(ACTIVE)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  messages    AgentMessage[]
+
+  @@index([userId])
+  @@index([agentType])
+  @@index([status])
+  @@index([lastActivity])
+  @@map("agent_sessions")
+}
+
+// Agent Messages
+model AgentMessage {
+  id          String   @id @default(cuid())
+  sessionId   String
+  session     AgentSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  agentId     String
+  userId      String   @map("user_uid")
+  user        User     @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  content     Json
+  messageType MessageType @default(TEXT)
+  metadata    Json?
+  timestamp   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([userId])
+  @@index([agentId])
+  @@index([timestamp])
+  @@map("agent_messages")
+}
+
+// Agent Configurations
+model AgentConfiguration {
+  id              String   @id @default(cuid())
+  agentId         String   @unique
+  agentType       AgentType
+  name            String
+  description     String?
+  capabilities    Json
+  modelConfig     Json
+  behaviorSettings Json?
+  integrations    Json?
+  version         String   @default("1.0.0")
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relationships
+  feedback        AgentFeedback[]
+  analytics       AgentAnalytics[]
+
+  @@index([agentType])
+  @@index([isActive])
+  @@map("agent_configurations")
+}
+
+// User Agent Preferences
+model UserAgentPreferences {
+  userId                  String   @id @map("user_uid")
+  user                    User     @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  agentPreferences        Json
+  communicationStyle      String   @default("friendly")
+  responseLength          String   @default("detailed")
+  language                String   @default("en")
+  timezone                String   @default("UTC")
+  notificationSettings    Json?
+  privacySettings         Json?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@map("user_agent_preferences")
+}
+
+// Agent Feedback
+model AgentFeedback {
+  id          String   @id @default(cuid())
+  agentId     String
+  agentConfig AgentConfiguration @relation(fields: [agentId], references: [agentId], onDelete: Cascade)
+  userId      String   @map("user_uid")
+  user        User     @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  sessionId   String   @map("session_id")
+  rating      Int      // 1-5 rating
+  comment     String?
+  category    String   // accuracy, helpfulness, response_time, overall
+  timestamp   DateTime @default(now())
+
+  @@index([agentId])
+  @@index([userId])
+  @@index([rating])
+  @@index([timestamp])
+  @@map("agent_feedback")
+}
+
+// Agent Analytics
+model AgentAnalytics {
+  id          String   @id @default(cuid())
+  agentId     String
+  agentConfig AgentConfiguration @relation(fields: [agentId], references: [agentId], onDelete: Cascade)
+  period      String   // hourly, daily, weekly, monthly
+  metrics     Json     // Contains all performance metrics
+  timestamp   DateTime @default(now())
+
+  @@index([agentId])
+  @@index([period])
+  @@index([timestamp])
+  @@map("agent_analytics")
+}
+
+// Agent Workflows
+model AgentWorkflow {
+  id          String   @id @default(cuid())
+  workflowId  String   @unique
+  name        String
+  description String?
+  steps       Json     // Array of workflow steps
+  triggers    Json     // Array of workflow triggers
+  conditions  Json?    // Array of workflow conditions
+  isActive    Boolean  @default(true)
+  createdBy   String   @map("created_by_uid")
+  creator     User     @relation(fields: [createdBy], references: [uid], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  executions  AgentWorkflowExecution[]
+
+  @@index([createdBy])
+  @@index([isActive])
+  @@map("agent_workflows")
+}
+
+// Agent Workflow Executions
+model AgentWorkflowExecution {
+  id          String   @id @default(cuid())
+  workflowId  String
+  workflow    AgentWorkflow @relation(fields: [workflowId], references: [workflowId], onDelete: Cascade)
+  userId      String   @map("user_uid")
+  user        User     @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  status      String   @default("running") // running, completed, failed, cancelled
+  startTime   DateTime @default(now())
+  endTime     DateTime?
+  currentStep Int?
+  context     Json?
+  results     Json?
+  error       String?
+
+  @@index([workflowId])
+  @@index([userId])
+  @@index([status])
+  @@index([startTime])
+  @@map("agent_workflow_executions")
+}
+
+// Agent Templates
+model AgentTemplate {
+  id          String   @id @default(cuid())
+  templateId  String   @unique
+  name        String
+  description String?
+  agentType   AgentType
+  content     String   // Template content with variables
+  variables   Json     // Template variable definitions
+  category    String?
+  isActive    Boolean  @default(true)
+  createdBy   String   @map("created_by_uid")
+  creator     User     @relation(fields: [createdBy], references: [uid], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([agentType])
+  @@index([category])
+  @@index([createdBy])
+  @@index([isActive])
+  @@map("agent_templates")
+}
+
+// Agent Integrations
+model AgentIntegration {
+  id           String   @id @default(cuid())
+  integrationId String  @unique
+  name         String
+  type         String   // api, webhook, database, file
+  config       Json     // Integration configuration
+  permissions  Json     // Required permissions
+  isActive     Boolean  @default(true)
+  agentType    AgentType?
+  createdBy    String   @map("created_by_uid")
+  creator      User     @relation(fields: [createdBy], references: [uid], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([type])
+  @@index([agentType])
+  @@index([createdBy])
+  @@index([isActive])
+  @@map("agent_integrations")
+}
+
+// Agent Alerts
+model AgentAlert {
+  id          String   @id @default(cuid())
+  alertId     String   @unique
+  agentId     String
+  type        String   // error, performance, security, usage
+  severity    String   // low, medium, high, critical
+  message     String
+  details     Json?    // Additional alert details
+  timestamp   DateTime @default(now())
+  acknowledged Boolean  @default(false)
+  acknowledgedBy String? @map("acknowledged_by_uid")
+  acknowledger User?    @relation("AlertAcknowledgments", fields: [acknowledgedBy], references: [uid])
+  acknowledgedAt DateTime?
+  resolvedBy  String?  @map("resolved_by_uid")
+  resolver    User?    @relation("AlertResolutions", fields: [resolvedBy], references: [uid])
+  resolvedAt  DateTime?
+
+  @@index([agentId])
+  @@index([type])
+  @@index([severity])
+  @@index([timestamp])
+  @@index([acknowledged])
+  @@map("agent_alerts")
+}
+
+// Agent Knowledge Base
+model AgentKnowledge {
+  id          String   @id @default(cuid())
+  agentType   AgentType
+  category    String
+  title       String
+  content     String
+  keywords    String[] // Array of keywords for search
+  relevance   Float    @default(1.0) // Relevance score
+  isActive    Boolean  @default(true)
+  source      String?  // Source of the knowledge
+  lastUpdated DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@index([agentType])
+  @@index([category])
+  @@index([keywords])
+  @@index([isActive])
+  @@map("agent_knowledge")
+}
+
+// Agent Learning Data
+model AgentLearning {
+  id          String   @id @default(cuid())
+  agentId     String
+  agentType   AgentType
+  userId      String   @map("user_uid")
+  user        User     @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  sessionId   String   @map("session_id")
+  input       String   // User input
+  output      String   // Agent output
+  feedback    Json?    // User feedback and ratings
+  context     Json?    // Session context
+  timestamp   DateTime @default(now())
+
+  @@index([agentId])
+  @@index([agentType])
+  @@index([userId])
+  @@index([timestamp])
+  @@map("agent_learning")
+}

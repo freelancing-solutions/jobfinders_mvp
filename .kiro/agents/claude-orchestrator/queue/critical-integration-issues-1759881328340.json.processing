@@ -1,0 +1,11 @@
+{
+  "action": "implement",
+  "specName": "critical-integration-issues",
+  "promptPath": ".kiro\\prompts\\worker-critical-integration-issues.md",
+  "attachments": [
+    ".kiro\\specs\\critical-integration-issues\\requirements.md",
+    ".kiro\\specs\\critical-integration-issues\\design.md",
+    ".kiro\\specs\\critical-integration-issues\\tasks.md",
+    ".kiro\\architecture"
+  ]
+}

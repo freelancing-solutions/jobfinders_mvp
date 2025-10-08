@@ -1,0 +1,9 @@
+{
+  "action": "implement",
+  "specName": "ARCHIVED-IMPLEMENTED",
+  "promptPath": ".kiro\\prompts\\worker-ARCHIVED-IMPLEMENTED.md",
+  "attachments": [
+    ".kiro\\specs\\ARCHIVED-IMPLEMENTED\\requirements.md",
+    ".kiro\\architecture"
+  ]
+}

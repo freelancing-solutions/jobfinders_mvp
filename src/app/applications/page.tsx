@@ -1,51 +1,95 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { useSocket } from '@/hooks/use-socket'
 import { AppLayout } from '@/components/layout/app-layout'
-import { ApplicationList } from '@/components/applications/ApplicationList'
-import { ApplicationDetails } from '@/components/applications/ApplicationDetails'
-import { ApplicationAnalytics } from '@/components/applications/ApplicationAnalytics'
-import { useApplicationStore } from '@/stores/applications'
-import { useRealtimeUpdates } from '@/hooks/applications/use-realtime-updates'
-import { Application, ApplicationStatus } from '@/types/applications'
+import { ApplicationGrid } from '@/components/applications/ApplicationList/ApplicationGrid'
+import { ApplicationStats } from '@/components/applications/application-stats'
+import { ApplicationAnalytics } from '@/components/applications/ApplicationAnalytics/ApplicationAnalytics'
+import { useApplications } from '@/hooks/use-applications'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Briefcase,
   BarChart3,
   FileText,
-  Settings,
   Plus,
   Filter,
   Download,
-  Bell,
   Search,
   RefreshCw,
   TrendingUp,
   Activity,
+  Loader2,
+  AlertCircle,
+  Wifi,
+  WifiOff,
 } from 'lucide-react'
+import Link from 'next/link'
 
-export default function ApplicationsPage() {
+function ApplicationsPageContent() {
   const { data: session } = useSession()
   const router = useRouter()
+  const { socket, isConnected } = useSocket()
 
-  const [selectedApplicationId, setSelectedApplicationId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState('applications')
+  const [realtimeUpdates, setRealtimeUpdates] = useState(false)
 
   const {
     applications,
-    isLoading,
+    stats,
+    loading,
     error,
-    fetchApplications,
+    hasActiveFilters,
+    activeFilterCount,
+    filters,
+    updateFilters,
+    clearFilters,
+    updatePagination,
+    search,
+    exportApplications,
     refresh,
-  } = useApplicationStore()
+    pagination
+  } = useApplications()
 
-  const { isConnected } = useRealtimeUpdates()
+  // WebSocket event listeners for real-time updates
+  useEffect(() => {
+    if (!socket || !session?.user?.id) return
+
+    // Listen for application status updates
+    const handleApplicationUpdate = (data: any) => {
+      if (data.userId === session.user.id) {
+        refresh() // Refresh applications when status changes
+      }
+    }
+
+    // Listen for new application events
+    const handleNewApplication = (data: any) => {
+      if (data.userId === session.user.id) {
+        refresh() // Refresh applications when new application is submitted
+      }
+    }
+
+    // Register event listeners
+    socket.on('application:status_updated', handleApplicationUpdate)
+    socket.on('application:created', handleNewApplication)
+
+    // Join user's personal room for targeted updates
+    socket.emit('join_room', `user:${session.user.id}`)
+
+    // Cleanup function
+    return () => {
+      socket.off('application:status_updated', handleApplicationUpdate)
+      socket.off('application:created', handleNewApplication)
+      socket.emit('leave_room', `user:${session.user.id}`)
+    }
+  }, [socket, session?.user?.id, refresh])
 
   // Redirect if not authenticated or not a job seeker
   if (!session?.user) {
@@ -58,53 +102,58 @@ export default function ApplicationsPage() {
     return null
   }
 
-  const handleApplicationSelect = (application: Application) => {
-    setSelectedApplicationId(application.id)
-  }
+  const LoadingSkeleton = () => (
+    <div className="space-y-4">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <Card key={i} className="p-6">
+          <div className="space-y-3">
+            <Skeleton className="h-6 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+            <Skeleton className="h-4 w-full" />
+            <div className="flex gap-2">
+              <Skeleton className="h-6 w-20" />
+              <Skeleton className="h-6 w-24" />
+            </div>
+          </div>
+        </Card>
+      ))}
+    </div>
+  )
 
-  const handleApplicationEdit = (application: Application) => {
-    // TODO: Implement edit functionality
-    console.log('Edit application:', application)
-  }
+  const EmptyState = () => (
+    <Card className="text-center py-12">
+      <CardContent>
+        <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+          <FileText className="h-12 w-12 text-gray-400" />
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">No applications found</h3>
+        <p className="text-gray-600 mb-6">
+          You haven't applied to any jobs yet. Start exploring opportunities and submit your first application!
+        </p>
+        <Link href="/jobs">
+          <Button>Browse Jobs</Button>
+        </Link>
+      </CardContent>
+    </Card>
+  )
 
-  const handleStatusUpdate = (applicationId: string, status: ApplicationStatus) => {
-    // Status update is handled by the store
-    console.log('Status updated:', applicationId, status)
-  }
-
-  const handleApplicationDelete = (applicationId: string) => {
-    setSelectedApplicationId(null)
-    // Refresh the list
-    fetchApplications()
-  }
-
-  const selectedApplication = applications.find(app => app.id === selectedApplicationId)
-
-  // Calculate stats
-  const stats = {
-    total: applications.length,
-    applied: applications.filter(app => app.status === 'applied').length,
-    reviewing: applications.filter(app => app.status === 'reviewing').length,
-    shortlisted: applications.filter(app => app.status === 'shortlisted').length,
-    interview: applications.filter(app =>
-      ['interview_scheduled', 'interview_completed'].includes(app.status)
-    ).length,
-    offered: applications.filter(app => app.status === 'offered').length,
-    rejected: applications.filter(app => app.status === 'rejected').length,
-    hired: applications.filter(app => app.status === 'hired').length,
-  }
+  const ErrorState = ({ error }: { error: string }) => (
+    <Alert variant="destructive">
+      <AlertCircle className="h-4 w-4" />
+      <AlertDescription>
+        {error || 'Failed to load applications. Please try again later.'}
+      </AlertDescription>
+      <Button onClick={refresh} className="mt-2">
+        Try Again
+      </Button>
+    </Alert>
+  )
 
   if (error) {
     return (
       <AppLayout>
         <div className="container mx-auto px-4 py-8">
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-            <Button onClick={refresh} className="mt-2">
-              Try Again
-            </Button>
-          </Alert>
+          <ErrorState error={error} />
         </div>
       </AppLayout>
     )
@@ -114,168 +163,124 @@ export default function ApplicationsPage() {
     <AppLayout>
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">My Applications</h1>
+            <div className="flex items-center gap-3 mb-1">
+              <h1 className="text-3xl font-bold text-gray-900">My Applications</h1>
+              <div className="flex items-center gap-1">
+                {isConnected ? (
+                  <div className="flex items-center gap-1 text-green-600">
+                    <Wifi className="h-4 w-4" />
+                    <span className="text-xs font-medium">Live</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1 text-gray-400">
+                    <WifiOff className="h-4 w-4" />
+                    <span className="text-xs font-medium">Offline</span>
+                  </div>
+                )}
+              </div>
+            </div>
             <p className="text-gray-600 mt-1">
-              Track and manage your job applications in one place
+              Track and manage your job applications {isConnected && '• Real-time updates active'}
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-              <span className="text-sm text-gray-600 hidden sm:inline">
-                {isConnected ? 'Real-time updates active' : 'Connection lost'}
-              </span>
-            </div>
-            <Button variant="outline" size="sm" className="hidden sm:flex">
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => exportApplications('csv')}
+              className="flex items-center gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export CSV
             </Button>
-            <Button variant="outline" size="sm" className="hidden sm:flex">
-              <Download className="h-4 w-4 mr-2" />
-              Export
+            <Button
+              variant="outline"
+              onClick={() => exportApplications('json')}
+              className="flex items-center gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export JSON
             </Button>
             <Button onClick={refresh} size="sm">
-              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">Refresh</span>
+              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
             </Button>
             <Button asChild>
-              <a href="/jobs">
+              <Link href="/jobs">
                 <Plus className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">New Application</span>
-                <span className="sm:hidden">Apply</span>
-              </a>
+                Browse Jobs
+              </Link>
             </Button>
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total</p>
-                  <p className="text-xl sm:text-2xl font-bold">{stats.total}</p>
-                </div>
-                <div className="p-2 sm:p-3 rounded-full bg-blue-500">
-                  <Briefcase className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Under Review</p>
-                  <p className="text-xl sm:text-2xl font-bold">{stats.reviewing}</p>
-                </div>
-                <div className="p-2 sm:p-3 rounded-full bg-yellow-500">
-                  <FileText className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Interviews</p>
-                  <p className="text-xl sm:text-2xl font-bold">{stats.interview}</p>
-                </div>
-                <div className="p-2 sm:p-3 rounded-full bg-purple-500">
-                  <Settings className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Offers</p>
-                  <p className="text-xl sm:text-2xl font-bold">{stats.offered}</p>
-                </div>
-                <div className="p-2 sm:p-3 rounded-full bg-green-500">
-                  <BarChart3 className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Stats Cards */}
+        <ApplicationStats stats={stats} loading={loading} />
 
         {/* Main Content */}
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Left Column - List/Analytics */}
-          <div className="flex-1 lg:flex-initial lg:w-2/3">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="applications" className="flex items-center gap-2">
-                  <Briefcase className="h-4 w-4" />
-                  <span className="hidden sm:inline">Applications</span>
-                  <span className="sm:hidden">Apps</span>
-                </TabsTrigger>
-                <TabsTrigger value="analytics" className="flex items-center gap-2">
-                  <BarChart3 className="h-4 w-4" />
-                  <span className="hidden sm:inline">Analytics</span>
-                  <span className="sm:hidden">Stats</span>
-                </TabsTrigger>
-              </TabsList>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="applications" className="flex items-center gap-2">
+              <Briefcase className="h-4 w-4" />
+              Applications
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Analytics
+            </TabsTrigger>
+          </TabsList>
 
-              <TabsContent value="applications" className="mt-6">
-                <ApplicationList
-                  showFilters={true}
-                  showStats={false}
-                  selectable={true}
-                  onApplicationSelect={handleApplicationSelect}
-                  onApplicationEdit={handleApplicationEdit}
-                  onStatusUpdate={handleStatusUpdate}
+          <TabsContent value="applications" className="mt-6">
+            <Suspense fallback={<LoadingSkeleton />}>
+              {loading ? (
+                <LoadingSkeleton />
+              ) : applications.length === 0 ? (
+                <EmptyState />
+              ) : (
+                <ApplicationGrid
+                  applications={applications}
+                  loading={loading}
+                  pagination={pagination}
+                  onPageChange={(page) => updatePagination(page)}
                 />
-              </TabsContent>
+              )}
+            </Suspense>
+          </TabsContent>
 
-              <TabsContent value="analytics" className="mt-6">
-                <ApplicationAnalytics compact={true} />
-              </TabsContent>
-            </Tabs>
-          </div>
-
-          {/* Right Column - Details */}
-          <div className="flex-1 lg:flex-initial lg:w-1/3">
-            {selectedApplication ? (
-              <ApplicationDetails
-                applicationId={selectedApplication.id}
-                onStatusUpdate={handleStatusUpdate}
-                onEdit={handleApplicationEdit}
-                onDelete={handleApplicationDelete}
-              />
-            ) : (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <FileText className="h-12 w-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No Application Selected</h3>
-                  <p className="text-gray-600 text-center">
-                    Select an application from the list to view details and manage your progress.
-                  </p>
-                  <Button className="mt-4" asChild>
-                    <a href="/jobs">Browse Jobs</a>
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </div>
-
-        {/* Floating Action Button for mobile */}
-        <div className="fixed bottom-6 right-6 lg:hidden">
-          <Button size="lg" className="rounded-full w-14 h-14 shadow-lg" asChild>
-            <a href="/jobs">
-              <Plus className="h-6 w-6" />
-            </a>
-          </Button>
-        </div>
+          <TabsContent value="analytics" className="mt-6">
+            <ApplicationAnalytics />
+          </TabsContent>
+        </Tabs>
       </div>
     </AppLayout>
+  )
+}
+
+export default function ApplicationsPage() {
+  return (
+    <Suspense fallback={
+      <AppLayout>
+        <div className="container mx-auto px-4 py-8">
+          <div className="space-y-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Card key={i} className="p-6">
+                <div className="space-y-3">
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-4 w-full" />
+                  <div className="flex gap-2">
+                    <Skeleton className="h-6 w-20" />
+                    <Skeleton className="h-6 w-24" />
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </AppLayout>
+    }>
+      <ApplicationsPageContent />
+    </Suspense>
   )
 }

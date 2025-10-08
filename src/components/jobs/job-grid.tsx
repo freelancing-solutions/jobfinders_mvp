@@ -1,13 +1,16 @@
 import { Job } from '@/types/jobs'
 import { JobCard } from './job-card'
+import { useState } from 'react'
 
 interface JobGridProps {
   jobs: Job[]
   isLoading?: boolean
   viewMode?: 'grid' | 'list'
+  savedJobs?: string[]
+  onToggleSave?: (jobId: string) => void
 }
 
-export function JobGrid({ jobs, isLoading, viewMode = 'grid' }: JobGridProps) {
+export function JobGrid({ jobs, isLoading, viewMode = 'grid', savedJobs = [], onToggleSave }: JobGridProps) {
   if (isLoading) {
     return (
       <div className={`grid gap-4 ${viewMode === 'grid' ? 'md:grid-cols-2' : 'md:grid-cols-1'}`}>
@@ -35,7 +38,12 @@ export function JobGrid({ jobs, isLoading, viewMode = 'grid' }: JobGridProps) {
   return (
     <div className={`grid gap-4 ${viewMode === 'grid' ? 'md:grid-cols-2' : 'md:grid-cols-1'}`}>
       {jobs.map(job => (
-        <JobCard key={job.id} job={job} />
+        <JobCard
+          key={job.id}
+          job={job}
+          isSaved={savedJobs.includes(job.id)}
+          onToggleSave={onToggleSave}
+        />
       ))}
     </div>
   )

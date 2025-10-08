@@ -1,0 +1,9 @@
+{
+  "action": "implement",
+  "specName": "applications-management",
+  "promptPath": ".kiro\\prompts\\worker-applications-management.md",
+  "attachments": [
+    ".kiro\\specs\\applications-management\\requirements.md",
+    ".kiro\\architecture"
+  ]
+}

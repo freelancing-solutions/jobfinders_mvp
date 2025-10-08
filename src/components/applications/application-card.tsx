@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { StatusBadge, ApplicationStatus, getStatusProgression } from './status-badge'
+import { StatusBadge, ApplicationStatus, getStatusProgression, isFinalStatus } from './status-badge'
 import { formatDistanceToNow } from 'date-fns'
 import {
   Building2,

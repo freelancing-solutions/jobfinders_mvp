@@ -112,28 +112,48 @@ export async function GET(request: NextRequest) {
     const transformedJobs = jobs.map(job => ({
       id: job.jobId,
       title: job.title,
-      company: job.company.name,
+      company: {
+        id: job.company.companyId,
+        name: job.company.name,
+        logo: job.company.logoUrl,
+        isVerified: job.company.isVerified
+      },
+      category: job.category ? {
+        id: job.category.categoryId,
+        name: job.category.name,
+        slug: job.category.slug
+      } : undefined,
       location: job.city ? `${job.city}, ${job.province || ''}`.replace(/, $/, '') : job.province || job.country || 'Remote',
-      salaryMin: job.salaryMin,
-      salaryMax: job.salaryMax,
-      currency: job.salaryCurrency,
-      positionType: job.positionType,
-      remotePolicy: job.remotePolicy,
       description: job.description,
-      postedAt: job.postedAt.toISOString(),
+      requirements: {
+        essential: job.requiredSkills || [],
+        preferred: job.preferredSkills || []
+      },
+      salary: job.salaryMin || job.salaryMax ? {
+        min: job.salaryMin || 0,
+        max: job.salaryMax || 0,
+        currency: job.salaryCurrency || 'ZAR'
+      } : undefined,
+      type: job.positionType,
+      experience: job.experienceLevel,
+      remote: job.remotePolicy === 'remote' || job.remotePolicy === 'hybrid',
+      verified: job.company.isVerified,
+      createdAt: job.postedAt.toISOString(),
+      updatedAt: job.postedAt.toISOString(), // Using postedAt as we don't have updatedAt
       expiresAt: job.expiresAt?.toISOString(),
-      experienceLevel: job.experienceLevel,
-      educationRequirements: job.educationRequirements,
-      requiredSkills: job.requiredSkills,
-      preferredSkills: job.preferredSkills,
-      requiredDocuments: job.requiredDocuments,
-      isFeatured: job.isFeatured,
-      isUrgent: job.isUrgent,
+      applicationCount: job.applicationCount || 0,
       companyLogo: job.company.logoUrl,
-      companyDescription: job.company.description,
-      companyWebsite: job.company.website,
-      applicationCount: job.applicationCount,
-      viewCount: job.viewCount,
+      employer: job.employer ? {
+        id: job.employer.employerId,
+        name: job.employer.user?.name || ''
+      } : undefined,
+      tags: [], // Could be derived from skills or category
+      benefits: [], // Not available in current schema
+      viewCount: job.viewCount || 0,
+      isFeatured: job.isFeatured || false,
+      isUrgent: job.isUrgent || false,
+      educationRequirements: job.educationRequirements,
+      requiredDocuments: job.requiredDocuments,
       matchScore: job.matchScore
     }))
 

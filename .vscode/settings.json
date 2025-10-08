@@ -1,0 +1,6 @@
+{
+    "workbench.editor.autoLockGroups": {
+        "workbench.editor.chatSession": false
+    },
+    "workbench.editor.editorActionsLocation": "default"
+}

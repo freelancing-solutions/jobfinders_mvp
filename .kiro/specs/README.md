@@ -32,12 +32,13 @@ This directory contains all technical specifications for the Job Finders MVP pla
 | design-system | Active | Medium | UI/UX | Foundation exists | 2024-01-15 | All UI specs |
 | critical-integration-issues | Active | Critical | Integration | Not Started | 2024-01-15 | All active specs |
 | **Unified Systems** | | | | | | |
-| notification-system-unified | Active | High | Infrastructure | Extensive | 2024-01-15 | All notification specs |
+| notification-system-unified | Active | High | Infrastructure | Extensive | 2024-01-15 | Consolidated from 15+ notification specs |
+| notification-analytics-unified | Active | Medium | Infrastructure | Not Started | 2024-01-15 | Part of notification-system-unified |
 
 ## Implementation Status Summary
 
 ### ✅ Fully Implemented (Available in Archive)
-- **Notification System** - Complete multi-channel notification platform
+- **Notification System** - Complete multi-channel notification platform (consolidated from 15+ individual specs)
 - **Template Engine** - Advanced resume template system with AI optimization
 - **Matching System** - ML-powered candidate-job matching
 

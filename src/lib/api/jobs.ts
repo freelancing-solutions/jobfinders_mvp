@@ -155,7 +155,7 @@ class JobsAPIClientImpl implements JobsAPIClient {
 
   async searchJobs(filters: SearchFilters & { page?: number; limit?: number }): Promise<JobSearchResponse> {
     const params = new URLSearchParams()
-    
+
     // Map filters to API parameters
     if (filters.query) params.set('query', filters.query)
     if (filters.location) params.set('location', filters.location)
@@ -182,20 +182,20 @@ class JobsAPIClientImpl implements JobsAPIClient {
       }
     }
     if (filters.sortOrder) params.set('sortOrder', filters.sortOrder)
-    
+
     params.set('page', (filters.page || 1).toString())
     params.set('limit', (filters.limit || 12).toString())
 
     const response = await this.request<any>(`/api/jobs/search?${params.toString()}`)
-    
+
     // Transform API response to match our interface
     return {
       jobs: response.data || [],
-      pagination: response.pagination || {
-        page: 1,
-        limit: 12,
-        total: 0,
-        totalPages: 0
+      pagination: {
+        page: response.pagination?.page || 1,
+        limit: response.pagination?.limit || 12,
+        total: response.pagination?.total || 0,
+        totalPages: response.pagination?.totalPages || 0
       },
       facets: response.facets || {
         categories: [],

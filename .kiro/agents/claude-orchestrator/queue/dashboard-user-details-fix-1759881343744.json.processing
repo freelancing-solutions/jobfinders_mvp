@@ -1,0 +1,11 @@
+{
+  "action": "implement",
+  "specName": "dashboard-user-details-fix",
+  "promptPath": ".kiro\\prompts\\worker-dashboard-user-details-fix.md",
+  "attachments": [
+    ".kiro\\specs\\dashboard-user-details-fix\\requirements.md",
+    ".kiro\\specs\\dashboard-user-details-fix\\design.md",
+    ".kiro\\specs\\dashboard-user-details-fix\\tasks.md",
+    ".kiro\\architecture"
+  ]
+}

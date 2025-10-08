@@ -1,0 +1,123 @@
+#!/usr/bin/env node
+
+/**
+ * Guardian CLI Wrapper
+ * Provides easy access to Guardian validation
+ */
+
+const path = require('path');
+const { program } = require('commander');
+
+// Import Guardian
+const Guardian = require('../scripts/guardian');
+const QuickCheck = require('../scripts/quick-check');
+const { installHooks } = require('../scripts/install-hooks');
+
+program
+  .name('guardian')
+  .description('Spec & Context Guardian for JobFinders project')
+  .version('1.0.0');
+
+program
+  .command('validate')
+  .alias('check')
+  .description('Run full validation on .kiro specifications')
+  .option('-q, --quiet', 'Only show conflicts, no progress messages')
+  .action(async (options) => {
+    const guardian = new Guardian();
+
+    if (options.quiet) {
+      // Override console.log for quiet mode
+      const originalLog = console.log;
+      console.log = () => {}; // Suppress output
+      await guardian.validate();
+      console.log = originalLog; // Restore output
+    } else {
+      await guardian.validate();
+    }
+  });
+
+program
+  .command('quick')
+  .description('Run quick validation check')
+  .action(async () => {
+    const checker = new QuickCheck();
+    const success = await checker.check();
+    process.exit(success ? 0 : 1);
+  });
+
+program
+  .command('install-hooks')
+  .description('Install git hooks for automatic validation')
+  .action(() => {
+    installHooks();
+  });
+
+program
+  .command('stats')
+  .description('Show statistics about specifications')
+  .action(() => {
+    const stats = getSpecStats();
+    console.log('📊 Guardian Statistics:');
+    console.log(`   Active specs: ${stats.active}`);
+    console.log(`   Archived specs: ${stats.archived}`);
+    console.log(`   Architecture docs: ${stats.architecture}`);
+    console.log(`   Total files: ${stats.totalFiles}`);
+    console.log(`   Last updated: ${stats.lastUpdated}`);
+  });
+
+function getSpecStats() {
+  const fs = require('fs');
+  const path = require('path');
+
+  const basePath = path.resolve(__dirname, '..');
+  const specsPath = path.join(basePath, 'specs');
+  const architecturePath = path.join(basePath, 'architecture');
+
+  let stats = {
+    active: 0,
+    archived: 0,
+    architecture: 0,
+    totalFiles: 0,
+    lastUpdated: new Date().toISOString().split('T')[0]
+  };
+
+  // Count spec folders
+  if (fs.existsSync(specsPath)) {
+    const folders = fs.readdirSync(specsPath)
+      .filter(file => {
+        const fullPath = path.join(specsPath, file);
+        return fs.statSync(fullPath).isDirectory();
+      });
+
+    stats.active = folders.filter(f => !f.startsWith('_')).length;
+    stats.archived = folders.filter(f => f.startsWith('_archive')).length;
+
+    // Count files
+    const countFiles = (dir) => {
+      if (!fs.existsSync(dir)) return 0;
+      return fs.readdirSync(dir).length;
+    };
+
+    for (const folder of folders) {
+      const folderPath = path.join(specsPath, folder);
+      stats.totalFiles += countFiles(folderPath);
+    }
+  }
+
+  // Count architecture files
+  if (fs.existsSync(architecturePath)) {
+    stats.architecture = fs.readdirSync(architecturePath).length;
+    stats.totalFiles += stats.architecture;
+  }
+
+  return stats;
+}
+
+// Parse command line arguments
+program.parse();
+
+// If no command provided, show help
+if (!process.argv.slice(2).length) {
+  program.outputHelp();
+}

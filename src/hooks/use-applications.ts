@@ -53,21 +53,19 @@ export interface Application {
 }
 
 export interface ApplicationFilters {
-  search: string
-  status: ApplicationStatus[]
-  dateRange: {
-    from: Date
-    to: Date
-  }
-  companies: string[]
-  locations: string[]
-  positionTypes: string[]
-  salaryRanges: string[]
-  remotePolicies: string[]
-  hasMatchScore: boolean | null
-  isArchived: boolean
-  sortBy: string
-  sortOrder: 'asc' | 'desc'
+  search?: string
+  status?: string[]
+  startDate?: string
+  endDate?: string
+  companies?: string[]
+  locations?: string[]
+  positionTypes?: string[]
+  salaryRanges?: string[]
+  remotePolicies?: string[]
+  hasMatchScore?: boolean | null
+  archived?: boolean
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
 }
 
 export interface UseApplicationsOptions {
@@ -75,10 +73,49 @@ export interface UseApplicationsOptions {
   pageSize?: number
 }
 
+export interface ApplicationStats {
+  total: number
+  active: number
+  archived: number
+  byStatus: Record<string, number>
+  byCompany: Array<{
+    companyName: string
+    count: number
+    successRate: number
+  }>
+  byTimePeriod: Array<{
+    period: string
+    applications: number
+    interviews: number
+    offers: number
+    rejections: number
+    successRate: number
+  }>
+  responseMetrics: {
+    averageResponseTime: number
+    responseRate: number
+    interviewRate: number
+    offerRate: number
+  }
+  topSkills: Array<{
+    skill: string
+    count: number
+    successRate: number
+  }>
+  salaryInsights: {
+    averageMin: number
+    median: number
+    marketRate: number
+  }
+}
+
 export interface UseApplicationsReturn {
   applications: Application[]
+  stats: ApplicationStats | null
   loading: boolean
   error: string | null
+  hasActiveFilters: boolean
+  activeFilterCount: number
   pagination: {
     page: number
     limit: number
@@ -89,7 +126,11 @@ export interface UseApplicationsReturn {
   }
   filters: ApplicationFilters
   updateFilters: (filters: Partial<ApplicationFilters>) => void
+  clearFilters: () => void
+  updatePagination: (page: number) => void
+  setView: (view: string) => void
   refresh: () => void
+  search: () => void
   fetchMore: () => void
   updateApplicationStatus: (id: string, status: ApplicationStatus) => Promise<void>
   withdrawApplication: (id: string) => Promise<void>
@@ -102,17 +143,13 @@ export interface UseApplicationsReturn {
 const defaultFilters: ApplicationFilters = {
   search: '',
   status: [],
-  dateRange: {
-    from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
-    to: new Date(),
-  },
   companies: [],
   locations: [],
   positionTypes: [],
   salaryRanges: [],
   remotePolicies: [],
   hasMatchScore: null,
-  isArchived: false,
+  archived: false,
   sortBy: 'appliedAt',
   sortOrder: 'desc',
 }
@@ -122,6 +159,7 @@ export function useApplications(options: UseApplicationsOptions = {}): UseApplic
   const { autoFetch = true, pageSize = 20 } = options
 
   const [applications, setApplications] = useState<Application[]>([])
+  const [stats, setStats] = useState<ApplicationStats | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [pagination, setPagination] = useState({
@@ -139,24 +177,51 @@ export function useApplications(options: UseApplicationsOptions = {}): UseApplic
     const params = new URLSearchParams({
       page: page.toString(),
       limit: pagination.limit.toString(),
-      sortBy: filters.sortBy,
-      sortOrder: filters.sortOrder,
     })
 
+    if (filters.sortBy) params.append('sortBy', filters.sortBy)
+    if (filters.sortOrder) params.append('sortOrder', filters.sortOrder)
     if (filters.search) params.append('search', filters.search)
-    if (filters.status.length > 0) params.append('status', filters.status.join(','))
-    if (filters.dateRange.from) params.append('startDate', filters.dateRange.from.toISOString())
-    if (filters.dateRange.to) params.append('endDate', filters.dateRange.to.toISOString())
-    if (filters.companies.length > 0) params.append('companies', filters.companies.join(','))
-    if (filters.locations.length > 0) params.append('locations', filters.locations.join(','))
-    if (filters.positionTypes.length > 0) params.append('positionTypes', filters.positionTypes.join(','))
-    if (filters.salaryRanges.length > 0) params.append('salaryRanges', filters.salaryRanges.join(','))
-    if (filters.remotePolicies.length > 0) params.append('remotePolicies', filters.remotePolicies.join(','))
-    if (filters.hasMatchScore !== null) params.append('hasMatchScore', filters.hasMatchScore.toString())
-    if (filters.isArchived) params.append('archived', 'true')
+    if (filters.status && filters.status.length > 0) params.append('status', filters.status.join(','))
+    if (filters.startDate) params.append('startDate', filters.startDate)
+    if (filters.endDate) params.append('endDate', filters.endDate)
+    if (filters.companies && filters.companies.length > 0) params.append('companies', filters.companies.join(','))
+    if (filters.locations && filters.locations.length > 0) params.append('locations', filters.locations.join(','))
+    if (filters.positionTypes && filters.positionTypes.length > 0) params.append('positionTypes', filters.positionTypes.join(','))
+    if (filters.salaryRanges && filters.salaryRanges.length > 0) params.append('salaryRanges', filters.salaryRanges.join(','))
+    if (filters.remotePolicies && filters.remotePolicies.length > 0) params.append('remotePolicies', filters.remotePolicies.join(','))
+    if (filters.hasMatchScore !== null && filters.hasMatchScore !== undefined) params.append('hasMatchScore', filters.hasMatchScore.toString())
+    if (filters.archived) params.append('archived', 'true')
 
     return params
   }, [filters, pagination.limit])
+
+  // Fetch application stats
+  const fetchStats = useCallback(async () => {
+    if (!session?.user?.id) return
+
+    try {
+      const response = await fetch('/api/applications/stats', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch application stats')
+      }
+
+      const data = await response.json()
+
+      if (data.success) {
+        setStats(data.data)
+      }
+    } catch (err) {
+      console.error('Failed to fetch stats:', err)
+      // Don't set error for stats failure to avoid blocking the main functionality
+    }
+  }, [session?.user?.id])
 
   // Fetch applications
   const fetchApplications = useCallback(async (page: number = 1, append: boolean = false) => {
@@ -184,13 +249,18 @@ export function useApplications(options: UseApplicationsOptions = {}): UseApplic
         const newApplications = data.data || []
         setApplications(prev => append ? [...prev, ...newApplications] : newApplications)
         setPagination(data.pagination || pagination)
+
+        // Fetch stats when we get applications
+        if (!append) {
+          fetchStats()
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch applications')
     } finally {
       setLoading(false)
     }
-  }, [session?.user?.id, buildQueryParams, pagination])
+  }, [session?.user?.id, buildQueryParams, pagination, fetchStats])
 
   // Update application status
   const updateApplicationStatus = useCallback(async (id: string, status: ApplicationStatus) => {
@@ -345,9 +415,8 @@ export function useApplications(options: UseApplicationsOptions = {}): UseApplic
     try {
       const params = buildQueryParams()
       params.append('format', format)
-      params.append('export', 'true')
 
-      const response = await fetch(`/api/applications/export?${params}`, {
+      const response = await fetch(`/api/applications?${params}`, {
         method: 'GET',
       })
 
@@ -376,10 +445,33 @@ export function useApplications(options: UseApplicationsOptions = {}): UseApplic
     setPagination(prev => ({ ...prev, page: 1 })) // Reset to first page when filters change
   }, [])
 
+  // Clear filters
+  const clearFilters = useCallback(() => {
+    setFilters(defaultFilters)
+    setPagination(prev => ({ ...prev, page: 1 }))
+  }, [])
+
+  // Update pagination
+  const updatePagination = useCallback((page: number) => {
+    fetchApplications(page, false)
+  }, [fetchApplications])
+
+  // Set view
+  const setView = useCallback((view: string) => {
+    // Placeholder for view switching functionality
+    console.log('Setting view to:', view)
+  }, [])
+
+  // Search
+  const search = useCallback(() => {
+    fetchApplications(1, false)
+  }, [fetchApplications])
+
   // Refresh applications
   const refresh = useCallback(() => {
     fetchApplications(1, false)
-  }, [fetchApplications])
+    fetchStats()
+  }, [fetchApplications, fetchStats])
 
   // Fetch more applications
   const fetchMore = useCallback(() => {
@@ -387,6 +479,28 @@ export function useApplications(options: UseApplicationsOptions = {}): UseApplic
       fetchApplications(pagination.page + 1, true)
     }
   }, [fetchApplications, pagination.hasNext, pagination.page, loading])
+
+  // Calculate active filters count
+  const hasActiveFilters = Object.keys(defaultFilters).some(key => {
+    const defaultValue = defaultFilters[key as keyof ApplicationFilters]
+    const currentValue = filters[key as keyof ApplicationFilters]
+
+    if (Array.isArray(defaultValue) && Array.isArray(currentValue)) {
+      return currentValue.length > 0
+    }
+
+    if (typeof defaultValue === 'boolean' && typeof currentValue === 'boolean') {
+      return currentValue !== defaultValue
+    }
+
+    return currentValue !== defaultValue && currentValue !== '' && currentValue !== undefined
+  })
+
+  const activeFilterCount = Object.keys(filters).filter(key => {
+    const value = filters[key as keyof ApplicationFilters]
+    return value !== undefined && value !== '' &&
+           (Array.isArray(value) ? value.length > 0 : true)
+  }).length
 
   // Auto-fetch applications when filters change
   useEffect(() => {
@@ -397,12 +511,19 @@ export function useApplications(options: UseApplicationsOptions = {}): UseApplic
 
   return {
     applications,
+    stats,
     loading,
     error,
+    hasActiveFilters,
+    activeFilterCount,
     pagination,
     filters,
     updateFilters,
+    clearFilters,
+    updatePagination,
+    setView,
     refresh,
+    search,
     fetchMore,
     updateApplicationStatus,
     withdrawApplication,

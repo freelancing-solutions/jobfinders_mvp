@@ -104,11 +104,29 @@ src/
 │   ├── matching/ # Candidate matching
 │   └── agents/   # AI agents
 ├── hooks/        # Custom React hooks
-└── lib/          # Utilities and configurations
+├── lib/          # Utilities and configurations
+└── types/        # TypeScript type definitions
 prisma/
-└── schema.prisma  # Database schema
+├── schema/       # Separated schema modules (NEW)
+│   ├── base.prisma
+│   ├── auth.prisma
+│   ├── jobs.prisma
+│   ├── applications.prisma
+│   ├── resumes.prisma
+│   ├── company.prisma
+│   ├── billing.prisma
+│   ├── notifications.prisma
+│   ├── analytics.prisma
+│   ├── templates.prisma
+│   └── matching.prisma
+├── schema.prisma # Main schema file with documentation
+└── schema-complete.prisma # Generated complete schema
+scripts/
+├── build-schema.js # Schema build script
+└── test-schema.js  # Schema validation script
 docs/
-└── ...            # TODO files and context documentation
+├── architecture/  # Architecture documentation
+└── resume-builder/ # Feature-specific docs
 ```
 
 ---
@@ -118,6 +136,9 @@ docs/
 ```bash
 # Install dependencies
 npm install
+
+# Build database schema from separated modules
+npm run schema:build
 
 # Start development server
 npm run dev
@@ -129,18 +150,87 @@ npm run build
 npm start
 ```
 
+### Schema Management Commands
+
+```bash
+# Build complete schema from separated modules
+npm run schema:build
+
+# Development workflow (build + database push)
+npm run schema:dev
+
+# Production workflow (build + client generation)
+npm run schema:prod
+
+# Test schema separation
+node scripts/test-schema.js
+```
+
 Visit [http://localhost:3000](http://localhost:3000) to view the app.
 
 ---
 
 ## 🗄️ Database & Auth
 
-- **Prisma**: Edit `prisma/schema.prisma` for models.  
-  Run migrations with:
-  ```bash
-  npx prisma migrate dev
-  ```
-- **NextAuth.js**: Configured for role-based authentication (seeker, employer, admin).
+### Schema Architecture (NEW)
+
+The database schema has been separated into modular files for better maintainability:
+
+- **Modular Design**: Schema split into 11 domain-specific modules
+- **Type Safety**: Strong TypeScript typing throughout
+- **Build Process**: Automated concatenation of separated schemas
+- **Development Workflow**: Streamlined schema management commands
+
+### Schema Modules
+
+| Module | Purpose | Key Models |
+|--------|---------|------------|
+| `base.prisma` | Core configuration & User model | User, core enums |
+| `auth.prisma` | Authentication & security | PasswordResetToken, EmailLog |
+| `jobs.prisma` | Job management | Job, JobCategory, Match |
+| `applications.prisma` | Application tracking | JobApplication, SavedJob, Timeline |
+| `resumes.prisma` | Resume/CV management | Resume, Experience, Education |
+| `company.prisma` | Company profiles | Company, EmployerProfile |
+| `billing.prisma` | Payment processing | BillingPlan, Invoice |
+| `notifications.prisma` | Notification system | Notification, AnalyticsEvent |
+| `analytics.prisma` | Analytics & tracking | AgentSession, UserJourney |
+| `templates.prisma` | Resume templates | ResumeTemplate, Customization |
+| `matching.prisma` | AI matching system | CandidateProfile, MLModel |
+
+### Type-Safe Enum Pattern
+
+Following best practices for type-safe enums:
+
+```typescript
+// src/types/roles.ts
+export enum UserRole {
+  EMPLOYER = 'EMPLOYER',
+  JOB_SEEKER = 'JOB_SEEKER',
+  ADMIN = 'ADMIN'
+}
+
+export const RoleDisplayText = {
+  [UserRole.EMPLOYER]: 'employer',
+  [UserRole.JOB_SEEKER]: 'job seeker',
+  [UserRole.ADMIN]: 'administrator'
+} as const;
+
+// Usage
+const roleText = RoleDisplayText[user.role]; // Fully type-safe!
+```
+
+### Schema Development
+
+1. **Edit Schema**: Modify files in `prisma/schema/` directory
+2. **Build Schema**: Run `npm run schema:build` to concatenate
+3. **Database Operations**: Use `schema-complete.prisma` for Prisma commands
+4. **Generate Client**: `npx prisma generate`
+
+### Authentication
+
+- **NextAuth.js**: Role-based authentication (seeker, employer, admin)
+- **Type Safety**: Strong typing for user roles and permissions
+- **Session Management**: Secure session handling with custom roles
 
 ---
 

@@ -1,0 +1,1 @@
+export { SavedJobsAnalytics } from './SavedJobsAnalytics'

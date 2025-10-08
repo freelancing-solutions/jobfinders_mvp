@@ -1,0 +1,25 @@
+{
+  "name": "claude-orchestrator",
+  "displayName": "Claude Orchestrator",
+  "description": "Open a Claude chat and prepare the selected spec prompt in the current Trae/VS Code instance.",
+  "version": "0.0.1",
+  "publisher": "jobfinders",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "activationEvents": [
+    "onCommand:jobfinders.openClaudeChat",
+    "*"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "jobfinders.openClaudeChat",
+        "title": "Jobfinders: Open Claude Chat with Spec Prompt"
+      }
+    ]
+  },
+  "categories": ["Other"],
+  "license": "MIT"
+}

@@ -1,0 +1,11 @@
+{
+  "action": "implement",
+  "specName": "candidate-matching-system",
+  "promptPath": ".kiro\\prompts\\worker-candidate-matching-system.md",
+  "attachments": [
+    ".kiro\\specs\\candidate-matching-system\\requirements.md",
+    ".kiro\\specs\\candidate-matching-system\\design.md",
+    ".kiro\\specs\\candidate-matching-system\\tasks.md",
+    ".kiro\\architecture"
+  ]
+}

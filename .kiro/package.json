@@ -1,0 +1,39 @@
+{
+  "name": "kiro-guardian",
+  "version": "1.0.0",
+  "description": "Spec & Context Guardian for JobFinders project",
+  "main": "scripts/guardian.js",
+  "scripts": {
+    "guardian": "node scripts/guardian.js",
+    "guardian:quick": "node scripts/quick-check.js",
+    "guardian:install": "node scripts/install-hooks.js",
+    "validate": "node scripts/guardian.js",
+    "pre-commit": "node scripts/guardian.js",
+    "orchestrate": "node scripts/orchestrate.js",
+    "implement": "node scripts/auto-implement.js",
+    "launch": "node scripts/launch-system.js",
+    "test-guardian": "node scripts/test-guardian.js",
+    "test-orchestrator": "node scripts/test-orchestrator.js"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0",
+    "commander": "^11.1.0"
+  },
+  "devDependencies": {
+    "husky": "^8.0.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run validate"
+    }
+  },
+  "keywords": [
+    "validation",
+    "specifications",
+    "architecture",
+    "consistency",
+    "guardian"
+  ],
+  "author": "JobFinders Team",
+  "license": "MIT"
+}

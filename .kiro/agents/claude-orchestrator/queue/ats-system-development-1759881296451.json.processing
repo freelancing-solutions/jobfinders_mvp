@@ -1,0 +1,11 @@
+{
+  "action": "implement",
+  "specName": "ats-system-development",
+  "promptPath": ".kiro\\prompts\\worker-ats-system-development.md",
+  "attachments": [
+    ".kiro\\specs\\ats-system-development\\requirements.md",
+    ".kiro\\specs\\ats-system-development\\design.md",
+    ".kiro\\specs\\ats-system-development\\tasks.md",
+    ".kiro\\architecture"
+  ]
+}
