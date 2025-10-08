@@ -6,6 +6,7 @@ export { InterviewPreparationAgent } from './InterviewPreparationAgent';
 export { ApplicationAssistantAgent } from './ApplicationAssistantAgent';
 export { EmployerAssistantAgent } from './EmployerAssistantAgent';
 export { NetworkingAssistantAgent } from './NetworkingAssistantAgent';
+export { MultiAgentCoordinator } from './MultiAgentCoordinator';
 
 // Types
 export type {
