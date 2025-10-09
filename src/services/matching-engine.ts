@@ -10,14 +10,20 @@ export class MatchingEngine {
   }) {
     const job = await prisma.job.findUnique({
       where: { id: params.jobId },
-      include: { requirements: true }
+      include: { requirements: true },
     });
 
     const candidates = await this.rankCandidates(job, params);
     return this.filterResults(candidates);
   }
 
-  private async rankCandidates(job: any, weights: any) {
+  private async rankCandidates(job: any, weights: any): Promise<any[]> {
     // Ranking implementation
+    return [];
+  }
+
+  private filterResults(candidates: any[]): any[] {
+    // Filter implementation
+    return candidates;
   }
 }

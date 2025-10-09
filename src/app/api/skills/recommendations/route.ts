@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
         skillId,
         totalVerifications: scores.total,
         averageScore: scores.averageScore,
-        masteryLevel: this.determineMasteryLevel(scores.averageScore)
+        masteryLevel: determineMasteryLevel(scores.averageScore)
       }))
 
     // Get platform recommendations
@@ -87,12 +87,11 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-      logger.error('Error getting skill recommendations', { error })
-      return NextResponse.json(
-        { error: 'Internal server error' },
-        { status: 500 }
-      )
-    }
+    logger.error('Error getting skill recommendations', { error })
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }
 

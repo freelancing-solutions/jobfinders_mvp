@@ -975,6 +975,14 @@ export class LearningPathService {
   }
 
   private calculateProgress(path: LearningPath): {
+    completedMilestones: number;
+    totalMilestones: number;
+    totalTime: number;
+    overallProgress: number;
+    currentMilestone: number;
+    nextMilestone: number;
+    estimatedCompletion: number;
+  } {
     const totalMilestones = path.milestones.length
     const completedMilestones = path.milestones.filter(m => m.status === 'completed').length
     const totalTime = path.estimatedDuration
@@ -986,7 +994,7 @@ export class LearningPathService {
       overallProgress: totalTime > 0 ? completedMilestones / totalMilestones : 0,
       currentMilestone: completedMilestones,
       nextMilestone: completedMilestones < totalMilestones ? completedMilestones + 1 : 0,
-      estimatedCompletion: totalTime > 0 ? totalTime - completedMilestones * totalTime : totalTime : 0
+      estimatedCompletion: totalTime > 0 ? totalTime - (completedMilestones * totalTime / totalMilestones) : 0
     }
   }
 }

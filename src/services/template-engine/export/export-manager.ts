@@ -276,7 +276,7 @@ export class ExportManager {
   static async processScheduledExports(): Promise<void> {
     const now = new Date();
     const dueExports = Array.from(this.scheduledExports.values())
-      .filter(export => export.active && export.schedule.enabled && export.nextRun <= now);
+      .filter(exportItem => exportItem.active && exportItem.schedule.enabled && exportItem.nextRun <= now);
 
     for (const scheduled of dueExports) {
       try {
