@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { RateLimiter } from '@/lib/rate-limit-utils';
+import { UserRole } from '@/types/roles';
 
 // Rate limiting configurations
 const MATCHING_RATE_LIMITS = {
@@ -28,7 +29,7 @@ const MATCHING_RATE_LIMITS = {
 
 // Role-based access control
 export const ROLE_PERMISSIONS = {
-  seeker: {
+  [UserRole.JOB_SEEKER]: {
     // Can manage their own profiles
     'POST:/api/matching/profiles/candidates': true,
     'PUT:/api/matching/profiles/candidates': true,
@@ -43,7 +44,7 @@ export const ROLE_PERMISSIONS = {
     'PUT:/api/matching/profiles/jobs': false,
     'DELETE:/api/matching/profiles/jobs': false,
   },
-  employer: {
+  [UserRole.EMPLOYER]: {
     // Can manage job profiles
     'POST:/api/matching/profiles/jobs': true,
     'PUT:/api/matching/profiles/jobs': true,
@@ -58,7 +59,7 @@ export const ROLE_PERMISSIONS = {
     'PUT:/api/matching/profiles/candidates': false,
     'DELETE:/api/matching/profiles/candidates': false,
   },
-  admin: {
+  [UserRole.ADMIN]: {
     // Can access all endpoints
     'POST:/api/matching/profiles/candidates': true,
     'PUT:/api/matching/profiles/candidates': true,
@@ -74,7 +75,7 @@ export const ROLE_PERMISSIONS = {
 } as const;
 
 interface MatchingAuthOptions {
-  requireRole?: 'seeker' | 'employer' | 'admin';
+  requireRole?: UserRole;
   requireSubscription?: boolean;
   rateLimitType?: 'profile' | 'search' | 'analysis';
   skipRateLimit?: boolean;
@@ -283,7 +284,7 @@ export async function canAccessResource(
   resourceId: string
 ): Promise<{ allowed: boolean; reason?: string }> {
   // Admin can access everything
-  if (user.role === 'admin') {
+  if (user.role === UserRole.ADMIN) {
     return { allowed: true };
   }
 
@@ -300,11 +301,11 @@ export async function canAccessResource(
 
   // Role-based access for read operations
   if (operation === 'read') {
-    if (resourceType === 'candidate_profile' && user.role === 'employer') {
+    if (resourceType === 'candidate_profile' && user.role === UserRole.EMPLOYER) {
       // Employers can search candidate profiles
       return { allowed: true };
     }
-    if (resourceType === 'job_profile' && user.role === 'seeker') {
+    if (resourceType === 'job_profile' && user.role === UserRole.JOB_SEEKER) {
       // Seekers can search job profiles
       return { allowed: true };
     }

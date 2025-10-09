@@ -7,6 +7,7 @@ import { AuthenticatedSocket } from './server';
 import { createUnauthorizedError, createRateLimitError } from '../api/error-handler';
 import { WebSocketRateLimiter, memoryStore } from '../api/rate-limiter';
 import { PrismaClient } from '@prisma/client';
+import { UserRole } from '@/types/roles';
 
 const prisma = new PrismaClient();
 
@@ -376,20 +377,20 @@ export class WebSocketMiddleware {
 
       // Role-based permissions
       switch (user.role) {
-        case 'admin':
+        case UserRole.ADMIN:
           permissions.add('read:all');
           permissions.add('write:all');
           permissions.add('delete:all');
           permissions.add('manage:users');
           permissions.add('manage:system');
           break;
-        case 'employer':
+        case UserRole.EMPLOYER:
           permissions.add('read:jobs');
           permissions.add('write:jobs');
           permissions.add('read:applications');
           permissions.add('write:applications');
           break;
-        case 'seeker':
+        case UserRole.JOB_SEEKER:
           permissions.add('read:jobs');
           permissions.add('write:applications');
           permissions.add('read:matches');

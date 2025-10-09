@@ -137,7 +137,7 @@ interface User {
   id: string;
   name: string;
   email: string;
-  role: 'seeker' | 'employer' | 'admin';
+  role: UserRole.JOB_SEEKER | UserRole.EMPLOYER | UserRole.ADMIN;
   profilePicture?: string;
   subscription?: {
     tier: string;
@@ -235,7 +235,7 @@ export default function SeekerDashboard() {
   }
 
   // Verify role
-  if (user.role !== 'seeker') {
+  if (user.role !== UserRole.JOB_SEEKER) {
     redirect('/dashboard'); // Redirect to appropriate dashboard
   }
 

@@ -2,6 +2,7 @@
 // Zod schemas for API request validation
 
 import { z } from 'zod';
+import { UserRole } from '@/types/roles';
 
 // Common Schemas
 export const PaginationSchema = z.object({
@@ -27,7 +28,7 @@ export const UserRegistrationSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   name: z.string().min(2, 'Name must be at least 2 characters'),
-  role: z.enum(['seeker', 'employer']).default('seeker')
+  role: z.enum([UserRole.JOB_SEEKER, UserRole.EMPLOYER]).default(UserRole.JOB_SEEKER)
 });
 
 export const UserLoginSchema = z.object({
@@ -300,7 +301,7 @@ export const SkillVerificationSchema = z.object({
 });
 
 export const SkillRecommendationSchema = z.object({
-  userRole: z.enum(['seeker', 'employer']),
+  userRole: z.enum([UserRole.JOB_SEEKER, UserRole.EMPLOYER]),
   currentSkills: z.array(z.string()),
   targetRole: z.string().optional(),
   industry: z.string().optional(),

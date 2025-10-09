@@ -3,6 +3,7 @@ import { RateLimiter } from '@/lib/rate-limiter';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { UserRole } from '@/types/roles';
 
 // Define protected routes and their required subscription features
 const protectedRoutes = {
@@ -10,7 +11,7 @@ const protectedRoutes = {
   '/api/resume-builder/': ['resumeBuilder'],
   '/api/ats/': ['atsSystem'],
   '/api/matching/': ['matching'],
-  '/api/employer/': ['employer'],
+  '/api/employer/': [UserRole.EMPLOYER],
 } as const;
 
 // Extend the middleware configuration

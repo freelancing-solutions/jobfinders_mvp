@@ -8,6 +8,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth/auth-options'
 import { db } from '@/lib/db'
 import { logger } from '@/lib/logging/logger'
+import { UserRole } from '@/types/roles';
 
 interface AuthenticatedSocket extends Socket {
   userId?: string
@@ -249,7 +250,7 @@ export function setupApplicationHandlers(io: Server) {
               status: status.toUpperCase(),
               notes: note || `Status changed to ${status}`,
               createdBy: userId,
-              createdByRole: 'candidate'
+              createdByRole: UserRole.JOB_SEEKER
             }
           }).then(() => {
             // Broadcast to user's rooms

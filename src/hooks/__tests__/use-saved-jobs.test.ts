@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react'
 import { useToast } from '@/hooks/use-toast'
 import { useSavedJobs } from '@/hooks/use-saved-jobs'
 import { act } from 'react'
+import { UserRole } from '@/types/roles'
 
 // Mock dependencies
 jest.mock('next-auth/react')
@@ -12,7 +13,7 @@ const mockSession = {
   data: {
     user: {
       id: 'test-user-id',
-      role: 'seeker'
+      role: UserRole.JOB_SEEKER
     }
   },
   status: 'authenticated'
@@ -65,7 +66,7 @@ describe('useSavedJobs', () => {
       data: {
         user: {
           id: 'test-user-id',
-          role: 'employer'
+          role: UserRole.EMPLOYER
         }
       },
       status: 'authenticated'

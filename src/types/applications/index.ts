@@ -3,6 +3,7 @@
  * This file contains all TypeScript interfaces and types for the applications management system
  */
 
+import { UserRole } from '@/types/roles'
 import { User } from '@/types/profiles'
 import { Job } from '@/types/jobs'
 
@@ -84,7 +85,7 @@ export interface ApplicationTimelineEvent {
   timestamp: string
   note?: string
   updatedBy: string
-  updatedByRole?: 'candidate' | 'employer' | 'system'
+  updatedByRole?: UserRole | 'system'
   attachments?: ApplicationAttachment[]
   metadata?: Record<string, any>
 }
@@ -131,7 +132,7 @@ export interface InterviewDetails {
  */
 export interface ApplicationFeedback {
   id: string
-  from: 'employer' | 'system' | 'ai'
+  from: UserRole | 'system' | 'ai'
   timestamp: string
   type: 'rating' | 'comment' | 'suggestion' | 'improvement'
   content: string

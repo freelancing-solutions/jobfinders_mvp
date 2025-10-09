@@ -3,6 +3,7 @@
 
 import { EventEmitter } from 'events';
 import { AuthenticatedSocket } from './server';
+import { UserRole } from '@/types/roles';
 
 export interface RoomConfig {
   id: string;
@@ -567,52 +568,52 @@ export class RoomManager extends EventEmitter {
   }
 
   private getDefaultPermissions(type: RoomType): RoomPermissions {
-    const allRoles = ['admin', 'employer', 'seeker', 'user'];
+    const allRoles = [UserRole.ADMIN, UserRole.EMPLOYER, UserRole.JOB_SEEKER, 'user'];
 
     switch (type) {
       case RoomType.USER:
         return {
           canJoin: allRoles,
           canSpeak: allRoles,
-          canModerate: ['admin'],
-          canInvite: ['admin'],
-          canKick: ['admin']
+          canModerate: [UserRole.ADMIN],
+          canInvite: [UserRole.ADMIN],
+          canKick: [UserRole.ADMIN]
         };
 
       case RoomType.JOB:
         return {
           canJoin: allRoles,
           canSpeak: allRoles,
-          canModerate: ['admin', 'employer'],
-          canInvite: ['admin', 'employer'],
-          canKick: ['admin', 'employer']
+          canModerate: [UserRole.ADMIN, UserRole.EMPLOYER],
+          canInvite: [UserRole.ADMIN, UserRole.EMPLOYER],
+          canKick: [UserRole.ADMIN, UserRole.EMPLOYER]
         };
 
       case RoomType.APPLICATION:
         return {
-          canJoin: ['admin', 'employer', 'seeker'],
-          canSpeak: ['admin', 'employer'],
-          canModerate: ['admin', 'employer'],
-          canInvite: ['admin', 'employer'],
-          canKick: ['admin', 'employer']
+          canJoin: [UserRole.ADMIN, UserRole.EMPLOYER, UserRole.JOB_SEEKER],
+          canSpeak: [UserRole.ADMIN, UserRole.EMPLOYER],
+          canModerate: [UserRole.ADMIN, UserRole.EMPLOYER],
+          canInvite: [UserRole.ADMIN, UserRole.EMPLOYER],
+          canKick: [UserRole.ADMIN, UserRole.EMPLOYER]
         };
 
       case RoomType.SYSTEM:
         return {
-          canJoin: ['admin'],
-          canSpeak: ['admin'],
-          canModerate: ['admin'],
-          canInvite: ['admin'],
-          canKick: ['admin']
+          canJoin: [UserRole.ADMIN],
+          canSpeak: [UserRole.ADMIN],
+          canModerate: [UserRole.ADMIN],
+          canInvite: [UserRole.ADMIN],
+          canKick: [UserRole.ADMIN]
         };
 
       default:
         return {
           canJoin: allRoles,
           canSpeak: allRoles,
-          canModerate: ['admin'],
-          canInvite: ['admin', 'employer'],
-          canKick: ['admin']
+          canModerate: [UserRole.ADMIN],
+          canInvite: [UserRole.ADMIN, UserRole.EMPLOYER],
+          canKick: [UserRole.ADMIN]
         };
     }
   }

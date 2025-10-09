@@ -1,23 +1,24 @@
 import { withAuth } from 'next-auth/middleware'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { UserRole } from '@/types/roles'
 
 // Define route patterns and their required roles
 const routeProtection = {
   // Admin routes - require ADMIN role
-  '/admin': ['ADMIN'],
+  '/admin': [UserRole.ADMIN],
   
   // Employer routes - require EMPLOYER role
-  '/employer': ['EMPLOYER'],
+  '/employer': [UserRole.EMPLOYER],
   
   // Job seeker specific routes - require SEEKER role
-  '/jobs/saved': ['SEEKER'],
-  '/applications': ['SEEKER'],
+  '/jobs/saved': [UserRole.JOB_SEEKER],
+  '/applications': [UserRole.JOB_SEEKER],
   
   // Protected routes that require authentication but any role
-  '/profile': ['SEEKER', 'EMPLOYER', 'ADMIN'],
-  '/settings': ['SEEKER', 'EMPLOYER', 'ADMIN'],
-  '/notifications': ['SEEKER', 'EMPLOYER', 'ADMIN'],
+  '/profile': [UserRole.JOB_SEEKER, UserRole.EMPLOYER, UserRole.ADMIN],
+  '/settings': [UserRole.JOB_SEEKER, UserRole.EMPLOYER, UserRole.ADMIN],
+  '/notifications': [UserRole.JOB_SEEKER, UserRole.EMPLOYER, UserRole.ADMIN],
   
   // Public routes that don't require authentication
   '/': null,
@@ -56,11 +57,11 @@ function hasRequiredRole(userRole: string | undefined, requiredRoles: string[] |
 // Get redirect URL based on user role
 function getRedirectUrl(userRole: string | undefined): string {
   switch (userRole) {
-    case 'ADMIN':
+    case UserRole.ADMIN:
       return '/admin/dashboard'
-    case 'EMPLOYER':
+    case UserRole.EMPLOYER:
       return '/employer/dashboard'
-    case 'SEEKER':
+    case UserRole.JOB_SEEKER:
       return '/jobs'
     default:
       return '/'

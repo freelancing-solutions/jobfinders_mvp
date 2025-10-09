@@ -71,7 +71,7 @@ Response: {
   id: string;
   name: string;
   email: string;
-  role: 'seeker' | 'employer' | 'admin';
+  role: UserRole.JOB_SEEKER | UserRole.EMPLOYER | UserRole.ADMIN;
   profilePicture?: string;
   subscription?: {
     tier: string;

@@ -3,11 +3,12 @@ import { IncomingMessage } from 'http'
 import { logger } from '@/lib/logger'
 import { EventStream } from '@/lib/events/event-stream'
 import { MatchEventProcessor } from '@/lib/events/match-events'
+import { UserRole } from '@/types/roles'
 
 export interface SocketClient {
   id: string
   userId: string
-  userType: 'candidate' | 'employer' | 'admin'
+  userType: UserRole.JOB_SEEKER | UserRole.EMPLOYER | UserRole.ADMIN
   socket: WebSocket
   connectedAt: Date
   lastActivity: Date
@@ -99,7 +100,7 @@ export class MatchingWebSocketServer {
     // Extract authentication token and user info
     const token = url.searchParams.get('token') || req.headers['authorization']?.replace('Bearer ', '')
     const userId = url.searchParams.get('userId')
-    const userType = url.searchParams.get('userType') as 'candidate' | 'employer' | 'admin'
+    const userType = url.searchParams.get('userType') as UserRole.JOB_SEEKER | UserRole.EMPLOYER | UserRole.ADMIN
 
     if (!token || !userId || !userType) {
       ws.close(1008, 'Authentication required')
