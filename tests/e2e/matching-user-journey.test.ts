@@ -5,6 +5,7 @@
 
 import { chromium, Browser, Page } from 'playwright';
 import { PrismaClient } from '@prisma/client';
+import { UserRole } from '@/types/roles';
 
 // Test configuration
 const TEST_BASE_URL = process.env.TEST_BASE_URL || 'http://localhost:3010';
@@ -671,7 +672,7 @@ export class MatchingJourneyUtils {
         email: 'e2e.test@example.com',
         firstName: 'E2E',
         lastName: 'Test',
-        role: 'SEEKER',
+        role: UserRole.JOB_SEEKER,
       },
     });
 

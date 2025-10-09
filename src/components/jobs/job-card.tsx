@@ -9,6 +9,7 @@ import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { useToast } from '@/hooks/use-toast'
 import { useState } from 'react'
+import { UserRole } from '@/types/roles'
 
 interface JobCardProps {
   job: Job
@@ -34,7 +35,7 @@ export function JobCard({ job, isSaved = false, onToggleSave }: JobCardProps) {
       return
     }
 
-    if (session.user.role !== 'seeker') {
+    if (session.user.role !== UserRole.JOB_SEEKER) {
       toast({
         title: "Access Denied",
         description: "Only job seekers can save jobs.",

@@ -3,6 +3,7 @@ import { SessionProvider } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { toast } from '@/hooks/use-toast'
 import SavedJobsPage from '@/app/saved/page'
+import { UserRole } from '@/types/roles'
 
 // Mock dependencies
 jest.mock('next-auth/react', () => ({
@@ -49,7 +50,7 @@ describe('SavedJobsPage', () => {
       id: 'user123',
       name: 'John Doe',
       email: 'john@example.com',
-      role: 'seeker'
+      role: UserRole.JOB_SEEKER
     }
   }
 
@@ -131,7 +132,7 @@ describe('SavedJobsPage', () => {
       useSession.mockReturnValue({
         status: 'authenticated',
         data: {
-          user: { role: 'employer' }
+          user: { role: UserRole.EMPLOYER }
         }
       })
 

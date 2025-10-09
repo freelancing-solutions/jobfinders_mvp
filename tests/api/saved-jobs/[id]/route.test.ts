@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { GET, PUT, DELETE } from '@/app/api/saved-jobs/[id]/route'
 import { getServerSession } from 'next-auth'
 import { db } from '@/lib/db'
+import { UserRole } from '@/types/roles'
 
 // Mock dependencies
 jest.mock('next-auth', () => ({
@@ -27,7 +28,7 @@ describe('/api/saved-jobs/[id]', () => {
   const mockSession = {
     user: {
       id: 'user123',
-      role: 'seeker'
+      role: UserRole.JOB_SEEKER
     }
   }
 
@@ -116,9 +117,9 @@ describe('/api/saved-jobs/[id]', () => {
     })
 
     it('returns 403 for non-seeker users', async () => {
-      ;(getServerSession as jest.Mock).mockResolvedValue({
-        user: { id: 'user123', role: 'employer' }
-      })
+       ;(getServerSession as jest.Mock).mockResolvedValue({
+         user: { id: 'user123', role: UserRole.EMPLOYER }
+       })
 
       const request = new NextRequest('http://localhost:3000/api/saved-jobs/job1')
       const response = await GET(request, { params: { id: 'job1' } })
@@ -233,9 +234,9 @@ describe('/api/saved-jobs/[id]', () => {
     })
 
     it('returns 403 for non-seeker users', async () => {
-      ;(getServerSession as jest.Mock).mockResolvedValue({
-        user: { id: 'user123', role: 'employer' }
-      })
+       ;(getServerSession as jest.Mock).mockResolvedValue({
+         user: { id: 'user123', role: UserRole.EMPLOYER }
+       })
 
       const requestBody = {
         status: 'applied'
@@ -304,9 +305,9 @@ describe('/api/saved-jobs/[id]', () => {
     })
 
     it('returns 403 for non-seeker users', async () => {
-      ;(getServerSession as jest.Mock).mockResolvedValue({
-        user: { id: 'user123', role: 'employer' }
-      })
+       ;(getServerSession as jest.Mock).mockResolvedValue({
+         user: { id: 'user123', role: UserRole.EMPLOYER }
+       })
 
       const request = new NextRequest('http://localhost:3000/api/saved-jobs/job1', {
         method: 'DELETE'
