@@ -1,34 +1,34 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { db } from '@/lib/db'
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { db } from '@/lib/db';
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions);
 
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
-      )
+        { status: 401 },
+      );
     }
 
     const user = await db.user.findUnique({
       where: { email: session.user?.email as string },
       include: {
-        jobSeekerProfile: true
-      }
-    })
+        jobSeekerProfile: true,
+      },
+    });
 
     if (!user || !user.jobSeekerProfile) {
       return NextResponse.json(
         { error: 'Job seeker profile not found' },
-        { status: 404 }
-      )
+        { status: 404 },
+      );
     }
 
-    const profile = user.jobSeekerProfile
+    const profile = user.jobSeekerProfile;
 
     return NextResponse.json({
       professionalTitle: profile.professionalTitle || '',
@@ -45,27 +45,27 @@ export async function GET(request: NextRequest) {
       salaryExpectationMin: profile.salaryExpectationMin || 0,
       salaryExpectationMax: profile.salaryExpectationMax || 0,
       currency: profile.currency || 'ZAR',
-      availability: profile.availability || 'immediate'
-    })
+      availability: profile.availability || 'immediate',
+    });
 
   } catch (error) {
-    console.error('Error fetching profile:', error)
+    console.error('Error fetching profile:', error);
     return NextResponse.json(
       { error: 'Failed to fetch profile' },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }
 
-export async function PUT(request: NextRequest) {
+export async function PUT(request: NextRequest): Promise<NextResponse> {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions);
 
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
-      )
+        { status: 401 },
+      );
     }
 
     const body = await request.json()

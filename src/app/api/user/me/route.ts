@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
+import { UserRole } from '@/types/roles'
 
 /**
  * GET /api/user/me
@@ -77,7 +78,7 @@ export async function GET(request: NextRequest) {
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       // Include profile data if available
-      ...(user.role === 'SEEKER' && user.jobSeekerProfile && {
+      ...(user.role === UserRole.JOB_SEEKER && user.jobSeekerProfile && {
         profile: {
           type: 'jobSeeker',
           professionalTitle: user.jobSeekerProfile.professionalTitle,
@@ -91,9 +92,9 @@ export async function GET(request: NextRequest) {
           currency: user.jobSeekerProfile.currency
         }
       }),
-      ...(user.role === 'EMPLOYER' && user.employerProfile && {
+      ...(user.role === UserRole.EMPLOYER && user.employerProfile && {
         profile: {
-          type: 'employer',
+          type: UserRole.EMPLOYER,
           fullName: user.employerProfile.fullName,
           jobTitle: user.employerProfile.jobTitle,
           companyId: user.employerProfile.companyId,

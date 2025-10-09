@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, Eye, EyeOff, Home } from 'lucide-react'
+import { UserRole } from '@/types/roles'
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -17,7 +18,7 @@ export default function SignUp() {
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'seeker'
+    role: UserRole.JOB_SEEKER
   })
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)

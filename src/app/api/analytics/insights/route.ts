@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { AnalyticsService } from '@/services/matching/analytics-service'
 import { MarketInsightsAnalyzer } from '@/lib/analytics/market-insights'
 import { logger } from '@/lib/logger'
+import { UserRole } from '@/types/roles'
 
 export async function GET(request: NextRequest) {
   try {
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session || session.user.role !== 'admin') {
+    if (!session || session.user.role !== UserRole.ADMIN) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

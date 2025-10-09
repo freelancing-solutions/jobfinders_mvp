@@ -39,6 +39,7 @@ import {
   Lightbulb
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import { UserRole } from '@/types/roles'
 
 interface MatchingPreferences {
   minMatchScore: number
@@ -98,7 +99,7 @@ export default function MatchingPage() {
   const { toast } = useToast()
 
   const [activeTab, setActiveTab] = useState('dashboard')
-  const [userRole, setUserRole] = useState<'seeker' | 'employer' | 'admin'>('seeker')
+  const [userRole, setUserRole] = useState<UserRole>(UserRole.JOB_SEEKER)
   const [matches, setMatches] = useState<(JobMatch | CandidateMatch)[]>([])
   const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
@@ -129,8 +130,8 @@ export default function MatchingPage() {
     remoteWorkOnly: false
   })
 
-  const isEmployer = session?.user?.role === 'employer'
-  const isAdmin = session?.user?.role === 'admin'
+  const isEmployer = session?.user?.role === UserRole.EMPLOYER
+  const isAdmin = session?.user?.role === UserRole.ADMIN
 
   // Fetch matches
   const fetchMatches = async () => {
@@ -249,7 +250,7 @@ export default function MatchingPage() {
 
   useEffect(() => {
     if (status === 'authenticated' && session?.user) {
-      setUserRole(session.user.role as 'seeker' | 'employer' | 'admin')
+      setUserRole(session.user.role as UserRole)
       fetchMatches()
     } else if (status === 'unauthenticated') {
       router.push('/auth/signin')

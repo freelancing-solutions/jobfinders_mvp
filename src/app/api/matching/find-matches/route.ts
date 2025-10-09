@@ -7,6 +7,7 @@ import { findMatchesSchema } from '@/lib/validation/matching-schemas';
 import { logger } from '@/lib/logging/logger';
 import { rateLimitMiddleware } from '@/middleware/rate-limit';
 import { errorHandler } from '@/middleware/error-handler';
+import { UserRole } from '@/types/roles';
 
 /**
  * POST /api/matching/find-matches - Find matches for candidates or jobs
@@ -180,7 +181,7 @@ async function checkJobViewPermission(
     const { prisma } = await import('@/lib/prisma');
 
     // Admin can view all
-    if (userRole === 'ADMIN') {
+    if (userRole === UserRole.ADMIN) {
       return true;
     }
 
@@ -217,7 +218,7 @@ async function checkCandidateViewPermission(
     const { prisma } = await import('@/lib/prisma');
 
     // Admin can view all
-    if (userRole === 'ADMIN') {
+    if (userRole === UserRole.ADMIN) {
       return true;
     }
 

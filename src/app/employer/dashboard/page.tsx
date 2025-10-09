@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AppLayout } from '@/components/layout/app-layout'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { CandidateSuggestions } from '@/components/matching/candidate-suggestions'
+import { UserRole } from '@/types/roles'
 import { 
   Building2, 
   Users, 
@@ -76,7 +77,7 @@ export default function EmployerDashboard() {
 
     // Redirect if not an employer
     if (!userLoading && user && !isEmployer) {
-      router.push(user.role === 'SEEKER' ? '/dashboard' : '/admin/dashboard')
+      router.push(user.role === UserRole.JOB_SEEKER ? '/dashboard' : '/admin/dashboard')
       return
     }
 

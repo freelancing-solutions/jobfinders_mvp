@@ -1,68 +1,68 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(request.url);
 
     // Extract query parameters
-    const query = searchParams.get('query') || ''
-    const location = searchParams.get('location') || ''
-    const positionType = searchParams.get('positionType') || ''
-    const remotePolicy = searchParams.get('remotePolicy') || ''
-    const experienceLevel = searchParams.get('experienceLevel') || ''
-    const salaryMin = searchParams.get('salaryMin') || ''
-    const salaryMax = searchParams.get('salaryMax') || ''
-    const page = parseInt(searchParams.get('page') || '1')
-    const limit = parseInt(searchParams.get('limit') || '10')
-    const offset = (page - 1) * limit
+    const query = searchParams.get('query') || '';
+    const location = searchParams.get('location') || '';
+    const positionType = searchParams.get('positionType') || '';
+    const remotePolicy = searchParams.get('remotePolicy') || '';
+    const experienceLevel = searchParams.get('experienceLevel') || '';
+    const salaryMin = searchParams.get('salaryMin') || '';
+    const salaryMax = searchParams.get('salaryMax') || '';
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const offset = (page - 1) * limit;
 
     // Build the where clause
     let whereClause: any = {
-      status: 'active'
-    }
+      status: 'active',
+    };
 
     // Add search conditions
     if (query) {
       whereClause.OR = [
         { title: { contains: query, mode: 'insensitive' } },
         { description: { contains: query, mode: 'insensitive' } },
-        { company: { name: { contains: query, mode: 'insensitive' } } }
-      ]
+        { company: { name: { contains: query, mode: 'insensitive' } } },
+      ];
     }
 
     if (location) {
-      whereClause.OR = whereClause.OR || []
+      whereClause.OR = whereClause.OR || [];
       whereClause.OR.push(
         { city: { contains: location, mode: 'insensitive' } },
         { province: { contains: location, mode: 'insensitive' } },
-        { country: { contains: location, mode: 'insensitive' } }
-      )
+        { country: { contains: location, mode: 'insensitive' } },
+      );
     }
 
     if (positionType) {
-      whereClause.positionType = positionType
+      whereClause.positionType = positionType;
     }
 
     if (remotePolicy) {
-      whereClause.remotePolicy = remotePolicy
+      whereClause.remotePolicy = remotePolicy;
     }
 
     if (experienceLevel) {
-      whereClause.experienceLevel = experienceLevel
+      whereClause.experienceLevel = experienceLevel;
     }
 
     if (salaryMin || salaryMax) {
-      whereClause.AND = []
+      whereClause.AND = [];
       if (salaryMin) {
         whereClause.AND.push({
-          salaryMin: { gte: parseFloat(salaryMin) }
-        })
+          salaryMin: { gte: parseFloat(salaryMin) },
+        });
       }
       if (salaryMax) {
         whereClause.AND.push({
-          salaryMax: { lte: parseFloat(salaryMax) }
-        })
+          salaryMax: { lte: parseFloat(salaryMax) },
+        });
       }
     }
 
@@ -177,9 +177,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const body = await request.json()
+    const body = await request.json();
     const {
       title,
       description,
@@ -200,8 +200,8 @@ export async function POST(request: NextRequest) {
       expiresAt,
       isFeatured = false,
       isUrgent = false,
-      categoryId
-    } = body
+      categoryId,
+    } = body;
 
     // Validate required fields
     if (!title || !description || !companyId || !employerId) {

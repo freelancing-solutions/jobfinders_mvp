@@ -50,6 +50,7 @@ import { redirect } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { JobPostForm } from '@/components/employer/job-post-form'
+import { UserRole } from '@/types/roles'
 
 export default async function PostJobPage() {
   const session = await getServerSession(authOptions)
@@ -58,7 +59,7 @@ export default async function PostJobPage() {
     redirect('/auth/signin')
   }
 
-  if (session.user.role !== 'EMPLOYER') {
+  if (session.user.role !== UserRole.EMPLOYER) {
     redirect('/')
   }
 

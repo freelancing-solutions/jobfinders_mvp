@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
+import { UserRole } from '@/types/roles'
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    if (session.user.role !== 'employer') {
+    if (session.user.role !==  UserRole.EMPLOYER) {
       return NextResponse.json(
         { success: false, error: 'Access denied' },
         { status: 403 }

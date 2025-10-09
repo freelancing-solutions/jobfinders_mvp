@@ -198,9 +198,11 @@ export class TemplateRegistry {
    * Get popular templates
    */
   getPopular(limit: number = 10): ResumeTemplate[] {
-    const popular = this.stats.mostPopular.map(id => this.get(id)).filter(Boolean) as ResumeTemplate[].slice(0, limit);
-
-    return popular;
+    const popular = this.stats.mostPopular
+      .map(id => this.get(id))
+      .filter(Boolean) as ResumeTemplate[];
+    
+    return popular.slice(0, limit);
   }
 
   /**

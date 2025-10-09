@@ -30,6 +30,7 @@ import {
 } from 'lucide-react'
 import { ProfileCompletion } from '@/components/profile/profile-completion'
 import type { JobSeekerProfile } from '@/types/profile'
+import { UserRole } from '@/types/roles'
 
 export default function Profile() {
   const { data: session, status } = useSession()
@@ -51,8 +52,8 @@ export default function Profile() {
     }
 
     if (status === 'authenticated') {
-      if (session.user.role !== 'USER') {
-        router.push(session.user.role === 'EMPLOYER' ? '/employer/dashboard' : '/admin/dashboard')
+      if (session.user.role !== UserRole.JOB_SEEKER) {
+        router.push(session.user.role === UserRole.EMPLOYER ? '/employer/dashboard' : '/admin/dashboard')
         return
       }
       fetchProfile()

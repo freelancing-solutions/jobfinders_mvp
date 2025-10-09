@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
+import { UserRole } from '@/types/roles';
 
 // Request schemas
 const MatchingPreferencesSchema = z.object({
@@ -22,7 +23,7 @@ const MatchingPreferencesSchema = z.object({
   requiredBenefits: z.array(z.string()).optional(),
 });
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
@@ -30,11 +31,11 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const type = searchParams.get('type'); // 'seeker' or 'employer'
+    const type = searchParams.get('type'); // UserRole.JOB_SEEKER or UserRole.EMPLOYER
     const limit = parseInt(searchParams.get('limit') || '20');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    if (!type || !['seeker', 'employer'].includes(type)) {
+    if (!type || ![UserRole.JOB_SEEKER, UserRole.EMPLOYER].includes(type as UserRole)) {
       return NextResponse.json({ error: 'Invalid type parameter' }, { status: 400 });
     }
 
@@ -57,9 +58,9 @@ export async function GET(request: NextRequest) {
 
     let matches;
 
-    if (type === 'seeker' && user.jobSeekerProfile) {
+    if (type === UserRole.JOB_SEEKER && user.jobSeekerProfile) {
       matches = await getJobSeekerMatches(user.jobSeekerProfile.id, preferences, limit, offset);
-    } else if (type === 'employer' && user.employerProfile) {
+    } else if (type === UserRole.EMPLOYER && user.employerProfile) {
       matches = await getEmployerMatches(user.employerProfile.id, preferences, limit, offset);
     } else {
       return NextResponse.json({ error: 'Invalid user profile for matching type' }, { status: 400 });
@@ -261,7 +262,7 @@ async function getEmployerMatches(
   const candidates = await prisma.user.findMany({
     where: {
       AND: [
-        { role: 'SEEKER' },
+        { role: UserRole.JOB_SEEKER },
         {
           OR: [
             // Users who applied to company jobs
@@ -504,7 +505,7 @@ async function updateMatchingPreferences(userId: string, preferences: any) {
 }
 
 async function saveMatch(userId: string, matchId: string, type: string) {
-  if (type === 'seeker') {
+  if (type === UserRole.JOB_SEEKER) {
     await prisma.savedJob.create({
       data: {
         userId,
@@ -525,7 +526,7 @@ async function saveMatch(userId: string, matchId: string, type: string) {
 }
 
 async function rejectMatch(userId: string, matchId: string, type: string, reason?: string) {
-  if (type === 'seeker') {
+  if (type === UserRole.JOB_SEEKER) {
     await prisma.rejectedJob.create({
       data: {
         userId,
