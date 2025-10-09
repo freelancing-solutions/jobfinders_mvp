@@ -158,69 +158,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-    const requestId = params.id
-    if (!requestId) {
-      return NextResponse.json({ error: 'Request ID is required' }, { status: 400 })
-    }
-
-    // Initialize skill verification service
-    const verificationService = new SkillVerificationService({
-      verificationMethods: {
-        automatic: true,
-        manual: false,
-        peer: false,
-        thirdParty: false
-      },
-      verificationLevel: 'intermediate',
-      retryConfig: {
-        maxRetries: 3,
-        retryDelay: 5000,
-        backoffMultiplier: 2
-      }
-    })
-
-    // Get verification status
-    const verificationStatus = await verificationService.getVerificationStatus(requestId)
-    if (!verificationStatus) {
-      return NextResponse.json(
-        { error: 'Verification request not found' },
-        { status: 404 }
-      )
-    }
-
-    // Get full verification result
-    const results = await verificationService.getVerificationResults(
-      verificationStatus.userId,
-      verificationStatus.skillId
-    )
-
-    const result = results.find(r => r.requestId === requestId)
-    if (!result) {
-      return NextResponse.json(
-        { error: 'Verification result not found' },
-        { status: 404 }
-      )
-    }
-
-    return NextResponse.json({
-      success: true,
-      data: {
-        result,
-        request: verificationStatus,
-        relatedResults: results.slice(0, 9) // Show up to 10 related results
-      }
-    })
-
-  } catch (error) {
-    logger.error('Error getting verification result', { error, requestId })
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
-}
-
-export async function PUT(request: NextRequest, { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions)
 
@@ -293,7 +231,7 @@ export async function PUT(request: NextRequest, { params: { id: string } }) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions)
 
