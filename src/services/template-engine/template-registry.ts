@@ -222,10 +222,9 @@ export class TemplateRegistry {
   getRecentlyUpdated(limit: number = 10): ResumeTemplate[] {
     const updated = this.stats.recentlyUpdated
       .map(id => this.get(id))
-      .filter(Boolean) as ResumeTemplate[]
-      .slice(0, limit);
-
-    return updated;
+      .filter(Boolean as any) as ResumeTemplate[];
+    
+    return updated.slice(0, limit);
   }
 
   /**

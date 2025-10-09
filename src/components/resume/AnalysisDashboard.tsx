@@ -286,7 +286,7 @@ const KeywordAnalysis: React.FC<KeywordAnalysisProps> = ({
   keywordMatches,
   title,
   description
-}) {
+}) => {
   const [showAll, setShowAll] = useState(false);
   const displayedKeywords = showAll ? keywordMatches : keywordMatches.slice(0, 5);
 

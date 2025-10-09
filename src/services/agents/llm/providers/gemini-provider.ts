@@ -48,7 +48,9 @@ export class GeminiProvider implements LLMProvider {
       await this.rateLimiter.check();
 
       const payload = this.buildRequestPayload(request);
-      payload.generationConfig?.streamResponse = true;
+      if (payload.generationConfig) {
+        payload.generationConfig.streamResponse = true;
+      }
 
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${request.model || this.config.models.primary}:streamGenerateContent?key=${this.config.apiKey}`, {
         method: 'POST',

@@ -232,7 +232,7 @@ export class ExperienceMatcher {
       }
     }
 
-    return bestScore;
+    return bestMatch;
   }
 
   /**
@@ -846,7 +846,7 @@ export class SalaryMatcher {
     } else {
       // Candidate salary is above job range
       const excess = (candidateMin - jobMax) / candidateMin;
-      return Math.max(0, 1 - excess * 0.5));
+      return Math.max(0, 1 - excess * 0.5);
     }
   }
 }

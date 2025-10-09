@@ -81,7 +81,8 @@ const mockTemplates: ResumeTemplate[] = [
           desktop: 1200,
           large: 1440
         }
-      },
+      }
+    },
     styling: {
       fonts: {
         heading: {

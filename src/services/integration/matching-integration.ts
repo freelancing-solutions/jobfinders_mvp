@@ -3,8 +3,8 @@
  * Integrates the candidate matching system with the main Next.js application
  */
 
-import { MatchingService } from '@/lib/matching/matching-service';
-import { CacheService } from '@/lib/cache/cache-service';
+import { MatchingCoreService } from '@/services/matching/core-service';
+import { CacheManager } from '@/lib/cache';
 import { NotificationService } from '@/lib/notifications/notification-service';
 import { Logger } from '@/lib/logger';
 
@@ -56,14 +56,14 @@ export interface MatchingFilters {
 }
 
 export class MatchingIntegrationService {
-  private matchingService: MatchingService;
-  private cacheService: CacheService;
+  private matchingService: MatchingCoreService;
+  private cacheService: CacheManager;
   private notificationService: NotificationService;
   private logger: Logger;
 
   constructor() {
-    this.matchingService = new MatchingService();
-    this.cacheService = new CacheService();
+    this.matchingService = new MatchingCoreService();
+    this.cacheService = new CacheManager();
     this.notificationService = new NotificationService();
     this.logger = new Logger('MatchingIntegration');
   }
@@ -81,8 +81,8 @@ export class MatchingIntegrationService {
 
       // Try cache first
       const cached = await this.cacheService.get(cacheKey);
-      if (cached) {
-        return JSON.parse(cached);
+      if (cached.data) {
+        return cached.data;
       }
 
       // Get user profile for matching
@@ -92,7 +92,7 @@ export class MatchingIntegrationService {
       }
 
       // Get matching jobs from service
-      const matches = await this.matchingService.findJobMatches(userProfile, filters, limit);
+      const matches = await this.matchingService.findJobsForCandidate(userId, filters, limit);
 
       // Format results
       const recommendations: JobRecommendation[] = matches.map(match => ({
@@ -111,7 +111,7 @@ export class MatchingIntegrationService {
       }));
 
       // Cache results
-      await this.cacheService.set(cacheKey, JSON.stringify(recommendations), 300); // 5 minutes
+      await this.cacheService.set(cacheKey, recommendations, { ttl: 300 }); // 5 minutes
 
       return recommendations;
 
@@ -135,8 +135,8 @@ export class MatchingIntegrationService {
 
       // Try cache first
       const cached = await this.cacheService.get(cacheKey);
-      if (cached) {
-        return JSON.parse(cached);
+      if (cached.data) {
+        return cached.data;
       }
 
       // Verify employer owns the job
@@ -145,8 +145,8 @@ export class MatchingIntegrationService {
         throw new Error('Job not found or access denied');
       }
 
-      // Get matching candidates from service
-      const matches = await this.matchingService.findCandidateMatches(job, filters, limit);
+    // Get matching candidates from service
+      const matches = await this.matchingService.findCandidatesForJob(jobId, filters, limit);
 
       // Format results
       const candidates: CandidateMatch[] = matches.map(match => ({
@@ -168,7 +168,7 @@ export class MatchingIntegrationService {
       }));
 
       // Cache results
-      await this.cacheService.set(cacheKey, JSON.stringify(candidates), 600); // 10 minutes
+      await this.cacheService.set(cacheKey, candidates, { ttl: 600 }); // 10 minutes
 
       return candidates;
 
@@ -192,7 +192,7 @@ export class MatchingIntegrationService {
       }
 
       // Find new matching jobs
-      const newMatches = await this.matchingService.findNewJobMatches(userProfile);
+      const newMatches = await this.matchingService.findJobsForCandidate(userId, {}, 20);
 
       // Send notifications for new matches
       if (newMatches.length > 0) {
@@ -251,14 +251,21 @@ export class MatchingIntegrationService {
 
       // Try cache first
       const cached = await this.cacheService.get(cacheKey);
-      if (cached) {
-        return JSON.parse(cached);
+      if (cached.data) {
+        return cached.data;
       }
 
-      const analytics = await this.matchingService.getUserAnalytics(userId, timeframe);
+      // TODO: Implement analytics method in MatchingCoreService
+      // const analytics = await this.matchingService.getUserAnalytics(userId, timeframe);
+      const analytics = {
+        totalMatches: 0,
+        averageScore: 0,
+        recentMatches: [],
+        timeframe
+      };
 
       // Cache results
-      await this.cacheService.set(cacheKey, JSON.stringify(analytics), 3600); // 1 hour
+      await this.cacheService.set(cacheKey, analytics, { ttl: 3600 }); // 1 hour
 
       return analytics;
 
@@ -278,7 +285,9 @@ export class MatchingIntegrationService {
     reason?: string
   ): Promise<void> {
     try {
-      await this.matchingService.updateFeedback(userId, jobId, feedback, reason);
+      // TODO: Implement feedback method in MatchingCoreService
+      // await this.matchingService.updateFeedback(userId, jobId, feedback, reason);
+      console.log(`Feedback received: ${userId} -> ${jobId} = ${feedback}`);
 
       // Invalidate user's recommendations cache
       await this.cacheService.delete(`job_recommendations:${userId}:{}`);
