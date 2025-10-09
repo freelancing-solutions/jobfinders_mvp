@@ -5,6 +5,7 @@ import { MatchingCoreService } from '@/services/matching/matching-core'
 import { MatchingScoreService } from '@/services/matching/matching-score'
 import { prisma } from '@/lib/prisma'
 import { logger } from '@/lib/logger'
+import { UserRole } from '@/types/roles'
 
 export interface CandidateRecommendation {
   candidateId: string
@@ -182,7 +183,7 @@ export class CandidateRecommender {
     const candidates = await prisma.user.findMany({
       where: {
         id: { in: Array.from(candidateIds) },
-        role: 'seeker',
+        role: UserRole.JOB_SEEKER,
         isActive: true,
         profile: {
           isPublic: true
@@ -217,7 +218,7 @@ export class CandidateRecommender {
 
     const candidates = await prisma.user.findMany({
       where: {
-        role: 'seeker',
+        role: UserRole.JOB_SEEKER,
         isActive: true,
         profile: {
           isPublic: true,
@@ -258,7 +259,7 @@ export class CandidateRecommender {
    */
   private async getExperienceBasedCandidates(job: any, filters: CandidateRecommendationRequest['filters']): Promise<any[]> {
     const whereClause: any = {
-      role: 'seeker',
+      role: UserRole.JOB_SEEKER,
       isActive: true,
       profile: {
         isPublic: true
@@ -295,7 +296,7 @@ export class CandidateRecommender {
    */
   private async getLocationBasedCandidates(job: any, filters: CandidateRecommendationRequest['filters']): Promise<any[]> {
     const whereClause: any = {
-      role: 'seeker',
+      role: UserRole.JOB_SEEKER,
       isActive: true,
       profile: {
         isPublic: true
@@ -366,7 +367,7 @@ export class CandidateRecommender {
       return prisma.user.findMany({
         where: {
           id: { in: topCandidateIds },
-          role: 'seeker',
+          role: UserRole.JOB_SEEKER,
           isActive: true,
           profile: {
             isPublic: true
@@ -405,7 +406,7 @@ export class CandidateRecommender {
       return prisma.user.findMany({
         where: {
           id: { in: candidateIds },
-          role: 'seeker',
+          role: UserRole.JOB_SEEKER,
           isActive: true,
           profile: {
             isPublic: true

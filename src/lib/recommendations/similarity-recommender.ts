@@ -3,6 +3,7 @@ import { SimilaritySearch } from '@/lib/vector/similarity-search'
 import { VectorStore } from '@/lib/vector/vector-store'
 import { prisma } from '@/lib/prisma'
 import { logger } from '@/lib/logger'
+import { UserRole } from '@/types/roles'
 
 export interface SimilarityRecommendation {
   id: string
@@ -343,7 +344,7 @@ export class SimilarityRecommender {
       return prisma.user.findMany({
         where: {
           id: { in: itemIds },
-          role: 'seeker'
+          role: UserRole.JOB_SEEKER
         },
         include: {
           profile: {

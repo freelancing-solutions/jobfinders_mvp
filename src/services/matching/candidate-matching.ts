@@ -13,6 +13,7 @@ import {
   CandidateSearchRequest,
   CandidateSearchResponse
 } from '@/types/matching';
+import { UserRole } from '@/types/roles';
 
 export class CandidateMatchingService {
   private prisma: PrismaClient;
@@ -548,7 +549,7 @@ export class CandidateMatchingService {
     // Implement candidate search logic
     const whereClause: any = {
       isActive: true,
-      role: 'seeker'
+      role: UserRole.JOB_SEEKER
     };
 
     if (request.query) {
@@ -582,7 +583,7 @@ export class CandidateMatchingService {
   private async countCandidates(request: CandidateSearchRequest): Promise<number> {
     const whereClause: any = {
       isActive: true,
-      role: 'seeker'
+      role: UserRole.JOB_SEEKER
     };
 
     if (request.query) {

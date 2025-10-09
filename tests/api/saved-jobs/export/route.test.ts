@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { POST } from '@/app/api/saved-jobs/export/route'
 import { getServerSession } from 'next-auth'
 import { db } from '@/lib/db'
+import { UserRole } from '@/types/roles'
 
 // Mock dependencies
 jest.mock('next-auth', () => ({
@@ -25,7 +26,7 @@ describe('/api/saved-jobs/export', () => {
   const mockSession = {
     user: {
       id: 'user123',
-      role: 'seeker'
+      role: UserRole.JOB_SEEKER
     }
   }
 
@@ -302,7 +303,7 @@ describe('/api/saved-jobs/export', () => {
 
     it('returns 403 for non-seeker users', async () => {
       ;(getServerSession as jest.Mock).mockResolvedValue({
-        user: { id: 'user123', role: 'employer' }
+        user: { id: 'user123', role: UserRole.EMPLOYER }
       })
 
       const requestBody = {

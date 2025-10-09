@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import { UserRole } from '../src/types/roles'
 
 const prisma = new PrismaClient()
 
@@ -171,7 +172,7 @@ async function main() {
         email: 'john.doe@example.com',
         passwordHash: hashedPassword,
         name: 'John Doe',
-        role: 'seeker',
+        role: UserRole.JOB_SEEKER,
         isActive: true,
         jobSeekerProfile: {
           create: {
@@ -199,7 +200,7 @@ async function main() {
         email: 'jane.smith@example.com',
         passwordHash: hashedPassword,
         name: 'Jane Smith',
-        role: 'seeker',
+        role: UserRole.JOB_SEEKER,
         isActive: true,
         jobSeekerProfile: {
           create: {
@@ -226,7 +227,7 @@ async function main() {
         email: 'mike.wilson@example.com',
         passwordHash: hashedPassword,
         name: 'Mike Wilson',
-        role: 'seeker',
+        role: UserRole.JOB_SEEKER,
         isActive: true,
         jobSeekerProfile: {
           create: {
@@ -254,7 +255,7 @@ async function main() {
         email: 'employer@techcorp.example.com',
         passwordHash: hashedPassword,
         name: 'Sarah Johnson',
-        role: 'employer',
+        role: UserRole.EMPLOYER,
         isActive: true,
         employerProfile: {
           create: {
@@ -275,7 +276,7 @@ async function main() {
         email: 'employer@digitalmarketingpro.example.com',
         passwordHash: hashedPassword,
         name: 'Tom Brown',
-        role: 'employer',
+        role: UserRole.EMPLOYER,
         isActive: true,
         employerProfile: {
           create: {
@@ -298,7 +299,7 @@ async function main() {
       email: 'admin@jobfinders.example.com',
       passwordHash: hashedPassword,
       name: 'Admin User',
-      role: 'admin',
+      role: UserRole.ADMIN,
       isActive: true,
       adminProfile: {
         create: {

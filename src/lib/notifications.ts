@@ -1,6 +1,7 @@
 import { Server } from 'socket.io'
 import { db } from './db'
 import { EnhancedNotificationService } from './enhanced-notification-service'
+import { UserRole } from '@/types/roles'
 
 export interface NotificationData {
   id: string
@@ -95,7 +96,7 @@ export const setupNotificationHandlers = (io: Server) => {
       try {
         // Find job seekers who might be interested
         const jobSeekers = await db.user.findMany({
-          where: { role: 'seeker' },
+          where: { role: UserRole.JOB_SEEKER },
           include: { jobSeekerProfile: true }
         })
 

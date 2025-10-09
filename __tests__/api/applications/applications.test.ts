@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { GET, POST } from '@/app/api/applications/route'
 import { getServerSession } from 'next-auth'
 import { db } from '@/lib/db'
+import { UserRole } from '@/types/roles'
 
 // Mock dependencies
 jest.mock('next-auth')
@@ -23,7 +24,7 @@ describe('/api/applications', () => {
       id: 'user-123',
       name: 'John Doe',
       email: 'john@example.com',
-      role: 'SEEKER',
+      role: UserRole.JOB_SEEKER,
     },
     expires: '2024-12-31',
   }

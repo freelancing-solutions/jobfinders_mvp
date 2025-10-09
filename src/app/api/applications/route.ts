@@ -5,6 +5,7 @@ import { db } from '@/lib/db'
 import { apiHandler, APIError } from '@/lib/api-handler'
 import { ApplicationStatus } from '@prisma/client'
 import { logger } from '@/lib/logging/logger'
+import { UserRole } from '@/types/roles'
 
 export async function POST(request: NextRequest) {
   return apiHandler(request, async (req) => {
@@ -132,7 +133,7 @@ export async function POST(request: NextRequest) {
         data: {
           email: email,
           name: fullName,
-          role: 'seeker',
+          role: UserRole.JOB_SEEKER,
           isActive: true
         }
       })

@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Dashboard } from '@/app/dashboard/page'
 import { SavedJobsPage } from '@/app/saved/page'
 import { ApplicationsPage } from '@/app/applications/page'
+import { UserRole } from '@/types/roles'
 
 // Mock session data
 const mockSession = {
@@ -16,7 +17,7 @@ const mockSession = {
     id: 'test-user-id',
     email: 'test@example.com',
     name: 'Test User',
-    role: 'seeker'
+    role: UserRole.JOB_SEEKER
   }
 }
 

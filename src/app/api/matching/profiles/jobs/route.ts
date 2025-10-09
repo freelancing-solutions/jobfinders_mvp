@@ -8,6 +8,7 @@ import {
   type JobProfileQueryInput
 } from '@/lib/validation/matching-schemas';
 import { ZodError } from 'zod';
+import { UserRole } from '@/types/roles';
 
 const jobService = new JobService();
 
@@ -101,7 +102,7 @@ export async function POST(request: NextRequest) {
   try {
     // Authentication - only employers can create job profiles
     const authResult = await withMatchingAuth(request, {
-      requireRole: 'employer',
+      requireRole: UserRole.EMPLOYER,
       rateLimitType: 'profile'
     });
 

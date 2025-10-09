@@ -10,6 +10,7 @@ import { RecommendationEngine } from '@/services/matching/recommendation-engine'
 import { CandidateService } from '@/services/matching/candidate-service';
 import { JobService } from '@/services/matching/job-service';
 import { CacheService } from '@/services/matching/cache-service';
+import { UserRole } from '@/types/roles';
 
 // Mock database
 const mockPrisma = {
@@ -104,7 +105,7 @@ describe('Matching Workflow Integration Tests', () => {
       email: 'test@example.com',
       firstName: 'Test',
       lastName: 'User',
-      role: 'SEEKER',
+      role: UserRole.JOB_SEEKER,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

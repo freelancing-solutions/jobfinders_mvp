@@ -1,5 +1,6 @@
 import { db } from '../src/lib/db'
 import { JobStatus, ApplicationStatus } from '@prisma/client'
+import { UserRole } from '../src/types/roles'
 
 async function main() {
   console.log('Seeding database...')
@@ -177,7 +178,7 @@ async function main() {
         email: 'employer@techsolutions.com',
         name: 'John Smith',
         passwordHash: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeZeUfkZMBs9kYZP6', // password: password123
-        role: 'employer',
+        role: UserRole.EMPLOYER,
         isActive: true
       }
     }),
@@ -188,7 +189,7 @@ async function main() {
         email: 'employer@aiinnovations.com',
         name: 'Sarah Johnson',
         passwordHash: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeZeUfkZMBs9kYZP6', // password: password123
-        role: 'employer',
+        role: UserRole.EMPLOYER,
         isActive: true
       }
     })

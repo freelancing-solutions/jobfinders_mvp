@@ -19,6 +19,7 @@ import {
   AnalyticsDataCollectedEvent
 } from './event-types';
 import { eventBus } from './event-bus';
+import { UserRole } from '@/types/roles';
 
 const prisma = new PrismaClient();
 
@@ -501,7 +502,7 @@ export class SystemHandlers {
     // Send alert to administrators about critical system errors
     try {
       const admins = await prisma.user.findMany({
-        where: { role: 'ADMIN' }
+        where: { role: UserRole.ADMIN }
       });
 
       for (const admin of admins) {

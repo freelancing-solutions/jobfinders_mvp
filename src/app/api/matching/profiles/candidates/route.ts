@@ -8,6 +8,7 @@ import {
   type CandidateProfileQueryInput
 } from '@/lib/validation/matching-schemas';
 import { ZodError } from 'zod';
+import { UserRole } from '@/types/roles';
 
 const candidateService = new CandidateService();
 
@@ -101,7 +102,7 @@ export async function POST(request: NextRequest) {
   try {
     // Authentication - only seekers can create candidate profiles
     const authResult = await withMatchingAuth(request, {
-      requireRole: 'seeker',
+      requireRole: UserRole.JOB_SEEKER,
       rateLimitType: 'profile'
     });
 
