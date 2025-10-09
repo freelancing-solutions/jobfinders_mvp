@@ -91,6 +91,7 @@ export async function GET(request: NextRequest) {
     const userId = searchParams.get('userId')
     const skillId = searchParams.get('skillId')
     const platformId = searchParams.get('platformId')
+    const id = searchParams.get('id')
     const filters = {
       dateRange: searchParams.get('dateRange') ? JSON.parse(searchParams.get('dateRange') as string) : undefined,
       status: searchParams.get('status')?.split(','),
@@ -113,6 +114,23 @@ export async function GET(request: NextRequest) {
         backoffMultiplier: 2
       }
     })
+
+    // If ID is provided, get specific verification result
+    if (id) {
+      const result = await verificationService.getVerificationResult(id)
+      
+      if (!result) {
+        return NextResponse.json(
+          { error: 'Verification result not found' },
+          { status: 404 }
+        )
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: result
+      })
+    }
 
     // Get verification results
     const results = await verificationService.getVerificationResults(
@@ -139,14 +157,6 @@ export async function GET(request: NextRequest) {
     )
   }
 }
-
-export async function GET(request: NextRequest, { params: { id: string } }) {
-  try {
-    const session = await getServerSession(authOptions)
-
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
 
     const requestId = params.id
     if (!requestId) {

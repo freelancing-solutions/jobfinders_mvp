@@ -483,7 +483,7 @@ export class ExportManager {
     // In a real implementation, you would use a job scheduler like node-cron
     // For now, we'll just set a timeout for the next due export
     const nextExports = Array.from(this.scheduledExports.values())
-      .filter(export => export.active && export.schedule.enabled)
+      .filter(exportItem => exportItem.active && exportItem.schedule.enabled)
       .sort((a, b) => a.nextRun.getTime() - b.nextRun.getTime());
 
     if (nextExports.length > 0) {

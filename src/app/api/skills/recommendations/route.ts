@@ -123,14 +123,14 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    const recommendations = await verificationService.getVerificationRecommendations(
+    let recommendations = await verificationService.getVerificationRecommendations(
       session.user.id,
       skillId
     )
 
     // Customize recommendations based on user preferences
     if (learningGoals) {
-      recommendations = this.customizeRecommendations(
+      recommendations = customizeRecommendations(
         recommendations,
         learningGoals,
         currentLevel,
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    return NextResponse({
+    return NextResponse.json({
       success: true,
       data: {
         recommendations
@@ -146,12 +146,11 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-      logger.error('Error generating skill recommendations', { error })
-      return NextResponse.json(
-        { error: 'Internal server error' },
-        { status: 500 }
-      )
-    }
+    logger.error('Error generating skill recommendations', { error })
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }
 
