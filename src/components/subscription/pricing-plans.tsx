@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Check } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { UserRole } from '@/types/roles';
 
 interface PricingFeature {
   text: string;
@@ -153,7 +154,7 @@ export function PricingPlans() {
     }
   };
 
-  const isEmployer = session?.user?.role === 'EMPLOYER';
+  const isEmployer = session?.user?.role === UserRole.EMPLOYER;
   const plans = isEmployer ? employerPlans : jobSeekerPlans;
 
   return (

@@ -10,6 +10,7 @@ import {
   Building,
   Briefcase,
 } from 'lucide-react';
+import { UserRole } from '@/types/roles';
 
 interface NavigationItem {
   href: string;
@@ -23,31 +24,31 @@ const subscriptionNavigation: NavigationItem[] = [
     href: '/settings/billing',
     label: 'Billing & Subscription',
     icon: CreditCard,
-    roles: ['SEEKER', 'EMPLOYER'],
+    roles: [UserRole.JOB_SEEKER, UserRole.EMPLOYER],
   },
   {
     href: '/settings/usage',
     label: 'Usage & Limits',
     icon: LineChart,
-    roles: ['SEEKER', 'EMPLOYER'],
+    roles: [UserRole.JOB_SEEKER, UserRole.EMPLOYER],
   },
   {
     href: '/settings/invoices',
     label: 'Invoices',
     icon: FileText,
-    roles: ['SEEKER', 'EMPLOYER'],
+    roles: [UserRole.JOB_SEEKER, UserRole.EMPLOYER],
   },
   {
     href: '/admin/plans',
     label: 'Plan Management',
     icon: Settings,
-    roles: ['ADMIN'],
+    roles: [UserRole.ADMIN],
   },
   {
     href: '/admin/subscriptions',
     label: 'User Subscriptions',
     icon: Users,
-    roles: ['ADMIN'],
+    roles: [UserRole.ADMIN],
   },
 ];
 

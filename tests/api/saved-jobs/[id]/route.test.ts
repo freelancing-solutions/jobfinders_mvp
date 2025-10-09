@@ -6,6 +6,7 @@ import { UserRole } from '@/types/roles'
 
 // Mock dependencies
 jest.mock('next-auth', () => ({
+
   getServerSession: jest.fn()
 }))
 

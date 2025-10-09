@@ -33,6 +33,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { UserRole } from '@/types/roles'
 
 interface UserMenuProps {
   user?: {
@@ -76,11 +77,11 @@ export function UserMenu({ user: propUser, className }: UserMenuProps) {
 
   const getRoleBadge = (role?: string) => {
     switch (role) {
-      case 'ADMIN':
+      case UserRole.ADMIN:
         return <Badge variant="destructive" className="text-xs">Admin</Badge>
-      case 'EMPLOYER':
+      case UserRole.EMPLOYER:
         return <Badge variant="default" className="text-xs">Employer</Badge>
-      case 'SEEKER':
+      case UserRole.JOB_SEEKER:
         return <Badge variant="secondary" className="text-xs">Job Seeker</Badge>
       default:
         return null
