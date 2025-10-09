@@ -1,8 +1,0 @@
-.vscode/**
-.git/**
-.gitignore
-README.md
-**/*.ts
-**/tsconfig.json
-node_modules/**
-.vscode-test

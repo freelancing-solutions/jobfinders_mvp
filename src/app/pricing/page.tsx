@@ -1,10 +1,12 @@
 import { PricingPlans } from '@/components/subscription/pricing-plans';
 import { SubscriptionStatus } from '@/components/subscription/subscription-status';
 import { HeroSection, SectionLayout } from '@/components/design-system';
+import { AppLayout } from '@/components/layout/app-layout';
 
 export default function PricingPage() {
   return (
-    <div className="bg-background">
+    <AppLayout>
+      <div className="bg-background">
       {/* Hero Section */}
       <HeroSection
         title="Simple, Transparent Pricing"
@@ -21,5 +23,6 @@ export default function PricingPage() {
         <PricingPlans />
       </SectionLayout>
     </div>
+    </AppLayout>
   );
 }

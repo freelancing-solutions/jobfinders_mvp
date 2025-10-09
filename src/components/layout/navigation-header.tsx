@@ -10,7 +10,7 @@ import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Button } from '@/components/ui/button'
 import { NotificationDropdown } from '@/components/notifications/notification-dropdown'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
-import { getNavigationItems } from '@/config/navigation'
+import { getNavigationItems, mainNavigationItems } from '@/config/navigation'
 import {
   Briefcase,
   MapPin,
@@ -47,6 +47,9 @@ export function NavigationHeader({ user: propUser }: NavigationHeaderProps) {
   // Get navigation items based on user state
   const navigationItems = getNavigationItems(user, isAuthenticated)
 
+  // For public users, use main navigation items in dropdown
+  const publicNavigationItems = isAuthenticated ? [] : mainNavigationItems
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       {/* Main Header */}
@@ -72,11 +75,14 @@ export function NavigationHeader({ user: propUser }: NavigationHeaderProps) {
 
         {/* Navigation Controls */}
         <div className="flex items-center gap-4">
-          {/* Main Navigation for Desktop */}
-          <MainNav navigationItems={navigationItems} />
-          
+          {/* Main Navigation Dropdown - Always visible for all users */}
+          <NavigationDropdown navigationItems={publicNavigationItems} />
+
+          {/* Role-specific Navigation for Desktop (only for authenticated users) */}
+          {isAuthenticated && <MainNav navigationItems={navigationItems} />}
+
           {/* Mobile Navigation */}
-          <MobileNav navigationItems={navigationItems} />
+          <MobileNav navigationItems={isAuthenticated ? navigationItems : publicNavigationItems} />
           
           {/* Quick Actions */}
           {isLoading ? (

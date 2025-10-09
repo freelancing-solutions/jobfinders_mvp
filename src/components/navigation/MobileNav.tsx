@@ -21,8 +21,13 @@ export function MobileNav({ navigationItems, className }: MobileNavProps) {
   const [expandedSections, setExpandedSections] = useState<string[]>([])
   const pathname = usePathname()
 
-  // Group navigation items by category for better mobile organization
-  const groupedItems = navigationItems.reduce((acc, item) => {
+  // For main navigation items (public), render them directly without grouping
+  // For authenticated users, group by category for better organization
+  const hasPublicItems = navigationItems.some(item =>
+    ['/', '/jobs', '/companies', '/about', '/contact', '/pricing'].includes(item.href)
+  )
+
+  const groupedItems = hasPublicItems ? { '': navigationItems } : navigationItems.reduce((acc, item) => {
     const category = item.category || 'main'
     if (!acc[category]) {
       acc[category] = []
@@ -62,13 +67,44 @@ export function MobileNav({ navigationItems, className }: MobileNavProps) {
               {Object.entries(groupedItems).map(([category, items]) => {
                 const isExpanded = expandedSections.includes(category)
                 const hasMultipleItems = items.length > 1
-                
+                const hasEmptyCategory = category === ''
+
+                // For empty category (public items), render them directly without section
+                if (hasEmptyCategory) {
+                  return items.map((item) => {
+                    const isActive = pathname === item.href ||
+                      (item.href !== '/' && pathname.startsWith(item.href))
+
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={handleLinkClick}
+                        className={cn(
+                          'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                          isActive
+                            ? 'bg-primary text-primary-foreground'
+                            : 'hover:bg-accent hover:text-accent-foreground'
+                        )}
+                      >
+                        <item.icon className="h-5 w-5" />
+                        <span className="flex-1">{item.label}</span>
+                        {item.badge && (
+                          <Badge variant="secondary" className="text-xs">
+                            {item.badge}
+                          </Badge>
+                        )}
+                      </Link>
+                    )
+                  })
+                }
+
                 if (!hasMultipleItems) {
                   // Single item - render directly
                   const item = items[0]
-                  const isActive = pathname === item.href || 
+                  const isActive = pathname === item.href ||
                     (item.href !== '/' && pathname.startsWith(item.href))
-                  
+
                   return (
                     <Link
                       key={item.href}
@@ -76,8 +112,8 @@ export function MobileNav({ navigationItems, className }: MobileNavProps) {
                       onClick={handleLinkClick}
                       className={cn(
                         'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                        isActive 
-                          ? 'bg-primary text-primary-foreground' 
+                        isActive
+                          ? 'bg-primary text-primary-foreground'
                           : 'hover:bg-accent hover:text-accent-foreground'
                       )}
                     >
@@ -109,9 +145,9 @@ export function MobileNav({ navigationItems, className }: MobileNavProps) {
                     </CollapsibleTrigger>
                     <CollapsibleContent className="space-y-1 mt-1">
                       {items.map((item) => {
-                        const isActive = pathname === item.href || 
+                        const isActive = pathname === item.href ||
                           (item.href !== '/' && pathname.startsWith(item.href))
-                        
+
                         return (
                           <Link
                             key={item.href}
@@ -119,8 +155,8 @@ export function MobileNav({ navigationItems, className }: MobileNavProps) {
                             onClick={handleLinkClick}
                             className={cn(
                               'flex items-center gap-3 px-6 py-2 rounded-md text-sm transition-colors',
-                              isActive 
-                                ? 'bg-primary text-primary-foreground' 
+                              isActive
+                                ? 'bg-primary text-primary-foreground'
                                 : 'hover:bg-accent hover:text-accent-foreground'
                             )}
                           >

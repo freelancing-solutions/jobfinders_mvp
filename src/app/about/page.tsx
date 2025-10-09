@@ -5,6 +5,7 @@ import { ArrowRight, Users, Target, Award, Heart, Globe, Briefcase } from 'lucid
 import { Button } from '@/components/design-system'
 import { Card, CardContent } from '@/components/design-system'
 import { HeroSection, SectionLayout } from '@/components/design-system'
+import { AppLayout } from '@/components/layout/app-layout'
 
 export const metadata: Metadata = {
   title: 'About Us - Job Finders',
@@ -14,7 +15,8 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="bg-background">
+    <AppLayout>
+      <div className="bg-background">
       {/* Hero Section */}
       <HeroSection
         title="Connecting Dreams with Opportunities"
@@ -270,5 +272,6 @@ export default function AboutPage() {
         </div>
       </SectionLayout>
     </div>
+    </AppLayout>
   )
 }

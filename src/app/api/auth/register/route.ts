@@ -24,6 +24,9 @@ export async function POST(request: NextRequest) {
     
     const { name, email, password, role } = validatedData
 
+    // Convert legacy role to proper UserRole enum for database storage
+    const userRole = convertLegacyToNewRole(role)
+
     // Check if user already exists
     const existingUser = await db.user.findUnique({
       where: { email }
@@ -37,7 +40,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12)
+    const hashedPassword = await hash(password, 12)
 
     // Create user
     const user = await db.user.create({
@@ -45,20 +48,20 @@ export async function POST(request: NextRequest) {
         name,
         email,
         passwordHash: hashedPassword,
-        role,
+        role: userRole,
         isActive: true
       }
     })
 
     // Create profile based on role
-    if (role === 'SEEKER') {
+    if (userRole === UserRole.JOB_SEEKER) {
       await db.jobSeekerProfile.create({
         data: {
           userUid: user.uid,
           currency: 'ZAR'
         }
       })
-    } else if (hasEmployerAccess(role)) {
+    } else if (userRole === UserRole.EMPLOYER) {
       // Create a default company for employers
       const company = await db.company.create({
         data: {
@@ -84,7 +87,7 @@ export async function POST(request: NextRequest) {
         userId: user.uid,
         email: user.email,
         name: user.name,
-        role: user.role
+        role: userRole
       }
     })
 

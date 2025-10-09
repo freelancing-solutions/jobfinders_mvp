@@ -28,8 +28,8 @@ export interface NavigationItem {
   badge?: string;
 }
 
-// Navigation items for unauthenticated users
-export const publicNavigationItems: NavigationItem[] = [
+// Main navigation items that go in dropdown menu
+export const mainNavigationItems: NavigationItem[] = [
   {
     href: '/',
     label: 'Home',
@@ -67,6 +67,9 @@ export const publicNavigationItems: NavigationItem[] = [
     description: 'View our pricing plans',
   },
 ];
+
+// Navigation items for unauthenticated users (for backwards compatibility)
+export const publicNavigationItems: NavigationItem[] = mainNavigationItems;
 
 // Navigation items for job seekers
 export const jobSeekerNavigationItems: NavigationItem[] = [

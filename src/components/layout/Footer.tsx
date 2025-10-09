@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import { Linkedin, Twitter, Facebook, Instagram, MapPin } from 'lucide-react';
-import { publicNavigationItems } from '@/config/navigation';
 
 export function Footer() {
-  // Filter to show only key marketing pages
-  const footerNavigationItems = publicNavigationItems.filter(item => 
-    ['/', '/jobs', '/companies', '/about', '/contact', '/pricing'].includes(item.href)
-  );
+  // Only show essential links since main navigation is now in dropdown
+  const footerNavigationItems = [
+    { href: '/employer/post', label: 'Post a Job' },
+    { href: '/auth/signin', label: 'Sign In' },
+    { href: '/auth/signup', label: 'Sign Up' },
+  ];
 
   const legalLinks = [
     { href: '/terms', label: 'Terms of Service' },
@@ -27,7 +28,7 @@ export function Footer() {
       <div className="container mx-auto px-4 py-12">
         {/* Top Section - Three columns */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          {/* Column 1: About & Navigation */}
+          {/* Column 1: About */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white">Job Finders</h3>
             <p className="text-sm text-slate-400">
