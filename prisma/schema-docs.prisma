@@ -1,0 +1,57 @@
+// This is the main Prisma schema file for the Job Finders application
+// Schema separation implementation - this file imports all schema modules
+
+// Note: Prisma doesn't currently support direct schema imports in the way shown below.
+// Instead, this file serves as documentation of the schema separation structure.
+// The actual schema files are located in the prisma/schema/ directory.
+
+// To use the separated schemas, you would need to:
+// 1. Concatenate all schema files during build time
+// 2. Use a schema stitching tool
+// 3. Or switch to a database tool that supports schema modules
+
+// For now, the original schema.prisma file has been backed up to:
+// prisma/schema-original-backup.prisma
+
+// The separated schemas are:
+// - prisma/schema/base.prisma - Core configuration and User model
+// - prisma/schema/auth.prisma - Authentication models
+// - prisma/schema/jobs.prisma - Job management models
+// - prisma/schema/applications.prisma - Application management models
+// - prisma/schema/resumes.prisma - Resume and CV models
+// - prisma/schema/company.prisma - Company and employer models
+// - prisma/schema/billing.prisma - Billing and invoice models
+// - prisma/schema/notifications.prisma - Notification system models
+// - prisma/schema/analytics.prisma - Analytics and tracking models
+// - prisma/schema/templates.prisma - Resume template models
+// - prisma/schema/matching.prisma - AI matching system models
+
+// For development purposes, you can use the original schema file or
+// concatenate the separated schemas using the build script:
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// IMPORTED SCHEMAS (concatenated during build):
+// Base schema with core configuration and User model
+// Auth schema with authentication models
+// Jobs schema with job management models
+// Applications schema with application management models
+// Resumes schema with resume and CV models
+// Company schema with company and employer models
+// Billing schema with billing and invoice models
+// Notifications schema with notification system models
+// Analytics schema with analytics and tracking models
+// Templates schema with resume template models
+// Matching schema with AI matching system models
+
+// To build the complete schema, run:
+// cat prisma/schema/base.prisma prisma/schema/auth.prisma prisma/schema/jobs.prisma prisma/schema/applications.prisma prisma/schema/resumes.prisma prisma/schema/company.prisma prisma/schema/billing.prisma prisma/schema/notifications.prisma prisma/schema/analytics.prisma prisma/schema/templates.prisma prisma/schema/matching.prisma > prisma/schema-complete.prisma
+
+// Then use schema-complete.prisma for development
